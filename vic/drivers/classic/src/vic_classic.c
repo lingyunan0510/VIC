@@ -53,6 +53,12 @@ main(int   argc,
     veg_hist_struct  **veg_hist;
     veg_con_struct    *veg_con;
     soil_con_struct    soil_con;
+    /**
+     * @brief Declare Glacier Condition
+     * Added in 2022-01-28
+     * Checked in 2022-02-10
+     */
+    glacier_con_struct glacier_con;
     all_vars_struct    all_vars;
     lake_con_struct    lake_con;
     stream_struct     *streams = NULL;
@@ -185,6 +191,13 @@ main(int   argc,
 
             /** Read Elevation Band Data if Used **/
             read_snowband(filep.snowband, &soil_con);
+
+            /**
+             * @brief Extract Glacier Band Area Fraction and Elevation
+             * Modified in 2022-02-10
+             * Checked in 2022-02-20
+             */
+            read_glacierband(filep.glacierband, &soil_con, &glacier_con);
 
             /** Make Top-level Control Structure **/
             all_vars = make_all_vars(veg_con[0].vegetat_type_num);

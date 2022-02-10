@@ -22,6 +22,12 @@ check_files(filep_struct     *filep,
     filep->vegparam = open_file(fnames->veg, "r");
     if (options.SNOW_BAND > 1) {
         filep->snowband = open_file(fnames->snowband, "r");
+        /**
+         * @brief Open The Glacier Band Physical File
+         * Added in 2022-02-10
+         * Checked in 2022-02-10
+         */
+        filep->glacierband = open_file(fnames->glacierband, "r");
     }
     if (options.LAKES) {
         filep->lakeparam = open_file(fnames->lakeparam, "r");
