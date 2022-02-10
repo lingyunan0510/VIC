@@ -515,8 +515,12 @@ get_global_param(FILE *gp)
                 sscanf(cmdstr, "%*s %zu", &options.ROOT_ZONES);
             }
             else if (strcasecmp("SNOW_BAND", optstr) == 0) {
-                sscanf(cmdstr, "%*s %zu %s", &options.SNOW_BAND,
-                       filenames.snowband);
+                /**
+                 * @brief Modified in 2022-02-09
+                 * 
+                 */
+                sscanf(cmdstr, "%*s %zu %s %s", &options.SNOW_BAND,
+                       filenames.snowband, filenames.glacierband);
             }
             else if (strcasecmp("LAKES", optstr) == 0) {
                 sscanf(cmdstr, "%*s %s", flgstr);
