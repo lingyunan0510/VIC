@@ -30,6 +30,11 @@ typedef struct {
     FILE *veglib;       /**< vegetation parameters for all vege types */
     FILE *vegparam;     /**< fractional coverage info for grid cell */
     FILE *logfile;      /**< log file */
+    /**
+     * @brief Glacier Band File
+     * Added in 2022-02-01
+     */
+    FILE *glacierband;  /**< glacier band file */
 } filep_struct;
 
 /******************************************************************************
@@ -44,6 +49,12 @@ typedef struct {
     char lakeparam[MAXSTRING];     /**< lake model constants file */
     char result_dir[MAXSTRING];    /**< directory where results will be written */
     char snowband[MAXSTRING];      /**< snow band parameter file name */
+    /**
+     * @brief The Glacier Band Physical File To Be Read
+     * Added in 2022-02-07
+     * Cheched in 2022-02-10
+     */
+    char glacierband[MAXSTRING];
     char soil[MAXSTRING];          /**< soil parameter file name */
     char statefile[MAXSTRING];     /**< name of file in which to store model state */
     char veg[MAXSTRING];           /**< vegetation grid coverage file */
@@ -83,6 +94,12 @@ void read_initial_model_state(FILE *, all_vars_struct *, int, int, int,
                               soil_con_struct *, lake_con_struct);
 lake_con_struct read_lakeparam(FILE *, soil_con_struct, veg_con_struct *);
 void read_snowband(FILE *, soil_con_struct *);
+/**
+ * @brief Read Glacier Band File
+ * Added in 2022-02-01
+ * Checked in 2022-02-10
+ */
+void read_glacierband(FILE *, soil_con_struct *, glacier_con_struct *);
 void read_soilparam(FILE *soilparam, soil_con_struct *temp, bool *RUN_MODEL,
                     bool *MODEL_DONE);
 veg_lib_struct *read_veglib(FILE *, size_t *);

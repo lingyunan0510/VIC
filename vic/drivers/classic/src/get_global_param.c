@@ -516,11 +516,13 @@ get_global_param(FILE *gp)
             }
             else if (strcasecmp("SNOW_BAND", optstr) == 0) {
                 /**
-                 * @brief Modified in 2022-02-09
-                 * 
+                 * @brief Read Glacier Band From Global Parameter File
+                 * Modified in 2022-02-01
+                 * Checked in 2022-02-10
                  */
                 sscanf(cmdstr, "%*s %zu %s %s", &options.SNOW_BAND,
                        filenames.snowband, filenames.glacierband);
+                log_info("Function get_global_param Receive Glacier Filename %s", filenames.glacierband);
             }
             else if (strcasecmp("LAKES", optstr) == 0) {
                 sscanf(cmdstr, "%*s %s", flgstr);
