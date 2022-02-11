@@ -295,6 +295,12 @@ get_default_outvar_aggtype(unsigned int varid)
     case OUT_SURFT_FBFLAG:
     case OUT_TCAN_FBFLAG:
     case OUT_TFOL_FBFLAG:
+    /**
+     * @brief Aggregation Type Should be Sum
+     * Added in 2022-02-11
+     * Checked in 2022-02-11
+     */
+    case OUT_GLACIER_MELT:
         agg_type = AGG_TYPE_SUM;
         break;
     default:

@@ -266,6 +266,12 @@ enum
     // Timing and Profiling Terms
     OUT_TIME_VICRUN_WALL, /**< Wall time spent inside vic_run [seconds] */
     OUT_TIME_VICRUN_CPU,  /**< Wall time spent inside vic_run [seconds] */
+    /**
+     * @brief Enumerate Glacier Output
+     * Added in 2022-02-11
+     * Checked in 2022-02-11
+     */
+    OUT_GLACIER_MELT,     /**< glacier melt [mm] */
     // Last value of enum - DO NOT ADD ANYTHING BELOW THIS LINE!!
     // used as a loop counter and must be >= the largest value in this enum
     N_OUTVAR_TYPES        /**< used as a loop counter*/

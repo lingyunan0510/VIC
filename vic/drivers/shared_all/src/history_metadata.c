@@ -21,7 +21,7 @@ set_output_met_data_info()
 
     // Set missing and/or default values
     for (v = 0; v < N_OUTVAR_TYPES; v++) {
-        // Set default string values
+        // Set default string values`
         strcpy(out_metadata[v].varname, MISSING_S);
         strcpy(out_metadata[v].long_name, MISSING_S);
         strcpy(out_metadata[v].standard_name, MISSING_S);
@@ -599,6 +599,17 @@ set_output_met_data_info()
     strcpy(out_metadata[OUT_SNOW_MELT].standard_name, "snow_melt_amount");
     strcpy(out_metadata[OUT_SNOW_MELT].units, "mm");
     strcpy(out_metadata[OUT_SNOW_MELT].description, "snow melt");
+
+    /**
+     * @brief Make Output Glacier 
+     * Added in 2022-02-11
+     * Checked in 2022-02-11
+     */
+    strcpy(out_metadata[OUT_GLACIER_MELT].varname, "OUT_GLACIER_MELT");
+    strcpy(out_metadata[OUT_GLACIER_MELT].long_name, "glacier_melt");
+    strcpy(out_metadata[OUT_GLACIER_MELT].standard_name, "glacier_melt_amount");
+    strcpy(out_metadata[OUT_GLACIER_MELT].units, "mm");
+    strcpy(out_metadata[OUT_GLACIER_MELT].description, "glacier melt");
 
     /* snowfall [mm] */
     strcpy(out_metadata[OUT_SNOWF].varname, "OUT_SNOWF");
