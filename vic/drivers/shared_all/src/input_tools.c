@@ -65,6 +65,10 @@ count_nstreams_nvars(FILE   *gp,
             }
 
             // if the line starts with OUTVAR, add another variable to nvars
+            /**
+             * @brief Line starts with OUTVAR will be added to nvars
+             * Mark in 2022-02-11 by Yunan Ling
+             */
             if (strcasecmp("OUTVAR", optstr) == 0) {
                 nvars[*nstreams - 1]++;
             }
