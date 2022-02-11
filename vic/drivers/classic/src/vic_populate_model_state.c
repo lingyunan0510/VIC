@@ -36,12 +36,24 @@ vic_populate_model_state(all_vars_struct *all_vars,
     energy_bal_struct  **energy;
     lake_var_struct     *lake;
     snow_data_struct   **snow;
+    /**
+     * @brief Assign Glacier Data Struct
+     * Added in 2022-01-28
+     * Checked in 2022-02-11
+     */
+    glacier_data_struct *glacier;
     veg_var_struct     **veg_var;
 
     cell = all_vars->cell;
     energy = all_vars->energy;
     lake = &all_vars->lake_var;
     snow = all_vars->snow;
+    /**
+     * @brief Get Glacier Varibales in All Variables
+     * Modified in 2022-02-10
+     * Checked in 2022-02-11
+     */
+    glacier = all_vars->glacier;
     veg_var = all_vars->veg_var;
 
     Nveg = veg_con[0].vegetat_type_num;
@@ -49,6 +61,12 @@ vic_populate_model_state(all_vars_struct *all_vars,
     // Initialize all data structures to 0
     initialize_soil(cell, Nveg);
     initialize_snow(snow, Nveg);
+    /**
+     * @brief Initialize Glacier Variables
+     * Modified in 2022-02-10
+     * Checked in 2022-02-10
+     */
+    initialize_glacier(glacier);
     initialize_veg(veg_var, Nveg);
     if (options.LAKES) {
         tmp_lake_idx = lake_con.lake_idx;

@@ -310,6 +310,13 @@ main(int   argc,
             free((char *) soil_con.Tfactor);
             free((char *) soil_con.Pfactor);
             free((char *) soil_con.AboveTreeLine);
+            /**
+             * @brief Free Glacier Band Information 
+             * Added in 2022-02-11
+             * Checked in 2022-02-11
+             */
+            free((char *) glacier_con.AreaFract);
+            free((char *) glacier_con.BandElev);
         } /* End Run Model Condition */
     }   /* End Grid Loop */
 

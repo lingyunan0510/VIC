@@ -630,6 +630,12 @@ void initialize_save_data(all_vars_struct *all_vars, force_data_struct *force,
                           double **out_data, save_data_struct *save_data,
                           timer_struct *timer);
 void initialize_snow(snow_data_struct **snow, size_t veg_num);
+/**
+ * @brief 
+ * 
+ * @param glacier 
+ */
+void initialize_glacier(glacier_data_struct *glacier);
 void initialize_soil(cell_data_struct **cell, size_t veg_num);
 void initialize_time(void);
 void initialize_veg(veg_var_struct **veg_var, size_t nveg);
@@ -642,6 +648,12 @@ energy_bal_struct **make_energy_bal(size_t nveg);
 void make_lastday(unsigned short int calendar, unsigned short int year,
                   unsigned short int lastday[]);
 snow_data_struct **make_snow_data(size_t nveg);
+/**
+ * @brief Make the Glacier Data 
+ * Added in 2022-01-28
+ * @return glacier_data_struct* 
+ */
+glacier_data_struct *make_glacier_data();
 veg_var_struct **make_veg_var(size_t veg_type_num);
 double no_leap_day_from_dmy(dmy_struct *dmy);
 void num2date(double origin, double time_value, double tzoffset,

@@ -23,6 +23,11 @@ make_all_vars(size_t nveg)
     temp.energy = make_energy_bal(Nitems);
     temp.veg_var = make_veg_var(Nitems);
     temp.cell = make_cell_data(Nitems);
+    /**
+     * @brief 
+     * 
+     */
+    temp.glacier = make_glacier_data();
 
     return (temp);
 }

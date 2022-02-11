@@ -47,4 +47,10 @@ free_all_vars(all_vars_struct *all_vars,
         free((char *) all_vars[0].snow[i]);
     }
     free((char *) all_vars[0].snow);
+    /**
+     * @brief Free Glacier Data in All Varibales
+     * Added in 2022-02-11
+     * Checked in 2022-02-11
+     */
+    free((char *) all_vars[0].glacier);
 }

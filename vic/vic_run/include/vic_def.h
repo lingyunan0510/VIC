@@ -596,6 +596,15 @@ typedef struct {
     double whoriz;
 } soil_con_struct;
 
+/**
+ * @brief 
+ * 
+ */
+typedef struct {
+    double *AreaFract;
+    double *BandElev;
+} glacier_con_struct;
+
 /******************************************************************************
  * @brief   This structure stores information about the vegetation coverage of
  *          the current grid cell.
@@ -987,6 +996,22 @@ typedef struct {
                                condensation from snow pack (m) */
 } snow_data_struct;
 
+/**
+ * @brief Glacier Data Struct
+ * 
+ */
+typedef struct {
+    // State
+    double coverage;/* Glacer Area Cover Fraction (%) */
+    double albedo;  /* Glacier Surface Albedo (no unit)*/
+    double surf_tmp;   /* Glacier Surface Temperature (C) */
+    bool METTING;   /* Flag Indicating Glacier Was Meltting Previously */
+    // Flux
+    double qm;      /* Energy Balance for Galcier Melting (W/m^2) */
+    double melt;    /* Glacier Melt (mm) */
+}  glacier_data_struct;
+
+
 /******************************************************************************
  * @brief   This structures stores variables averaged over a grid cell
  *****************************************************************************/
@@ -1082,6 +1107,11 @@ typedef struct {
     snow_data_struct **snow;      /**< Stores snow variables */
     veg_var_struct **veg_var;     /**< Stores vegetation variables */
     gridcell_avg_struct gridcell_avg;   /**< Stores gridcell average variables */
+    /**
+     * @brief Make Glacier Storage in All Variable Struct
+     * Added in 2022-01-28
+     */
+    glacier_data_struct *glacier; /**< Stores glacier variables */
 } all_vars_struct;
 
 #endif
