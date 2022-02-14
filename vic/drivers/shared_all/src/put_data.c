@@ -213,7 +213,16 @@ put_data(all_vars_struct   *all_vars,
                                      (1 - Clake),
                                      overstory,
                                      frost_fract,
-                                     out_data);
+                                     out_data,
+                                     /**
+                                     * @brief Transter Veg Classes to Water Balance Calculation
+                                     * If veg Class is glacier, then do the math
+                                     * If not, do nothing
+                                     * Added in 2022-02-13
+                                     * Checked in 2022-02-13
+                                     */
+                                     veg_con[veg].veg_class);
+
 
                     /**********************************
                        Record Energy Balance Terms
@@ -282,7 +291,14 @@ put_data(all_vars_struct   *all_vars,
                                          Clake,
                                          overstory,
                                          frost_fract,
-                                         out_data);
+                                         out_data,
+                                         /**
+                                          * @brief Add Required Vegetation Class
+                                          * But Do Nothing Because The Lake Option
+                                          * Modified in 2022-02-13
+                                          * Checked in 2022-02-13
+                                          */
+                                         veg_con[veg].veg_class);
 
                         /**********************************
                            Record Energy Balance Terms
@@ -576,7 +592,15 @@ collect_wb_terms(cell_data_struct cell,
                  double           lakefactor,
                  bool             overstory,
                  double          *frost_fract,
-                 double         **out_data)
+                 double         **out_data,
+                 /**
+                  * @brief Identification of Vegetation Class
+                  * If is glacier, do the math
+                  * Else do nothing
+                  * Modofied in 2022-02-13
+                  * Checked in 2022-12-13
+                  */
+                 int              veg_class)
 {
     extern option_struct     options;
     extern parameters_struct param;
@@ -718,6 +742,17 @@ collect_wb_terms(cell_data_struct cell,
 
     /** record snowpack melt **/
     out_data[OUT_SNOW_MELT][0] += snow.melt * AreaFactor;
+
+    /**
+     * @brief Veg Class Type is 18
+     * Must Match
+     * Modified in 2022-02-13
+     * Checked in 2022-02-13
+     */
+    if (veg_class == 18) {
+        out_data[OUT_GLACIER_MELT][0] += 0.0;
+        log_info("This is glacier band");
+    }
 
     /** record snow cover fraction **/
     out_data[OUT_SNOW_COVER][0] += snow.coverage * AreaFactor;

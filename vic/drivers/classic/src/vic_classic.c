@@ -221,6 +221,10 @@ main(int   argc,
                                      &soil_con, veg_con, lake_con, &(dmy[0]));
 
             /** Initialize the storage terms in the water and energy balances **/
+            /**
+             * Marked in 2022-02-12 By Yunan Ling
+             * Initialize Save Data
+             */
             initialize_save_data(&all_vars, &force[0], &soil_con, veg_con,
                                  veg_lib, &lake_con, out_data[0], &save_data,
                                  &cell_timer);
@@ -254,6 +258,10 @@ main(int   argc,
                 /**************************************************
                    Calculate cell average values for current time step
                 **************************************************/
+                /**
+                * Marked in 2022-02-12 By Yunan Ling
+                * Put Save Data
+                */
                 put_data(&all_vars, &force[rec], &soil_con, veg_con, veg_lib,
                          &lake_con, out_data[0], &save_data, &cell_timer);
 
@@ -265,6 +273,10 @@ main(int   argc,
                 }
 
                 // Write cell average values for current time step
+                /**
+                * Marked in 2022-02-12 By Yunan Ling
+                * Write Output
+                */
                 write_output(&streams, &dmy[rec]);
 
                 /************************************

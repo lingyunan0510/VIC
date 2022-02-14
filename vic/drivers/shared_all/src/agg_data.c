@@ -59,6 +59,14 @@ agg_stream_data(stream_struct *stream,
                      (stream->aggtype[j] == AGG_TYPE_AVG)) {
                 for (k = 0; k < nelem; k++) {
                     stream->aggdata[i][j][k][0] += out_data[i][varid][k];
+                    /**
+                     * @brief Marked by Yunan Ling
+                     * 2022-02-13
+                     */
+                    if (varid == 165) {
+                        log_info("Glacier Sum is %f", stream->aggdata[i][j][k][0]);
+                        log_info("Glacier input is %f", out_data[i][varid][k]);
+                    }
                 }
             }
             // Maximum over the period
