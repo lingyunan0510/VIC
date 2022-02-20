@@ -57,6 +57,12 @@ put_data(all_vars_struct   *all_vars,
     energy_bal_struct        **energy;
     lake_var_struct            lake_var;
     snow_data_struct         **snow;
+    /**
+     * @brief Get Glacier Data
+     * Added in 2022-02-14
+     * Checked in 2022-02-14
+     */
+    glacier_data_struct       *glacier;
     veg_var_struct           **veg_var;
 
     cell = all_vars->cell;
@@ -64,6 +70,13 @@ put_data(all_vars_struct   *all_vars,
     lake_var = all_vars->lake_var;
     snow = all_vars->snow;
     veg_var = all_vars->veg_var;
+
+    /**
+     * @brief Get Glacier Data
+     * Added in 2022-02-14
+     * Checked in 2022-02-14
+     */
+    glacier = all_vars->glacier;
 
     AboveTreeLine = soil_con->AboveTreeLine;
     AreaFract = soil_con->AreaFract;
@@ -196,7 +209,7 @@ put_data(all_vars_struct   *all_vars,
                     if (overstory) {
                         cv_overstory += Cv * ThisAreaFract * ThisTreeAdjust;
                     }
-                    if (snow[veg][band].swq > 0.0) {
+                    if (snow[veg][band].swq > 0.0) {  
                         cv_snow += Cv * ThisAreaFract * ThisTreeAdjust;
                     }
 
@@ -206,6 +219,11 @@ put_data(all_vars_struct   *all_vars,
                     collect_wb_terms(cell[veg][band],
                                      veg_var[veg][band],
                                      snow[veg][band],
+                                     /**
+                                      * @brief 
+                                      * 
+                                      */
+                                     glacier[band],
                                      Cv,
                                      ThisAreaFract,
                                      ThisTreeAdjust,
@@ -222,6 +240,7 @@ put_data(all_vars_struct   *all_vars,
                                      * Checked in 2022-02-13
                                      */
                                      veg_con[veg].veg_class);
+                    log_info("Veg index is %d and Band index is %d", veg, band);
 
 
                     /**********************************
@@ -284,6 +303,7 @@ put_data(all_vars_struct   *all_vars,
                         collect_wb_terms(lake_var.soil,
                                          veg_var[0][0],
                                          lake_var.snow,
+                                         glacier[0],
                                          Cv,
                                          ThisAreaFract,
                                          ThisTreeAdjust,
@@ -585,6 +605,12 @@ void
 collect_wb_terms(cell_data_struct cell,
                  veg_var_struct   veg_var,
                  snow_data_struct snow,
+                 /**
+                  * @brief Put Glacier Melt Water Into Water Balance
+                  * Modified in 2022-02-14
+                  * Checked in 2022-02-14
+                  */
+                 glacier_data_struct glacier,
                  double           Cv,
                  double           AreaFract,
                  double           TreeAdjustFactor,
@@ -750,8 +776,8 @@ collect_wb_terms(cell_data_struct cell,
      * Checked in 2022-02-13
      */
     if (veg_class == 18) {
-        out_data[OUT_GLACIER_MELT][0] += 0.0;
-        log_info("This is glacier band");
+        out_data[OUT_GLACIER_MELT][0] += 1.0 * glacier.coverage;
+        log_info("This is glacier band %f", glacier.coverage);
     }
 
     /** record snow cover fraction **/

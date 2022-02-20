@@ -220,14 +220,20 @@ main(int   argc,
             vic_populate_model_state(&all_vars, filep, soil_con.gridcel,
                                      &soil_con, veg_con, lake_con, &(dmy[0]));
 
-            /** Initialize the storage terms in the water and energy balances **/
             /**
-             * Marked in 2022-02-12 By Yunan Ling
-             * Initialize Save Data
+             * @brief Initialize the storage terms in the water and energy balances
+             * Modified in 2022-02-14
+             * Checked in 2022-02-14
              */
             initialize_save_data(&all_vars, &force[0], &soil_con, veg_con,
                                  veg_lib, &lake_con, out_data[0], &save_data,
                                  &cell_timer);
+            
+            int b;
+            for (b = 0; b < options.SNOW_BAND; b++) {
+                all_vars.glacier[b].coverage = glacier_con.AreaFract[b];
+                log_info("glacier data fraction is %f", all_vars.glacier[b].coverage);
+            }
 
             /******************************************
                Run Model in Grid Cell for all Time Steps

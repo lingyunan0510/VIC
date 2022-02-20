@@ -588,9 +588,11 @@ void collect_eb_terms(energy_bal_struct, snow_data_struct, cell_data_struct,
 /**
  * @brief Modifiy Water Balance Function 
  * Modified in 2022-02-13
+ * Modified again in 2022-02-14
  * Checked in 2022-02-13
+ * Checked again in 2022-02-14
  */
-void collect_wb_terms(cell_data_struct, veg_var_struct, snow_data_struct,
+void collect_wb_terms(cell_data_struct, veg_var_struct, snow_data_struct, glacier_data_struct, 
                       double, double, double, bool, double, bool, double *,
                       double **, int);
 void compute_derived_state_vars(all_vars_struct *, soil_con_struct *,
