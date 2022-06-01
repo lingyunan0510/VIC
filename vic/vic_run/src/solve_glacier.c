@@ -229,7 +229,7 @@ double solve_glacier(char               overstory,
      * @brief Modify Before Submit It
      * Marked By Yunan Ling In 2022-03-05
      */
-    ErrorFlag = 0;
+    ErrorFlag = 0; 
     /**
      * @brief Transfer Unit
      */
