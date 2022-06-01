@@ -68,6 +68,7 @@ read_vegparam(FILE  *vegparam,
             }
         }
     }
+    // log_info("%d %d", vegcel, vegetat_type_num);
     fgets(str, MAX_VEGPARAM_LINE_LENGTH, vegparam); // read newline at end of veg class line to advance to next line
     if (vegcel != gridcel) {
         log_err("Grid cell %d not found", gridcel);
@@ -85,6 +86,7 @@ read_vegparam(FILE  *vegparam,
     Cv_sum = 0.0;
 
     for (i = 0; i < vegetat_type_num; i++) {
+        // log_info("%d", i);
         temp[i].zone_depth = calloc(options.ROOT_ZONES,
                                     sizeof(*(temp[i].zone_depth)));
         temp[i].zone_fract = calloc(options.ROOT_ZONES,
@@ -155,11 +157,11 @@ read_vegparam(FILE  *vegparam,
             log_err("Root zone depths must sum to a value greater than 0.");
         }
         if (sum != 1.) {
-            log_warn("Root zone fractions sum to more than 1 ( = %f), "
-                     "normalizing fractions.  If the sum is large, check that "
-                     "your vegetation parameter file is in the form - <zone 1 "
-                     "depth> <zone 1 fract> <zone 2 depth> <zone 2 fract>...",
-                     sum);
+            // log_warn("Root zone fractions sum to more than 1 ( = %f), "
+            //          "normalizing fractions.  If the sum is large, check that "
+            //          "your vegetation parameter file is in the form - <zone 1 "
+            //          "depth> <zone 1 fract> <zone 2 depth> <zone 2 fract>...",
+            //          sum);
             for (j = 0; j < options.ROOT_ZONES; j++) {
                 temp[i].zone_fract[j] /= sum;
             }

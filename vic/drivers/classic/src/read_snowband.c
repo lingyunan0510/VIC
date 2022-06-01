@@ -81,7 +81,7 @@ read_snowband(FILE            *snowband,
                      "average elevation %f; setting grid cell elevation to "
                      "average band elevation.", avg_elev,
                      soil_con->elevation);
-            soil_con->elevation = (double) avg_elev;
+            // soil_con->elevation = (double) avg_elev;
         }
         for (band = 0; band < Nbands; band++) {
             soil_con->Tfactor[band] =

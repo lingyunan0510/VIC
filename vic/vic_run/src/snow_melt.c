@@ -472,7 +472,11 @@ snow_melt(double            Le,
 
     MassBalanceError = (InitialSwq - snow->swq) + (RainFall + SnowFall) -
                        melt[0] + snow->vapor_flux;
-
+    /**
+     * @brief Unit TransFormation
+     * Marked by Yunan Ling in 2022-03-05
+     */
+    // log_info("Original Snow Melt is %f", melt[0]);
     melt[0] *= MM_PER_M;               /* converts back to mm */
     snow->mass_error = MassBalanceError;
     snow->coldcontent = SurfaceCC;

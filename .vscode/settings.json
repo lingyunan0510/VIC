@@ -1,0 +1,8 @@
+{
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "vic_run.h": "c",
+        "vic_driver_classic.h": "c",
+        "vic_driver_shared_all.h": "c"
+    }
+}

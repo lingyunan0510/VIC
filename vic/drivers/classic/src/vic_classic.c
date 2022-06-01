@@ -232,7 +232,7 @@ main(int   argc,
             int b;
             for (b = 0; b < options.SNOW_BAND; b++) {
                 all_vars.glacier[b].coverage = glacier_con.AreaFract[b];
-                log_info("glacier data fraction is %f", all_vars.glacier[b].coverage);
+                // log_info("glacier data fraction is %f", all_vars.glacier[b].coverage);
             }
 
             /******************************************
@@ -256,6 +256,7 @@ main(int   argc,
                    Compute cell physics for 1 timestep
                 **************************************************/
                 timer_start(&cell_timer);
+                // print_dmy(&(dmy[rec]));
                 ErrorFlag = vic_run(&force[rec], &all_vars,
                                     &(dmy[rec]), &global_param, &lake_con,
                                     &soil_con, veg_con, veg_lib);

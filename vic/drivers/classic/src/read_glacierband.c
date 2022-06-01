@@ -32,7 +32,7 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
     check_alloc_status(glacier_con->BandElev, "Memory allocation error.");
 
     if (Nbands > 1) {
-        log_info("More than 1 Glacier Band");
+        // log_info("More than 1 Glacier Band");
         fscanf(glacierband, "%d", &cell);
         while (cell != soil_con->gridcel && !feof(glacierband)) {
             fgets(ErrStr, MAXSTRING, glacierband);
@@ -54,11 +54,11 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
             }
             glacier_con->BandElev[band] = soil_con->BandElev[band];
             glacier_con->AreaFract[band] = area_fract;
-            log_info("%f", glacier_con->AreaFract[band]);
+            // log_info("%f", glacier_con->AreaFract[band]);
             total += area_fract;
         }
 
-        log_info("Total Area of Glacier is %f", total);
+        // log_info("Total Area of Glacier is %f", total);
 
         if (total != 1.) {
             log_warn("Sum of the glacier band area fractions does not equal 1 (%f), dividing each fraction by the sum", total);

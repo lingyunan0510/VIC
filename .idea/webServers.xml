@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="01a8c36c-84d6-4585-aaf1-d77337e86e73" name="HPC">
+        <fileTransfer rootFolder="/kyukon/data/gent/445/vsc44547/VIC" accessType="SFTP" host="login.hpc.ugent.be" port="22" sshConfigId="40ee5910-68a0-434d-b3a4-e1731da0db28" sshConfig="vsc44547@login.hpc.ugent.be:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

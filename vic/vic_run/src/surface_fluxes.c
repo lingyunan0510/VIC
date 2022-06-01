@@ -42,6 +42,7 @@ surface_fluxes(bool                 overstory,
                global_param_struct *gp,
                cell_data_struct    *cell,
                snow_data_struct    *snow,
+               glacier_data_struct *glacier,
                soil_con_struct     *soil_con,
                veg_var_struct      *veg_var,
                double               lag_one,
@@ -111,6 +112,13 @@ surface_fluxes(bool                 overstory,
     double                   step_ppt;
     double                   step_prec;
 
+    /**
+     * @brief The Glacier Melt Water And Energy To be Stored in Sub Step
+     * Added in 2022-02-22
+     * Checked in 2022-02-22
+     */
+    double                   step_glacier_melt;
+
     // Quantities that need to be summed or averaged over multiple snow steps
     // energy structure
     double            store_AlbedoOver;
@@ -153,6 +161,8 @@ surface_fluxes(bool                 overstory,
     double            store_vapor_flux;
     double            store_blowing_flux;
     double            store_surface_flux;
+    // Glacier Structure
+    double            store_glacier_melt;
     // veg_var structure
     double            store_canopyevap;
     double            store_throughfall;
@@ -168,6 +178,11 @@ surface_fluxes(bool                 overstory,
     veg_var_struct    snow_veg_var;    // veg fluxes/storages in presence of snow
     veg_var_struct    soil_veg_var;    // veg fluxes/storages in soil energy balance
     snow_data_struct  step_snow;
+    /**
+     * @brief 
+     * 
+     */
+    glacier_data_struct step_glacier;
     layer_data_struct step_layer[MAX_LAYERS];
 
     // Structures holding values for current iteration
@@ -238,6 +253,11 @@ surface_fluxes(bool                 overstory,
     snow_veg_var = (*veg_var);
     soil_veg_var = (*veg_var);
     step_snow = (*snow);
+    /**
+     * @brief 
+     * 
+     */
+    step_glacier = (*glacier);
     for (lidx = 0; lidx < Nlayers; lidx++) {
         step_layer[lidx] = layer[lidx];
     }
@@ -317,6 +337,12 @@ surface_fluxes(bool                 overstory,
     // veg_var and cell structures
     store_throughfall = 0.;
     store_canopyevap = 0.;
+    /**
+     * @brief Initialize Glacier Melt And Melt Energy
+     * Added in 2022-02-22
+     * Checked in 2022-02-22
+     */
+    store_glacier_melt = 0.0;
     for (lidx = 0; lidx < options.Nlayer; lidx++) {
         store_layerevap[lidx] = 0.;
     }
@@ -352,7 +378,14 @@ surface_fluxes(bool                 overstory,
     do
     {
         /** Solve energy balance for all sub-model time steps **/
-
+        // if (veg_class == 17) {
+        //     /**
+        //      * @brief 
+        //      * Every Time When Sub Step Is Set
+        //      * Do The Interation
+        //      */
+        //     log_info("--First Interation");
+        // }
 
         /* set air temperature and precipitation for this snow band */
         Tair = force->air_temp[hidx] + soil_con->Tfactor[band];
@@ -442,6 +475,15 @@ surface_fluxes(bool                 overstory,
         do
         {
             /** Iterate for overstory solution **/
+            // if (veg_class == 17) {
+            //     /**
+            //      * @brief 
+            //      * Every Time When It Has Something To Do With The Canopy Issue
+            //      * Do The Job
+            //      * Almost Interate Once Everytime, But I'm Not Sure
+            //      */
+            //     log_info("----Second Interation");
+            // }
 
             over_iter++;
             last_tol_over = tol_over;
@@ -460,6 +502,14 @@ surface_fluxes(bool                 overstory,
 
             do
             {
+                // if(veg_class == 17) {
+                //     /**
+                //      * @brief
+                //      * Every Time When The Surface Temperature Decreases
+                //      * The Third Interation Do Its Job.
+                //      */
+                //     log_info("------Thrid Interation");
+                // }
                 /** Iterate for understory solution - itererates to find snow flux **/
 
                 under_iter++;
@@ -568,6 +618,8 @@ surface_fluxes(bool                 overstory,
                 if (step_melt == ERROR) {
                     return (ERROR);
                 }
+
+                // log_info("Step Melt is %f", step_melt);
 
                 /* Check that the snow surface temperature was estimated, if not
                    prepare to include thin snowpack in the estimation of the
@@ -709,6 +761,18 @@ surface_fluxes(bool                 overstory,
                 else {
                     store_tol_over = 0;
                     tol_over = 0;
+                }
+                if (veg_class == 17) {
+                    // log_info("------T_Surf is %f", snow->surf_temp);
+                    // log_info("------Melt is %f", snow->melt);
+                    // log_info("UnderStory is %d", UnderStory);
+                    // if (fabs(tol_under - last_tol_under) <= param.TOL_GRND) {
+                    //     log_info("------First One.");
+                    // } else if (tol_under == 0) {
+                    //     log_info("------Second One");
+                    // } else if (under_iter >= param.MAX_ITER_GRND_CANOPY) {
+                    //     log_info("------Third One");
+                    // }
                 }
             }
             while ((fabs(tol_under - last_tol_under) > param.TOL_GRND) &&
@@ -857,7 +921,44 @@ surface_fluxes(bool                 overstory,
         if (iveg != Nveg) {
             store_canopy_vapor_flux += step_snow.canopy_vapor_flux;
         }
+        /**
+         * @brief 
+         * 
+         */
+        step_glacier_melt = solve_glacier(overstory, 
+                                      BareAlbedo, LongUnderOut,
+                                      param.SNOW_MIN_RAIN_TEMP,
+                                      param.SNOW_MAX_SNOW_TEMP,
+                                      new_snow_albedo,
+                                      Tcanopy, Tgrnd, Tair,
+                                      step_prec, snow_grnd_flux, 
+                                      &energy->AlbedoUnder, Le,
+                                      &LongUnderIn, &NetLongSnow,
+                                      &NetShortGrnd,
+                                      &NetShortSnow, &ShortUnderIn, &OldTSurf,
+                                      iter_aero_resist, iter_aero_resist_used,
+                                      &coverage, &delta_coverage,
+                                      &delta_snow_heat, displacement,
+                                      gauge_correction, &step_melt_energy,
+                                      &step_out_prec, &step_out_rain,
+                                      &step_out_snow,
+                                      &step_ppt, &rainfall, ref_height,
+                                      roughness, snow_inflow, &snowfall,
+                                      &surf_atten,
+                                      wind, root, UNSTABLE_SNOW,
+                                      Nveg, iveg, band, step_dt, 0,
+                                      veg_class,
+                                      &UnderStory, CanopLayerBnd, &dryFrac,
+                                      dmy, force, 
+                                      &(step_snow), &(step_glacier));
+        // glacier->melt = solve_glacier();
         store_melt += step_melt;
+        /**
+         * @brief Sum Up Glacier Melt Water in Sub Step
+         * Added in 2022-02-22
+         * Checked in 2022-02-22
+         */
+        store_glacier_melt += step_glacier_melt;
         store_vapor_flux += step_snow.vapor_flux;
         store_surface_flux += step_snow.surface_flux;
         store_blowing_flux += step_snow.blowing_flux;
@@ -950,7 +1051,16 @@ surface_fluxes(bool                 overstory,
     snow->canopy_vapor_flux = store_canopy_vapor_flux;
     (*Melt) = store_melt;
     snow->melt = store_melt;
-    ppt = store_ppt;
+    /**
+     * @brief When Vegatation Type Is Glacier, Record Glacier Melt
+     * Modified in 2022-02-23
+     * Checked in 2023-03-25
+     */
+    if (veg_class == 17) {
+        glacier->melt = store_glacier_melt;
+    }
+    ppt = store_ppt + store_glacier_melt*MM_PER_M;
+    // ppt = store_ppt;
 
     /******************************************************
        Store energy flux averages for sub-model time steps
@@ -1074,7 +1184,10 @@ surface_fluxes(bool                 overstory,
     /********************************************************
        Compute Runoff, Baseflow, and Soil Moisture Transport
     ********************************************************/
-
+    /**
+     * Here Is Where Vertical Water Reaching The Soil
+     * Marked by Yunan Ling in 2022-02-22
+     */
     (*inflow) = ppt;
 
     ErrorFlag = runoff(cell, energy, soil_con, ppt, soil_con->frost_fract,

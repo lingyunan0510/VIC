@@ -240,7 +240,6 @@ put_data(all_vars_struct   *all_vars,
                                      * Checked in 2022-02-13
                                      */
                                      veg_con[veg].veg_class);
-                    log_info("Veg index is %d and Band index is %d", veg, band);
 
 
                     /**********************************
@@ -770,14 +769,21 @@ collect_wb_terms(cell_data_struct cell,
     out_data[OUT_SNOW_MELT][0] += snow.melt * AreaFactor;
 
     /**
-     * @brief Veg Class Type is 18
+     * @brief Veg Class Index is 17
      * Must Match
      * Modified in 2022-02-13
      * Checked in 2022-02-13
+     * 
+     * Modified Again in 2022-03-05
+     * Checked Again in 2022-03-05
+     * 
+     * Modified Again in 2022-03-25
+     * Checked Again in 2022-03-25
      */
-    if (veg_class == 18) {
-        out_data[OUT_GLACIER_MELT][0] += 1.0 * glacier.coverage;
-        log_info("This is glacier band %f", glacier.coverage);
+    if (veg_class == 17) {
+        // log_info("Glacier Coverage %f, Cell Fraction %f", glacier.coverage, Cv);
+        out_data[OUT_GLACIER_MELT][0] += 1.0 * glacier.coverage * glacier.melt * Cv * MM_PER_M;
+        // log_info("%f", out_data[OUT_GLACIER_MELT][0]);
     }
 
     /** record snow cover fraction **/

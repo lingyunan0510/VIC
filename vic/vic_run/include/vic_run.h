@@ -277,7 +277,7 @@ int surface_fluxes(bool, double, double, double, double, double *, double *,
                    size_t, unsigned short int, double, unsigned short int,
                    unsigned short int, force_data_struct *, dmy_struct *,
                    energy_bal_struct *, global_param_struct *,
-                   cell_data_struct *, snow_data_struct *, soil_con_struct *,
+                   cell_data_struct *, snow_data_struct *, glacier_data_struct *, soil_con_struct *,
                    veg_var_struct *, double, double, double, double *);
 double svp(double);
 double svp_slope(double);
@@ -314,5 +314,23 @@ int water_under_ice(int, double, double, double *, double *, double, int,
 void wrap_compute_zwt(soil_con_struct *, cell_data_struct *);
 void write_layer(layer_data_struct *, int, double *);
 void write_vegvar(veg_var_struct *, int);
+
+double calc_glacier_sensible_heat(double, double, double, double);
+double calc_glacier_latent_heat(double, double, double, double, double);
+double calc_glacier_outgoing_longwave_radiation(double, double);
+double calc_glacier_albedo(double, double, double);
+double calc_glacier_ground_heat(int);
+double calc_glacier_rain_heat(double, double, double, double);
+double solve_glacier(char, 
+                    double, double, double, double, double, double, double,
+                    double, double, double, 
+                    double *, double *, double *,
+                    double *, double *, double *, double *, double *, double *,
+                    double *, double *, double *, double *, double *, double *,
+                    double *, double *, double *, double *, double *, double *,
+                    double *, double *, double *, double *, double *, double *,
+                    double *, int, size_t, unsigned short int, unsigned short int,
+                    double, size_t, int, int *, double *, double *, dmy_struct *,
+                    force_data_struct *, snow_data_struct *, glacier_data_struct *);
 
 #endif

@@ -50,6 +50,12 @@ vic_run(force_data_struct   *force,
     double                   Cv;
     double                   Le;
     double                  *Melt;
+    /**
+     * @brief Record The Glacier Melt Amount
+     * Added in 2022-02-20
+     * Checked in 2022-02-20
+     */
+    double                  *glacier_melt;
     double                   bare_albedo;
     double                  *snow_inflow;
     double                   rainonly;
@@ -72,6 +78,12 @@ vic_run(force_data_struct   *force,
     veg_var_struct          *veg_var;
     energy_bal_struct       *energy;
     snow_data_struct        *snow;
+    /**
+     * @brief Assign The Glacier Data
+     * Added in 2022-02-20
+     * Checked in 2022-02-20
+     */
+    glacier_data_struct     *glacier;
 
     out_prec = calloc(options.SNOW_BAND, sizeof(*out_prec));
     check_alloc_status(out_prec, "Memory allocation error.");
@@ -81,6 +93,13 @@ vic_run(force_data_struct   *force,
     check_alloc_status(out_snow, "Memory allocation error.");
     Melt = calloc(options.SNOW_BAND, sizeof(*Melt));
     check_alloc_status(Melt, "Memory allocation error.");
+    /**
+     * @brief Allocate Memory For Glacier Melt Series
+     * Added in 2022-02-20
+     * Checked in 2022-03-25
+     */
+    glacier_melt = calloc(options.SNOW_BAND, sizeof(*glacier_melt));
+    check_alloc_status(glacier_melt, "Memory allocation error.");
     snow_inflow = calloc(options.SNOW_BAND, sizeof(*snow_inflow));
     check_alloc_status(snow_inflow, "Memory allocation error.");
 
@@ -215,6 +234,13 @@ vic_run(force_data_struct   *force,
                     snow = &(all_vars->snow[iveg][band]);
                     energy = &(all_vars->energy[iveg][band]);
 
+                    /**
+                     * @brief Get Current Glacier Band
+                     * Added in 2022-02-20
+                     * Checked in 2022-03-07
+                     */
+                    glacier = &(all_vars->glacier[band]);
+
                     // Convert LAI from global to local
                     if (veg_var->fcanopy > 0) {
                         veg_var->LAI /= veg_var->fcanopy;
@@ -288,6 +314,13 @@ vic_run(force_data_struct   *force,
                     snow_inflow[band] = 0.;
                     Melt[band] = 0.;
 
+                    /**
+                     * @brief Initialize glacier_melt
+                     * Added in 2022-02-20
+                     * Checked in 2022-02-20
+                     */
+                    glacier_melt[band] = 0.0;
+
                     /* Initialize precipitation storage */
                     out_prec[band] = 0;
                     out_rain[band] = 0;
@@ -301,6 +334,10 @@ vic_run(force_data_struct   *force,
                     sigma_slope = veg_con[iveg].sigma_slope;
                     fetch = veg_con[iveg].fetch;
 
+                    /**
+                     * @brief Should Transport Glacier_Melt Into This Function Later
+                     * Marked by Yunan Ling in 2022-02-23
+                     */
                     ErrorFlag = surface_fluxes(overstory, bare_albedo,
                                                ice0, moist0, surf_atten,
                                                &(Melt[band]), &Le, aero_resist,
@@ -313,7 +350,7 @@ vic_run(force_data_struct   *force,
                                                tmp_wind, veg_con[iveg].root,
                                                options.Nlayer, Nveg, band, dp,
                                                iveg, veg_class, force, dmy,
-                                               energy, gp, cell, snow,
+                                               energy, gp, cell, snow, glacier,
                                                soil_con, veg_var, lag_one,
                                                sigma_slope, fetch,
                                                veg_con[iveg].CanopLayerBnd);
@@ -464,6 +501,12 @@ vic_run(force_data_struct   *force,
     free((char *) (out_rain));
     free((char *) (out_snow));
     free((char *) (Melt));
+    /**
+     * @brief Free Glacier Melt Array
+     * Added in 2022-02-20
+     * Checked in 2022-02-20
+     */
+    free((char *) (glacier_melt));
     free((char *) (snow_inflow));
 
     return (0);

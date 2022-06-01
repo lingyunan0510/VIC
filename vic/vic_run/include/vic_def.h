@@ -1008,7 +1008,7 @@ typedef struct {
     bool METTING;   /* Flag Indicating Glacier Was Meltting Previously */
     // Flux
     double qm;      /* Energy Balance for Galcier Melting (W/m^2) */
-    double melt;    /* Glacier Melt (mm) */
+    double melt;    /* Glacier Melt (m) */
 }  glacier_data_struct;
 
 
