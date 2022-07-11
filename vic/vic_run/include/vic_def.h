@@ -271,6 +271,10 @@ typedef struct {
 
     // output options
     size_t Noutstreams;  /**< Number of output stream */
+
+    // albedo options
+    double albedo_a; // albedo-temperature formula slope
+    double albedo_b; // albedo_temperature formula intercept
 } option_struct;
 
 /******************************************************************************

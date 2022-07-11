@@ -31,6 +31,13 @@ get_global_param(FILE *gp)
     unsigned int               tmpenddate;
     unsigned short int         lastday[MONTHS_PER_YEAR];
 
+    double a;
+    double b;
+    size_t c;
+    a = 0.00;
+    b = 2.00;
+    c = 0;
+
     file_num = 0;
 
     /** Read through global control file to find parameters **/
@@ -520,9 +527,14 @@ get_global_param(FILE *gp)
                  * Modified in 2022-02-01
                  * Checked in 2022-02-10
                  */
-                sscanf(cmdstr, "%*s %zu %s %s", &options.SNOW_BAND,
-                       filenames.snowband, filenames.glacierband);
+                log_info("%s", cmdstr);
+                // sscanf(cmdstr, "%*s %zu %s %s %f %f", &options.SNOW_BAND,
+                //        filenames.snowband, filenames.glacierband, a, b);
+                sscanf(cmdstr, "%*s %zu %s %s %lf %lf", &options.SNOW_BAND,
+                       filenames.snowband, filenames.glacierband, &options.albedo_a, &options.albedo_b);
                 log_info("Function get_global_param Receive Glacier Filename %s", filenames.glacierband);
+                log_info("The albedo-tempereture equation is %4fx+%4f", options.albedo_a, options.albedo_b);
+                log_info("New equation is %fx+%f", a, b);
             }
             else if (strcasecmp("LAKES", optstr) == 0) {
                 sscanf(cmdstr, "%*s %s", flgstr);

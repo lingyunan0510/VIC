@@ -80,4 +80,8 @@ initialize_options()
     options.SAVE_STATE = false;
     // output options
     options.Noutstreams = 2;
+    //
+    options.albedo_a = -0.018;
+    options.albedo_b = 0.324;
+    log_info("a is %f b is %f", options.albedo_a, options.albedo_b);
 }

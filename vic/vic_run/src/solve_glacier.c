@@ -169,7 +169,7 @@ double solve_glacier(char               overstory,
         }
 
         // Calculate Glacier Albedo
-        glacier_albedo = calc_glacier_albedo(tair, snow_albedo, snow_depth);
+        glacier_albedo = calc_glacier_albedo(options.albedo_a, options.albedo_b, tair, snow_albedo, snow_depth);
         // log_info("air temperature is %f", tair);
         // log_info("snow depth is %f", snow_depth);
         // log_info("glacier albedo is %f", glacier_albedo);

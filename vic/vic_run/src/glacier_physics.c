@@ -76,12 +76,14 @@ double calc_glacier_rain_heat(double srf_tmp, double air_tmp, double pcp_rat, do
 /**
  * @brief Calculate Glacier Albedo Considering Snow Cover
  * 
+ * @param a albedo-temperature formula slope
+ * @param b albedo-temperature formula intercept
  * @param air_tmp 2-Meter Air Temperature C 
  * @param snw_abd Snow Surafce Albedo 
  * @param snw_dph Snow Depth mm 
  * @return double Glacir Surafce Albedo
  */
-double calc_glacier_albedo(double air_tmp, double snw_abd, double snw_dph) {
+double calc_glacier_albedo(double a, double b, double air_tmp, double snw_abd, double snw_dph) {
     double ai;
     double gi;
     if (air_tmp <= -15.0) {
@@ -90,7 +92,8 @@ double calc_glacier_albedo(double air_tmp, double snw_abd, double snw_dph) {
     if (air_tmp > 10.0) {
         air_tmp = 10.0;
     }
-    ai = 0.324-0.018*air_tmp;
+    ai = (a)*air_tmp + b;
+    // ai = -0.018*air_tmp+0.324;
     // double tdew;
     // tdew = (116.91+237.3*log(air_tmp*(1/PA_PER_KPA)))/(16.78-log(air_tmp*(1/PA_PER_KPA)));
     // ai = 0.2577+(-0.031)*tdew;

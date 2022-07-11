@@ -318,7 +318,11 @@ void write_vegvar(veg_var_struct *, int);
 double calc_glacier_sensible_heat(double, double, double, double);
 double calc_glacier_latent_heat(double, double, double, double, double);
 double calc_glacier_outgoing_longwave_radiation(double, double);
-double calc_glacier_albedo(double, double, double);
+/**
+ * @brief glacier albedo will be imported
+ * Modified in 2022-07-08
+ */
+double calc_glacier_albedo(double, double, double, double, double);
 double calc_glacier_ground_heat(int);
 double calc_glacier_rain_heat(double, double, double, double);
 double solve_glacier(char, 
