@@ -519,9 +519,14 @@ get_global_param(FILE *gp)
                  * @brief Read Glacier Band From Global Parameter File
                  * Modified in 2022-02-01
                  * Checked in 2022-02-10
+                 * Append Reading Degree-Day Coefficient
+                 * Modified in 2022-07-11
+                 * Cheched in 2022-07-11
                  */
-                sscanf(cmdstr, "%*s %zu %s %s", &options.SNOW_BAND,
-                       filenames.snowband, filenames.glacierband);
+                // log_info("1 The f_r is %f and b_g is %f", options.f_r, options.b_g);
+                sscanf(cmdstr, "%*s %zu %s %s %lf %lf", &options.SNOW_BAND,
+                       filenames.snowband, filenames.glacierband, &options.f_r, &options.b_g);
+                // log_info("2 The f_r is %f and b_g is %f", options.f_r, options.b_g);
                 log_info("Function get_global_param Receive Glacier Filename %s", filenames.glacierband);
             }
             else if (strcasecmp("LAKES", optstr) == 0) {

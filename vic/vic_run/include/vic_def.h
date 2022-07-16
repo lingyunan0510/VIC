@@ -271,6 +271,17 @@ typedef struct {
 
     // output options
     size_t Noutstreams;  /**< Number of output stream */
+
+    // degree-day model
+    double f_r; // Refreezing Factor 
+    double b_g; // Multi-year Average Melting Coefficient 
+
+    // melting factor 4 level
+    double a;
+    double b;
+    double c;
+    double d;
+    double e;
 } option_struct;
 
 /******************************************************************************

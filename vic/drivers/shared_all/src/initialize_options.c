@@ -80,4 +80,13 @@ initialize_options()
     options.SAVE_STATE = false;
     // output options
     options.Noutstreams = 2;
+    // degree-day 
+    options.f_r = 0.33;
+    options.b_g = 3.52;
+    // melting factor
+    options.a = 1.52474747e-03;
+    options.b = -4.05141009e-02;
+    options.c = 3.86379334e-01;
+    options.d = -1.54597567e+00;
+    options.e = 2.15706716e+00;
 }

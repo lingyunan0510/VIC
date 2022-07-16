@@ -1054,12 +1054,18 @@ surface_fluxes(bool                 overstory,
     /**
      * @brief When Vegatation Type Is Glacier, Record Glacier Melt
      * Modified in 2022-02-23
-     * Checked in 2023-03-25
+     * Checked in 2022-03-25
+     * 
+     * The Degree Day Model Result is MM
+     * glacier->melt Unit: M
+     * ppt Unit MM
+     * Modified in 2022-07-15
+     * Checked in 2022-07-15
      */
     if (veg_class == 17) {
-        glacier->melt = store_glacier_melt;
+        glacier->melt = store_glacier_melt/MM_PER_M;
     }
-    ppt = store_ppt + store_glacier_melt*MM_PER_M;
+    ppt = store_ppt + store_glacier_melt;
     // ppt = store_ppt;
 
     /******************************************************

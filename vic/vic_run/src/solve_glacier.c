@@ -70,52 +70,20 @@ double solve_glacier(char               overstory,
 
     // Error Flag
     int                      ErrorFlag;
-    // Day Of The Year
-    int                      day_in_year;
-    // Melt Water
-    double                   melt;
+    // Month
+    double                   month;
+    // 
+    double                   d_g;
 
     /**
      * @brief Metrological Forcing
      */
     double                   tair;
-    double                   density;
-    double                   longwavein;
-    double                   pressure;
-    double                   shortwavein;
-    double                   vp;
-
-    /**
-     * @brief Snow Related Parameters
-     */
-    double                   snow_albedo;
-    double                   snow_depth;
-
-    /**
-     * @brief 
-     * 
-     */
-    double                   ra;
 
     /**
      * @brief Glacier Related Paramters
      */
-    double                   tsurf;
     double                   glacier_melt;
-    double                   glacier_albedo;
-
-    /**
-     * @brief Energy Balance Items
-     */
-    double                   longwaverout;
-    double                   NetRadiation;
-    double                   SensibleHeat;
-    double                   LatentHeat;
-    double                   GroundHeat;
-    double                   PcpHeat;
-    double                   Qm;
-
-    // log_info("%d", veg_class);
 
     if (veg_class != 17) {
         /**
@@ -126,109 +94,24 @@ double solve_glacier(char               overstory,
         /**
          * @brief If In Glacier Area, Do The Math
          */
-        day_in_year = dmy->day_in_year;
+        if (dmy->month >= 8) {
+            month = (double) dmy->month-7;
+        } else {
+            month = (double) dmy->month+5;
+        }
+        // log_info("The Current Month is %f", month);
+        d_g = options.b_g*((options.a*month*month*month*month)+(options.b*month*month*month)+(options.c*month*month)+(options.d*month)+(options.e));
 
-        //
-        snow_albedo = snow->albedo;
-        //
-        snow_depth = snow->depth;
-
-        // Tair ()
+        // Tair
         tair = air_temp;
 
-        // Air Density (kg/m^3)
-        density = force->density[hidx];
-        // Incoming Longwave Radiation (W/m^2)
-        longwavein = force->longwave[hidx];
-        // Air Pressure (kPa)
-        pressure = force->pressure[hidx];
-        // Incoming Shortwave Radiation (W/m^2)
-        shortwavein = force->shortwave[hidx];
-        // Vapor Pressure (kPa)
-        vp = force->vp[hidx];
-
-        /**
-         * @brief May Be Modified Later
-         * Marked By Yunan Ling in 2022-03-01
-         */
-        if (snow->depth > 0.0) {
-            tsurf = snow->surf_temp;
+        if (tair >= 0.0) {
+            glacier_melt = (1-options.f_r)*d_g*(tair-0.0);
         } else {
-            if (Tgrnd <= 0.0) {
-                tsurf = Tgrnd;
-            } else {
-                tsurf = 0.0;
-            }
-        }
-        // tsurf = 0.0;
-
-        if (wind[*UnderStory] > 0.0) {
-            ra = aero_resist[*UnderStory] / StabilityCorrection(ref_height[*UnderStory], 0.f, tsurf, Tcanopy, wind[*UnderStory], roughness[2]);
-        } else {
-            ra = param.HUGE_RESIST;
-        }
-
-        // Calculate Glacier Albedo
-        glacier_albedo = calc_glacier_albedo(tair, snow_albedo, snow_depth);
-        // log_info("air temperature is %f", tair);
-        // log_info("snow depth is %f", snow_depth);
-        // log_info("glacier albedo is %f", glacier_albedo);
-        // Calculate Glacier Outgoing Longwave
-        longwaverout = calc_glacier_outgoing_longwave_radiation(tsurf, 1.0);
-        // log_info("longwaverout is %f", longwaverout);
-        // Calculate Glacier Net Shortwave
-        NetRadiation = shortwavein * (1 - glacier_albedo) + longwavein - longwaverout;
-        // log_info("netradiation is %f", NetRadiation);
-        // Calculate Glacier Sensible Heat
-        SensibleHeat = calc_glacier_sensible_heat(density, tair, tsurf, ra);
-        // log_info("sensibleheat is %f", SensibleHeat);
-        // Calculate Glacier Latent Heat
-        // log_info("pressure is %f", pressure);
-        // log_info("vapor pressure is %f", vp);
-        LatentHeat = calc_glacier_latent_heat(density, pressure, tsurf, vp, ra);
-        // log_info("latentheat is %f", LatentHeat);
-        // Calculate Glacier Ground Heat
-        GroundHeat = 0.0;
-        // Calculate Glacier Heat 
-        if (snow->depth > 0.0) {
-            PcpHeat = 0.0;
-        } else {
-            PcpHeat = calc_glacier_rain_heat(tsurf, tair, (*snowfall+*rainfall), dt);
-        }
-        // Q net
-        Qm = NetRadiation - SensibleHeat - LatentHeat + GroundHeat + PcpHeat;
-
-        if ((Qm>0)&(tsurf==0.0)) {
-            glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt; 
-        } else {
-            // 
             glacier_melt = 0.0;
         }
-
-        // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f", 
-        //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, dt,
-        //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
-        //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
         
-        // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", 
-        //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, 
-        //     tair, density, pressure, vp, shortwavein, longwavein, longwaverout, 
-        //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
-        //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
-
-        // log_info("%d %d %d %d %d %10f %10f %10f", 
-        // band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, *out_prec, *out_rain, *out_snow);
-
-        /**
-         * @brief Modify Before Submit It 
-         * Marked By Yunan Ling In 2022-03-05
-         */
-        // glacier_melt = 0.00;
     }
-    /**
-     * @brief Modify Before Submit It
-     * Marked By Yunan Ling In 2022-03-05
-     */
     ErrorFlag = 0; 
     /**
      * @brief Transfer Unit
