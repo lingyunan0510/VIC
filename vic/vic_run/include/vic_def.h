@@ -603,6 +603,7 @@ typedef struct {
 typedef struct {
     double *AreaFract;
     double *BandElev;
+    double *MinAlbedo;
 } glacier_con_struct;
 
 /******************************************************************************

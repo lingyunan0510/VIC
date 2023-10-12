@@ -336,6 +336,7 @@ main(int   argc,
              */
             free((char *) glacier_con.AreaFract);
             free((char *) glacier_con.BandElev);
+            free((char *) glacier_con.MinAlbedo);
         } /* End Run Model Condition */
     }   /* End Grid Loop */
 

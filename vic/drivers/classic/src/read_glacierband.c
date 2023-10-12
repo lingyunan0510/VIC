@@ -4,6 +4,7 @@
  * @brief 
  * @version 0.1
  * @date 2022-01-30
+ * Modified in 2023-10-12
  * Modified in 2022-02-10
  * Checked in 2022-02-10
  * 
@@ -22,6 +23,7 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
     unsigned int cell;
     double total;
     double area_fract;
+    double min_albedo;
 
     Nbands = options.SNOW_BAND;
 
@@ -30,6 +32,9 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
 
     glacier_con->BandElev = calloc(Nbands, sizeof(*(glacier_con->BandElev)));
     check_alloc_status(glacier_con->BandElev, "Memory allocation error.");
+
+    glacier_con->MinAlbedo = calloc(Nbands, sizeof(*(glacier_con->MinAlbedo)));
+    check_alloc_status(glacier_con->MinAlbedo, "Memory allocation error.");
 
     if (Nbands > 1) {
         // log_info("More than 1 Glacier Band");
@@ -68,6 +73,19 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
         } else {
             log_info("Glacier Band Area Correct");
         }
+        
+        /**
+         * @brief Read Minimum Albedo
+         * 
+         */
+        for (band = 0; band < Nbands; band++) {
+            fscanf(glacierband, "%lf", &min_albedo);
+            if (min_albedo < 0.1) {
+                min_albedo = 0.1;
+            }
+            glacier_con->MinAlbedo[band] = min_albedo;
+        }
+
     } else {
         log_info("Only 1 Glacier Band");
     }
