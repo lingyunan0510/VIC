@@ -232,6 +232,7 @@ main(int   argc,
             int b;
             for (b = 0; b < options.SNOW_BAND; b++) {
                 all_vars.glacier[b].coverage = glacier_con.AreaFract[b];
+                all_vars.glacier[b].albedo = glacier_con.MinAlbedo[b];
                 // log_info("glacier data fraction is %f", all_vars.glacier[b].coverage);
             }
 
