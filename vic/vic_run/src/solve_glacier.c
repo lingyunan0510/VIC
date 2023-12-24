@@ -84,12 +84,14 @@ double solve_glacier(char               overstory,
     double                   pressure;
     double                   shortwavein;
     double                   vp;
+    double                   rain;
 
     /**
      * @brief Snow Related Parameters
      */
     double                   snow_albedo;
     double                   snow_depth;
+    double                   snow_tsurf;
 
     /**
      * @brief 
@@ -101,6 +103,8 @@ double solve_glacier(char               overstory,
      * @brief Glacier Related Paramters
      */
     double                   tsurf;
+    double                   old_tsurf;
+    double                   tbrent;
     double                   glacier_melt;
     double                   glacier_albedo;
 
@@ -118,49 +122,43 @@ double solve_glacier(char               overstory,
     // log_info("%d", veg_class);
 
     if (veg_class != 17) {
-        /**
-         * @brief If Not In Glacier Area, No Melt Occur
-         */
+        // No Glacier LUCC
+        // No Glacier Melt
         glacier_melt = 0.0;
     } else {
-        /**
-         * @brief If In Glacier Area, Do The Math
-         */
+        // Glacier LUCC
+
+        // Date Struct
         day_in_year = dmy->day_in_year;
+        // fprintf(LOG_DEST, "DOY = %d\n", day_in_year);
+        // fprintf(LOG_DEST, "Band = %d\n", band);
 
-        //
+        // Snow 
         snow_albedo = snow->albedo;
-        //
         snow_depth = snow->depth;
+        snow_tsurf = snow->surf_temp;
 
-        // Tair ()
+        // Tair
         tair = air_temp;
+        // fprintf(LOG_DEST, "air_temp = %f\n", air_temp);
+        // TSurf
+        tsurf = glacier->surf_tmp;
+        old_tsurf = glacier->surf_tmp;
+
+        // fprintf(LOG_DEST, "glacier_surf_temp = %f\n", tsurf);
 
         // Air Density (kg/m^3)
         density = force->density[hidx];
         // Incoming Longwave Radiation (W/m^2)
         longwavein = force->longwave[hidx];
-        // Air Pressure (kPa)
+        // Air Pressure (Pa)
         pressure = force->pressure[hidx];
         // Incoming Shortwave Radiation (W/m^2)
         shortwavein = force->shortwave[hidx];
-        // Vapor Pressure (kPa)
+        // Vapor Pressure (Pa)
         vp = force->vp[hidx];
-
-        /**
-         * @brief May Be Modified Later
-         * Marked By Yunan Ling in 2022-03-01
-         */
-        if (snow->depth > 0.0) {
-            tsurf = snow->surf_temp;
-        } else {
-            if (Tgrnd <= 0.0) {
-                tsurf = Tgrnd;
-            } else {
-                tsurf = 0.0;
-            }
-        }
-        // tsurf = 0.0;
+        // 
+        rain = *rainfall;
 
         if (wind[*UnderStory] > 0.0) {
             ra = aero_resist[*UnderStory] / StabilityCorrection(ref_height[*UnderStory], 0.f, tsurf, Tcanopy, wind[*UnderStory], roughness[2]);
@@ -168,40 +166,39 @@ double solve_glacier(char               overstory,
             ra = param.HUGE_RESIST;
         }
 
-        // Calculate Glacier Albedo
-        glacier_albedo = calc_glacier_albedo(tair, snow_albedo, snow_depth);
-        // log_info("air temperature is %f", tair);
-        // log_info("snow depth is %f", snow_depth);
-        // log_info("glacier albedo is %f", glacier_albedo);
-        // Calculate Glacier Outgoing Longwave
-        longwaverout = calc_glacier_outgoing_longwave_radiation(tsurf, 1.0);
-        // log_info("longwaverout is %f", longwaverout);
-        // Calculate Glacier Net Shortwave
-        NetRadiation = shortwavein * (1 - glacier_albedo) + longwavein - longwaverout;
-        // log_info("netradiation is %f", NetRadiation);
-        // Calculate Glacier Sensible Heat
-        SensibleHeat = calc_glacier_sensible_heat(density, tair, tsurf, ra);
-        // log_info("sensibleheat is %f", SensibleHeat);
-        // Calculate Glacier Latent Heat
-        // log_info("pressure is %f", pressure);
-        // log_info("vapor pressure is %f", vp);
-        LatentHeat = calc_glacier_latent_heat(density, pressure, tsurf, vp, ra);
-        // log_info("latentheat is %f", LatentHeat);
-        // Calculate Glacier Ground Heat
-        GroundHeat = 0.0;
-        // Calculate Glacier Heat 
-        if (snow->depth > 0.0) {
-            PcpHeat = 0.0;
-        } else {
-            PcpHeat = calc_glacier_rain_heat(tsurf, tair, (*snowfall+*rainfall), dt);
-        }
-        // Q net
-        Qm = NetRadiation - SensibleHeat - LatentHeat + GroundHeat + PcpHeat;
+        glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth);
 
-        if ((Qm>0)&(tsurf==0.0)) {
+        Qm = calc_glacier_energy_balance(tsurf, tair, glacier_albedo, rain, 
+                                            shortwavein, longwavein, density, 
+                                            pressure, vp, dt, ra);
+        
+        if ((glacier->surf_tmp == 0.0) & (Qm > 0)) {
+            /**
+             * 当表面温度为0 且 能量平衡余项为正时
+             * 发生融化
+             */
+            glacier->METTING = true;
+            glacier->surf_tmp = 0.0;
             glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt; 
         } else {
-            // 
+            /**
+             * 否则 仅涉及温度变化
+             * 采用Brent Root方法计算温度变化
+             */
+            glacier->METTING = false;
+            tbrent = root_brent((double) (tsurf - param.SNOW_DT), 
+                                (double) (tsurf + param.SNOW_DT), 
+                                calc_glacier_energy_balance, 
+                                tair, glacier_albedo, rain, shortwavein, 
+                                longwavein, density, pressure, vp, dt, ra);
+            if (tbrent <= -998) { // 计算错误
+                glacier->surf_tmp = old_tsurf;
+            } else if (tbrent >= 0.0) { // 冰川表面温度非正值
+                glacier->surf_tmp = 0.0;
+            } else {
+                glacier->surf_tmp = tbrent;
+            }
+            fprintf(LOG_DEST, "tbrent = %f\n", tbrent);
             glacier_melt = 0.0;
         }
 
