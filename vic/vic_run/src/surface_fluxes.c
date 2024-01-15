@@ -925,7 +925,13 @@ surface_fluxes(bool                 overstory,
          * @brief 
          * 
          */
-        step_glacier_melt = solve_glacier(overstory, 
+        store_melt += step_melt;
+        /**
+         * @brief When Vegatation Type Is Glacier
+         *        Then Do the Math
+         */
+        if (veg_class == 17) {
+            step_glacier_melt = solve_glacier(overstory, 
                                       BareAlbedo, LongUnderOut,
                                       param.SNOW_MIN_RAIN_TEMP,
                                       param.SNOW_MAX_SNOW_TEMP,
@@ -951,14 +957,11 @@ surface_fluxes(bool                 overstory,
                                       &UnderStory, CanopLayerBnd, &dryFrac,
                                       dmy, force, 
                                       &(step_snow), &(step_glacier));
-        // glacier->melt = solve_glacier();
-        store_melt += step_melt;
-        /**
-         * @brief Sum Up Glacier Melt Water in Sub Step
-         * Added in 2022-02-22
-         * Checked in 2022-02-22
-         */
-        store_glacier_melt += step_glacier_melt;
+
+            // Dummy Variable just Corresponding to Snow Melt
+            store_glacier_melt += step_glacier_melt;
+        }
+
         store_vapor_flux += step_snow.vapor_flux;
         store_surface_flux += step_snow.surface_flux;
         store_blowing_flux += step_snow.blowing_flux;
@@ -1052,13 +1055,14 @@ surface_fluxes(bool                 overstory,
     (*Melt) = store_melt;
     snow->melt = store_melt;
     /**
-     * @brief When Vegatation Type Is Glacier, Record Glacier Melt
-     * Modified in 2022-02-23
-     * Checked in 2023-03-25
+     * @brief When Vegatation Type Is Glacier
+     *        Do the Math and Record
      */
     if (veg_class == 17) {
+        (*glacier) = step_glacier;
         glacier->melt = store_glacier_melt;
     }
+
     ppt = store_ppt + store_glacier_melt*MM_PER_M;
     // ppt = store_ppt;
 

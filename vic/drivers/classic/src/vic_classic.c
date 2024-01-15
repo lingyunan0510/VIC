@@ -233,10 +233,11 @@ main(int   argc,
             for (b = 0; b < options.SNOW_BAND; b++) {
                 all_vars.glacier[b].coverage = glacier_con.AreaFract[b];
                 all_vars.glacier[b].albedo = glacier_con.MinAlbedo[b];
+                all_vars.glacier[b].surf_tmp = -40.0;
                 all_vars.glacier[b].melt = 0.0;
                 all_vars.glacier[b].qm = 0.0;
                 all_vars.glacier[b].METTING = false;
-                // log_info("glacier data fraction is %f", all_vars.glacier[b].coverage);
+                // log_info("glacier_tsurf is %f", all_vars.glacier[b].surf_tmp);
             }
 
             /******************************************
@@ -333,6 +334,8 @@ main(int   argc,
             free((char *) soil_con.Tfactor);
             free((char *) soil_con.Pfactor);
             free((char *) soil_con.AboveTreeLine);
+            free((char *) soil_con.BandAspect);
+            free((char *) soil_con.BandSlope);
             /**
              * @brief Free Glacier Band Information 
              * Added in 2022-02-11

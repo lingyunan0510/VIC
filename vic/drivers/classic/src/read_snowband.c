@@ -57,13 +57,13 @@ read_snowband(FILE            *snowband,
             soil_con->AreaFract[band] = area_fract;
             total += area_fract;
         }
-        if (total != 1.) {
-            log_warn("Sum of the snow band area fractions does not equal "
-                     "1 (%f), dividing each fraction by the sum", total);
-            for (band = 0; band < options.SNOW_BAND; band++) {
-                soil_con->AreaFract[band] /= total;
-            }
-        }
+        // if (total != 1.) {
+        //     log_warn("Sum of the snow band area fractions does not equal "
+        //              "1 (%f), dividing each fraction by the sum", total);
+        //     for (band = 0; band < options.SNOW_BAND; band++) {
+        //         soil_con->AreaFract[band] /= total;
+        //     }
+        // }
 
         /** Read Band Elevation **/
         avg_elev = 0;
@@ -105,14 +105,14 @@ read_snowband(FILE            *snowband,
             soil_con->Pfactor[band] = prec_frac;
             total += prec_frac;
         }
-        if (total != 1.) {
-            log_warn("Sum of the snow band precipitation fractions "
-                     "does not equal %d (%f), dividing each fraction by the "
-                     "sum", 1, total);
-            for (band = 0; band < options.SNOW_BAND; band++) {
-                soil_con->Pfactor[band] /= total;
-            }
-        }
+        // if (total != 1.) {
+        //     log_warn("Sum of the snow band precipitation fractions "
+        //              "does not equal %d (%f), dividing each fraction by the "
+        //              "sum", 1, total);
+        //     for (band = 0; band < options.SNOW_BAND; band++) {
+        //         soil_con->Pfactor[band] /= total;
+        //     }
+        // }
         for (band = 0; band < options.SNOW_BAND; band++) {
             if (soil_con->AreaFract[band] > 0) {
                 soil_con->Pfactor[band] /= soil_con->AreaFract[band];

@@ -333,4 +333,12 @@ double solve_glacier(char,
                     double, size_t, int, int *, double *, double *, dmy_struct *,
                     force_data_struct *, snow_data_struct *, glacier_data_struct *);
 
+double calc_glacier_energy_balance(double srf_tmp, ...);
+double glacier_energy_balance(double srf_tmp, va_list);
+
+double compute_solar_zen(double, double, double, unsigned short int, unsigned int);
+double compute_solar_azi(double, double, double, unsigned short int, unsigned int);
+double compute_cos_theta(double, double, double, unsigned short int, unsigned int, double, double);
+double compute_max_cos_theta(double, double, double, unsigned short int, unsigned int, double, double);
+
 #endif

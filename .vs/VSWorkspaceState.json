@@ -1,13 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\vic",
-    "\\vic\\drivers",
     "\\vic\\drivers\\classic\\include",
     "\\vic\\drivers\\classic\\src",
+    "\\vic\\drivers\\shared_all",
     "\\vic\\drivers\\shared_all\\src",
     "\\vic\\vic_run"
   ],
-  "SelectedNode": "\\vic\\drivers\\shared_all",
   "PreviewInSolutionExplorer": false
 }

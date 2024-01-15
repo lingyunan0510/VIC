@@ -579,6 +579,8 @@ typedef struct {
     double soil_dens_org[MAX_LAYERS]; /**< particle density of organic soil (kg/m^3) */
     double *BandElev;                 /**< Elevation of each snow elevation band */
     double *AreaFract;                /**< Fraction of grid cell included in each snow elevation band */
+    double *BandSlope;
+    double *BandAspect;
     double *Pfactor;                  /**< Change in Precipitation due to elevation (fract) in each snow elevation band */
     double *Tfactor;                  /**< Change in temperature due to elevation (C) in each snow elevation band */
     bool *AboveTreeLine;             /**< Flag to indicate if band is above the treeline */
@@ -604,6 +606,7 @@ typedef struct {
     double *AreaFract;
     double *BandElev;
     double *MinAlbedo;
+    // double *Area;
 } glacier_con_struct;
 
 /******************************************************************************

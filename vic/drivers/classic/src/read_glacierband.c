@@ -24,6 +24,10 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
     double total;
     double area_fract;
     double min_albedo;
+    double band_slope;
+    double band_aspect;
+
+    // double area;
 
     Nbands = options.SNOW_BAND;
 
@@ -35,6 +39,9 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
 
     glacier_con->MinAlbedo = calloc(Nbands, sizeof(*(glacier_con->MinAlbedo)));
     check_alloc_status(glacier_con->MinAlbedo, "Memory allocation error.");
+
+    // glacier_con->Area = calloc(Nbands, sizeof(*(glacier_con->Area)));
+    // check_alloc_status(glacier_con->Area, "Memory allocation error.");
 
     if (Nbands > 1) {
         // log_info("More than 1 Glacier Band");
@@ -80,12 +87,20 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
          */
         for (band = 0; band < Nbands; band++) {
             fscanf(glacierband, "%lf", &min_albedo);
-            if (min_albedo < 0.1) {
-                min_albedo = 0.1;
-            }
             glacier_con->MinAlbedo[band] = min_albedo;
         }
-
+        for (band = 0; band < Nbands; band++) {
+            fscanf(glacierband, "%lf", &band_slope);
+            soil_con->BandSlope[band] = band_slope;
+        }
+        for (band = 0; band < Nbands; band++) {
+            fscanf(glacierband, "%lf", &band_aspect);
+            soil_con->BandAspect[band] = band_aspect;
+        }
+        // for (band = 0; band < Nbands; band++) {
+        //     fscanf(glacierband, "%lf", &area);
+        //     glacier_con->Area[band] = area;
+        // }
     } else {
         log_info("Only 1 Glacier Band");
     }

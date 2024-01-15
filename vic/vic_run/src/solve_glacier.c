@@ -120,8 +120,9 @@ double solve_glacier(char               overstory,
     double                   Qm;
 
     // log_info("%d", veg_class);
+    // fprintf(LOG_DEST, "veg_class = %d\n", veg_class);
 
-    if (veg_class != 17) {
+    if ((veg_class != 17) || (glacier->coverage <= 0.00)) {
         // No Glacier LUCC
         // No Glacier Melt
         glacier_melt = 0.0;
@@ -154,6 +155,10 @@ double solve_glacier(char               overstory,
         // Air Pressure (Pa)
         pressure = force->pressure[hidx];
         // Incoming Shortwave Radiation (W/m^2)
+        /**
+         * @brief 
+         * 
+         */
         shortwavein = force->shortwave[hidx];
         // Vapor Pressure (Pa)
         vp = force->vp[hidx];
@@ -171,8 +176,8 @@ double solve_glacier(char               overstory,
         Qm = calc_glacier_energy_balance(tsurf, tair, glacier_albedo, rain, 
                                             shortwavein, longwavein, density, 
                                             pressure, vp, dt, ra);
-        
-        if ((glacier->surf_tmp == 0.0) & (Qm > 0)) {
+
+        if ((tsurf >= 0.0) && (Qm > 0)) {
             /**
              * 当表面温度为0 且 能量平衡余项为正时
              * 发生融化
@@ -180,6 +185,7 @@ double solve_glacier(char               overstory,
             glacier->METTING = true;
             glacier->surf_tmp = 0.0;
             glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt; 
+            // fprintf(LOG_DEST, "glc_mlt = %f\n", glacier_melt);
         } else {
             /**
              * 否则 仅涉及温度变化
@@ -188,7 +194,7 @@ double solve_glacier(char               overstory,
             glacier->METTING = false;
             tbrent = root_brent((double) (tsurf - param.SNOW_DT), 
                                 (double) (tsurf + param.SNOW_DT), 
-                                calc_glacier_energy_balance, 
+                                glacier_energy_balance, 
                                 tair, glacier_albedo, rain, shortwavein, 
                                 longwavein, density, pressure, vp, dt, ra);
             if (tbrent <= -998) { // 计算错误
@@ -198,9 +204,54 @@ double solve_glacier(char               overstory,
             } else {
                 glacier->surf_tmp = tbrent;
             }
-            fprintf(LOG_DEST, "tbrent = %f\n", tbrent);
+            // fprintf(LOG_DEST, "tbrent = %f\n", tbrent);
             glacier_melt = 0.0;
         }
+        // if (band == 0) {
+        //     fprintf(LOG_DEST, "after_gsf = %f\n", glacier->surf_tmp);
+        // }
+
+        // // /**
+        // //  * @brief May Be Modified Later
+        // //  * Marked By Yunan Ling in 2022-03-01
+        // //  */
+        // // if (snow->depth > 0.0) {
+        // //     tsurf = snow->surf_temp;
+        // // } else {
+        // //     if (Tgrnd <= 0.0) {
+        // //         tsurf = Tgrnd;
+        // //     } else {
+        // //         tsurf = 0.0;
+        // //     }
+        // // }
+        // // // tsurf = 0.0;
+
+
+
+        // // Calculate Glacier Albedo
+        // glacier_albedo = calc_glacier_albedo(tair, snow_albedo, snow_depth);
+        // // Calculate Glacier Outgoing Longwave
+        // longwaverout = calc_glacier_outgoing_longwave_radiation(tsurf, 1.0);
+        // // Calculate Glacier Net Shortwave
+        // NetRadiation = shortwavein * (1 - glacier_albedo) + longwavein - longwaverout;
+        // // Calculate Glacier Sensible Heat
+        // SensibleHeat = calc_glacier_sensible_heat(density, tair, tsurf, ra);
+        // // Calculate Glacier Latent Heat
+        // LatentHeat = calc_glacier_latent_heat(density, pressure, tsurf, vp, ra);
+        // // Calculate Glacier Ground Heat
+        // GroundHeat = 0.0;
+        // // Calculate Glacier Precipitation Heat 
+        // PcpHeat = calc_glacier_rain_heat(tsurf, tair, (*snowfall+*rainfall), dt);
+
+        // // Q net
+        // Qm = NetRadiation - SensibleHeat - LatentHeat + GroundHeat + PcpHeat;
+
+        // if ((Qm>0)&(tsurf==0.0)) {
+            
+        // } else {
+        //     // 
+        //     glacier_melt = 0.0;
+        // }
 
         // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f", 
         //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, dt,
@@ -213,8 +264,8 @@ double solve_glacier(char               overstory,
         //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
         //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
 
-        // log_info("%d %d %d %d %d %10f %10f %10f", 
-        // band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, *out_prec, *out_rain, *out_snow);
+        // log_info("%d %d %d %d %d %f", 
+        // band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, glacier_melt);
 
         /**
          * @brief Modify Before Submit It 

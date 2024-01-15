@@ -101,32 +101,76 @@ double calc_saturated_vp_over_ice(temp) {
 }
 
 /**
- * @brief 计算冰川能量平衡项
+ * @brief 占位函数 计算冰川能量平衡
  * 
- * @param srf_tmp        Glacier Surface Temperature    C
- * @param air_tmp        Air Temperature                C
- * @param glc_abd        Glacier Minimum Albedo         No Scale
- * @param pcp_rat        Precipitation Rate             mm
- * @param shortwave_in   Income Shortwave               W/m^2
- * @param longwave_in    Income Longwave                W/m^2
- * @param air_den        Air Density                    kg/m^3
- * @param air_pre        Air Pressure                   Pa 
- * @param vap_pre        Vapor Pressure                 Pa 
- * @param dt 
- * @param Ra             Aerodynamics Resistance        No Scale
+ * @param srf_tmp    Glacier Surface Temperature    C
+ * @param ...        double air_tmp, double glc_abd, double pcp_rat, double shortwave_in, double longwave_in, double air_den, double air_pre, double vap_pre, double dt, double Ra,
+
  * @return double 
  */
-double calc_glacier_energy_balance( double srf_tmp, 
-                                    double air_tmp, 
-                                    double glc_abd,  
-                                    double pcp_rat, 
-                                    double shortwave_in, 
-                                    double longwave_in, 
-                                    double air_den, 
-                                    double air_pre, 
-                                    double vap_pre, 
-                                    double dt,
-                                    double Ra) {
+double calc_glacier_energy_balance(double srf_tmp, ...) {
+    va_list ap;
+
+    double netQ;
+    va_start(ap, srf_tmp);
+
+    netQ = glacier_energy_balance(srf_tmp, ap);
+
+    va_end(ap);
+
+    return netQ;
+}
+
+// /**
+//  * @brief 计算冰川能量平衡项
+//  * 
+//  * @param srf_tmp        Glacier Surface Temperature    C
+//  * @param air_tmp        Air Temperature                C
+//  * @param glc_abd        Glacier Minimum Albedo         No Scale
+//  * @param pcp_rat        Precipitation Rate             mm
+//  * @param shortwave_in   Income Shortwave               W/m^2
+//  * @param longwave_in    Income Longwave                W/m^2
+//  * @param air_den        Air Density                    kg/m^3
+//  * @param air_pre        Air Pressure                   Pa 
+//  * @param vap_pre        Vapor Pressure                 Pa 
+//  * @param dt 
+//  * @param Ra             Aerodynamics Resistance        No Scale
+//  * @return double 
+//  */
+
+/**
+ * @brief 实际函数 计算冰川能量平衡
+ * 
+ * @param srf_tmp    Glacier Surface Temperature    C
+ * @param ap 
+ * @return double 
+ */
+double glacier_energy_balance(double srf_tmp, va_list ap) {
+    
+    double air_tmp; 
+    double glc_abd; 
+    double pcp_rat; 
+    double shortwave_in; 
+    double longwave_in; 
+    double air_den; 
+    double air_pre; 
+    double vap_pre; 
+    double dt; 
+    double Ra; 
+    // bool is_snow;
+
+    air_tmp = (double) va_arg(ap, double);
+    glc_abd = (double) va_arg(ap, double);
+    pcp_rat = (double) va_arg(ap, double);
+    shortwave_in = (double) va_arg(ap, double);
+    longwave_in = (double) va_arg(ap, double);
+    air_den = (double) va_arg(ap, double);
+    air_pre = (double) va_arg(ap, double);
+    vap_pre = (double) va_arg(ap, double);
+    dt = (double) va_arg(ap, double);
+    Ra = (double) va_arg(ap, double);
+    // is_snow = (bool) va_arg(ap, bool);
+
     double netQ;
 
     double shortwave_net;
@@ -146,26 +190,134 @@ double calc_glacier_energy_balance( double srf_tmp,
     // 潜热通量
     latent_heat = calc_glacier_latent_heat(air_den, air_pre, srf_tmp, vap_pre, Ra);
     // 降水热通量
-    rain_heat = calc_glacier_rain_heat(srf_tmp, air_tmp, pcp_rat, dt);
+    rain_heat = 0.0;
+    // if (is_snow) {
+    //     rain_heat = 0.0;
+    // } else {
+    //     rain_heat = calc_glacier_rain_heat(srf_tmp, air_tmp, pcp_rat, dt);
+    // }
     // 地热通量
     ground_heat = 0.0;
     
     // 辐射余项为以上变量之和
     netQ = shortwave_net + longwave_net + sensible_heat + latent_heat + rain_heat + ground_heat;
 
-    log_info("%f %f %f %f %f %f %f %f %f %f", 
-    srf_tmp, 
-    air_tmp, 
-    glc_abd,  
-    pcp_rat, 
-    shortwave_in, 
-    longwave_in,
-    air_den, 
-    air_pre, 
-    vap_pre, 
-    dt,
-    Ra);
-
+    // log_info("%f %f %f %f %f %f %f %f %f %f", 
+    // srf_tmp, 
+    // air_tmp, 
+    // glc_abd,  
+    // pcp_rat, 
+    // shortwave_in, 
+    // longwave_in,
+    // air_den, 
+    // air_pre, 
+    // vap_pre, 
+    // dt,
+    // Ra);
 
     return netQ;
 }
+
+
+// /**
+//  * @brief 
+//  * 
+//  * @param TSurf             冰川表面温度 CC
+//  * @param NetRad            净辐射通量 为净长波与净短波之和 W/m^2
+//  * @param SensibleHeat      显热通量 W/m^2
+//  * @param LatentHeat        潜热通量 W/m^2
+//  * @param GroundFlux        地热通量 W/m^2
+//  * @param AdvectedEnergy    降水热通量 W/m^2
+//  * @param RefreezeEnergy    在融化情景中 为融化所耗能量 W/m^2
+//  * @return double RestTerm  能量余项 仅在非融化情景中 作为温变所耗能量 W/m^2
+//  */
+// double calc_glacier_energy_balance(double TSurf, 
+//                                     double NetRad, 
+//                                     double SensibleHeat, 
+//                                     double LatentHeat, 
+//                                     double GroundFlux, 
+//                                     double AdvectedEnergy, 
+//                                     double *RefreezeEnergy) {
+//     double RestTerm = 0.0;
+    
+//     *RefreezeEnergy = 0.0;
+//     RestTerm = NetRad + *SensibleHeat + *LatentHeat + *GroundFlux + *AdvectedEnergy;
+//     /**
+//      * @brief 
+//      * 由于需要采用root brent法计算
+//      * 本代码基础结构参照snow/ice_energy_balance
+//      */
+//     // 仅在表面温度为0 且 能量平衡余项为正时 发生融化
+//     if (TSurf == 0.0 && RestTerm > (*RefreezeEnergy)) {
+//         *RefreezeEnergy = -RestTerm;
+//         RestTerm = 0.0;
+//     } else {
+//         // 有两种情况
+//         // 表面温度低于0 即冰川未达到熔化温度 即使有能量输入仅使冰川升温
+//         // 或能量平衡余项为负 即冰川变冷 冰川停止融化或降温
+//         RestTerm += *RefreezeEnergy;
+//     }
+
+//     /**
+//      * @brief 计算之后需要注意的点
+//      * 能量余项RestTerm在输出后作为指示变量
+//      * 取值为0时意为融化 但RefreezeEnergy才真正表示可用能量
+//      * 
+//      * 在非0值情况下 RestTerm可作为冰川升温/降温的可用能量
+//      * 但是与融化过程无关
+//      */
+
+//     return RestTerm;
+// }
+
+// void update_annual_glacier(all_vars_struct *all_vars, soil_con_struct soil_con) {
+
+//     extern option_struct options;
+
+//     // 计数变量
+//     int b;
+//     // 分带数
+//     size_t Nbands;
+//     // 格网面积
+//     double cell_area;
+//     // 冰川LUCC面积占比
+//     double cv;
+//     // 各分带面积
+//     double *band_area;
+//     // 各分带冰川面积
+//     double glacier_area;
+//     double *band_glacier_area;
+
+//     // 初始化变量
+//     Nbands = options.SNOW_BAND;
+//     band_area = calloc(Nbands, sizeof(*(band_area)));
+//     check_alloc_status(band_area, "Memory allocation error.");
+//     band_glacier_area = calloc(Nbands, sizeof(*(band_glacier_area)));
+//     check_alloc_status(band_glacier_area, "Memory allocation error.");
+
+//     // 分带面积
+//     for (b = 0; b < options.SNOW_BAND; b++) {
+//         band_area[b] = cell_area * soil_con.AreaFract[b];
+//     }
+
+//     // 冰川面积
+//     glacier_area = cv * cell_area;
+
+//     // 冰川分带面积
+//     for (b = 0; b < options.SNOW_BAND; b++) {
+//         glacier_data_struct glacier = all_vars->glacier[b];
+//         band_glacier_area[b] = glacier.coverage * cv * cell_area;
+//     }
+
+//     // 取得累计年融化垂直水通量 取得冰川表面积雪垂直水通量
+
+//     // 计算各分带累计融化体积
+
+//     // 计算分带各冰川新面积
+
+//     // 计算各分带冰川新面积占总冰川面积的百分比 更新glacier
+
+//     // 计算新的
+
+//     // 
+// }
