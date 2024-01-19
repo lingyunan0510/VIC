@@ -24,6 +24,9 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
     double total;
     double area_fract;
     double min_albedo;
+    // 
+    double cell_slope;
+    double cell_aspect;
     double band_slope;
     double band_aspect;
 
@@ -89,14 +92,19 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
             fscanf(glacierband, "%lf", &min_albedo);
             glacier_con->MinAlbedo[band] = min_albedo;
         }
-        for (band = 0; band < Nbands; band++) {
-            fscanf(glacierband, "%lf", &band_slope);
-            soil_con->BandSlope[band] = band_slope;
-        }
-        for (band = 0; band < Nbands; band++) {
-            fscanf(glacierband, "%lf", &band_aspect);
-            soil_con->BandAspect[band] = band_aspect;
-        }
+        // GSave Grid Scale Slope and Aspect
+        fscanf(glacierband, "%lf", &cell_slope);
+        soil_con->slope = cell_slope;
+        fscanf(glacierband, "%lf", &cell_aspect);
+        soil_con->aspect = cell_aspect;
+        // for (band = 0; band < Nbands; band++) {
+        //     fscanf(glacierband, "%lf", &band_slope);
+        //     soil_con->BandSlope[band] = band_slope;
+        // }
+        // for (band = 0; band < Nbands; band++) {
+        //     fscanf(glacierband, "%lf", &band_aspect);
+        //     soil_con->BandAspect[band] = band_aspect;
+        // }
         // for (band = 0; band < Nbands; band++) {
         //     fscanf(glacierband, "%lf", &area);
         //     glacier_con->Area[band] = area;

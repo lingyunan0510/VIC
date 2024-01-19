@@ -721,7 +721,7 @@ read_soilparam(FILE            *soilparam,
             temp->Zsum_node[2] = dp;
         }
         else {
-            if (!options.EXP_TRANS) {
+            if (!options.EXP_TRANS) { 
                 /* Compute soil node thicknesses
                    Nodes set at surface, the depth of the first layer,
                    twice the depth of the first layer, and at the
@@ -823,14 +823,6 @@ read_soilparam(FILE            *soilparam,
         check_alloc_status(temp->AreaFract, "Memory allocation error.");
         temp->BandElev = calloc(Nbands, sizeof(*(temp->BandElev)));
         check_alloc_status(temp->BandElev, "Memory allocation error.");
-        /**
-         * @brief 
-         * 
-         */
-        temp->BandAspect = calloc(Nbands, sizeof(*(temp->BandAspect)));
-        check_alloc_status(temp->BandAspect, "Memory allocation error.");
-        temp->BandSlope = calloc(Nbands, sizeof(*(temp->BandSlope)));
-        check_alloc_status(temp->BandSlope, "Memory allocation error.");
         temp->Tfactor = calloc(Nbands, sizeof(*(temp->Tfactor)));
         check_alloc_status(temp->Tfactor, "Memory allocation error.");
         temp->Pfactor = calloc(Nbands, sizeof(*(temp->Pfactor)));
@@ -842,8 +834,6 @@ read_soilparam(FILE            *soilparam,
         for (band = 0; band < Nbands; band++) {
             temp->AreaFract[band] = 0.;
             temp->BandElev[band] = temp->elevation;
-            temp->BandAspect[band] = 0.0;
-            temp->BandSlope[band] = 0.0;
             temp->Tfactor[band] = 0.;
             temp->Pfactor[band] = 1.;
         }
