@@ -40,6 +40,13 @@ alloc_atmos(int                 nrecs,
         check_alloc_status((*force)[i].vpd, "Memory allocation error.");
         (*force)[i].wind = calloc(NR + 1, sizeof(*(*force)[i].wind));
         check_alloc_status((*force)[i].wind, "Memory allocation error.");
+        /**
+         * 
+        */
+        (*force)[i].s0 = calloc(NR + 1, sizeof(*(*force)[i].s0));
+        check_alloc_status((*force)[i].s0, "Memory allocation error.");
+        (*force)[i].cos_theta = calloc(options.SNOW_BAND, sizeof(*(*force)[i].cos_theta));
+        check_alloc_status((*force)[i].cos_theta, "Memory allocation error.");
         if (options.LAKES) {
             (*force)[i].channel_in =
                 calloc(NR + 1, sizeof(*(*force)[i].channel_in));
@@ -84,6 +91,11 @@ free_atmos(int                 nrecs,
         free((*force)[i].vp);
         free((*force)[i].vpd);
         free((*force)[i].wind);
+        /**
+         *
+        */
+        free((*force)[i].s0);
+        free((*force)[i].cos_theta);
         if (options.LAKES) {
             free((*force)[i].channel_in);
         }

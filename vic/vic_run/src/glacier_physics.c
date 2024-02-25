@@ -80,11 +80,12 @@ double calc_glacier_rain_heat(double srf_tmp, double air_tmp, double pcp_rat, do
  * @param min_abd Minimum Bare Ice albedo       No Scale
  * @param snw_abd Snow Surafce Albedo           No Scale
  * @param snw_dph Snow Depth                    m
+ * @param d       Reference Depth               mm
  * @return double Glacir Surafce Albedo         No Scale
  */
-double calc_glacier_albedo(double min_abd, double snw_abd, double snw_dph) {
+double calc_glacier_albedo(double min_abd, double snw_abd, double snw_dph, double d) {
     double glc_abd;
-    glc_abd = snw_abd*(1-exp(-snw_dph*MM_PER_M/24))+min_abd*exp(-snw_dph*MM_PER_M/24);
+    glc_abd = snw_abd*(1-exp(-snw_dph*MM_PER_M/d))+min_abd*exp(-snw_dph*MM_PER_M/d);
     // fprintf(LOG_DEST, "min_abd = %f\n", min_abd);
     // fprintf(LOG_DEST, "glc_abd = %f\n", glc_abd);
     return glc_abd;

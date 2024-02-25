@@ -851,7 +851,7 @@ surface_fluxes(bool                 overstory,
 
         compute_pot_evap(gp->model_steps_per_day,
                          vic_run_veg_lib[veg_class].rmin,
-                         iter_soil_veg_var.albedo, force->shortwave[hidx],
+                         iter_soil_veg_var.albedo, force->shortwave[hidx]*force->cos_theta[band],
                          iter_soil_energy.NetLongAtmos,
                          vic_run_veg_lib[veg_class].RGL, Tair, VPDcanopy,
                          iter_soil_veg_var.LAI, soil_con->elevation,
@@ -1063,8 +1063,8 @@ surface_fluxes(bool                 overstory,
         glacier->melt = store_glacier_melt;
     }
 
-    ppt = store_ppt + store_glacier_melt*MM_PER_M;
-    // ppt = store_ppt;
+    // ppt = store_ppt + store_glacier_melt*MM_PER_M;
+    ppt = store_ppt;
 
     /******************************************************
        Store energy flux averages for sub-model time steps
@@ -1196,6 +1196,7 @@ surface_fluxes(bool                 overstory,
 
     ErrorFlag = runoff(cell, energy, soil_con, ppt, soil_con->frost_fract,
                        options.Nnode);
+    cell->runoff += store_glacier_melt*MM_PER_M;
 
     return(ErrorFlag);
 }

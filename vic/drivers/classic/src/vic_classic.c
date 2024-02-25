@@ -333,6 +333,11 @@ main(int   argc,
             free((char *) soil_con.BandElev);
             free((char *) soil_con.Tfactor);
             free((char *) soil_con.Pfactor);
+            /**
+             * 
+            */
+            free((char *) soil_con.BandAspect);
+            free((char *) soil_con.BandSlope);
             free((char *) soil_con.AboveTreeLine);
             /**
              * @brief Free Glacier Band Information 

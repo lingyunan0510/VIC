@@ -122,6 +122,7 @@ double compute_solar_azi(double         lat,
     // Calculate Solar Zenith
     solar_zen = compute_solar_zen(lat, lng, time_zone_lng, day_in_year, second);
     cos_solar_zen = compute_coszen(lat, lng, time_zone_lng, day_in_year, second);
+    sin_solar_zen = sin(solar_zen);
     
     // Calculate Solar Declination
     decl = CONST_MINDECL * cos(((double) day_in_year + CONST_DAYSOFF) * CONST_RADPERDAY);
@@ -135,6 +136,7 @@ double compute_solar_azi(double         lat,
 
     // Calculate Cos Solar Azimuth
     cos_solar_azi = (sin_decl - (sin(lat*CONST_PI/180)*cos_solar_zen))/(cos(lat*CONST_PI/180)*sin_solar_zen);
+    // log_warn("cos_sa %f", cos_solar_azi);
     // Get Solar Azimuth ranges (0, pi)
     solar_azi = acos(cos_solar_azi);
     // Adjust Solar Azimuth to (0, 2pi)
@@ -188,19 +190,29 @@ double compute_cos_theta(double         lat,
 
     solar_zenith = compute_solar_zen(lat, lng, time_zone_lng, day_in_year, second);
     cos_solar_zenith = cos(solar_zenith);
+    if (cos_solar_zenith <= 0) {
+        return 0.0;
+    }
     sin_solar_zenith = sin(solar_zenith);
-
+    // log_warn("sz %f, cos_sz %f, sin_sz %f", solar_zenith, cos_solar_zenith, sin_solar_zenith);
     solar_azimuth = compute_solar_azi(lat, lng, time_zone_lng, day_in_year, second);
+    // log_warn("sa %f", solar_azimuth);
+    cos_theta = (cos_beta*cos_solar_zenith + sin_beta*sin_solar_zenith*cos(solar_azimuth-phi));
 
-    cos_theta = (cos_beta*cos_solar_zenith + sin_beta*sin_solar_zenith*cos(solar_azimuth-phi))/cos_solar_zenith;
+    if (cos_theta <= 0.0) {
+        // 坡面法线角和太阳光线的夹角大于90度
+        // 只有散射辐射
+        // Liu-Jordan模型
+        cos_theta = ((1+cos(slope))/2)*cos_solar_zenith;
+    } else {
+        cos_theta += ((1+cos(slope))/2)*cos_solar_zenith;
+    }
 
     return cos_theta;
 }
 
 /**
- * @brief 计算逐Step短波辐射地形-太阳校正因子
- *        考虑到6h的Step步长可能会经历日出/日落
- *        选择模拟步长开始 中段 结束三个时刻中最高太阳高度计算短波辐射地形-太阳校正因子
+ * @brief 计算时间段中间的短波辐射地形-太阳校正因子
  * 
  * @param lat           纬度 deg
  * @param lng           经度 deg
@@ -211,68 +223,74 @@ double compute_cos_theta(double         lat,
  * @param aspect        高程分带平均坡向 rad
  * @return double       短波辐射地形-太阳校正因子 \
  */
-double compute_max_cos_theta(double         lat,
-                             double         lng,
-                             double         time_zone_lng,
-                             unsigned short day_in_year,
-                             unsigned       second, 
-                             double         slope, 
-                             double         aspect) {
+double compute_mean_cos_theta(double         lat,
+                              double         lng,
+                              double         time_zone_lng,
+                              unsigned short day_in_year,
+                              unsigned       second, 
+                              double         slope, 
+                              double         aspect) {
+    unsigned int s0 = 0;
+    unsigned int count = 0;
+    double cz0 = 0;
+    double sum_theta = 0.0;
+    double mean_theta = 0.0;
 
-    // 在Step不同时间的时刻秒
-    unsigned s1;
-    unsigned s2;
-    unsigned s3;
-    // 太阳高度角最高时的时刻秒
-    unsigned s0;
-    // 在Step不同时间的太阳天顶角的cos
-    double cz1;
-    double cz2;
-    double cz3;
-    // 最高的太阳高度 此时太阳天顶角的cos也为最大
-    double cz0;
-    // 太阳高度角
-    double solar_elevation;
-    // 太阳方位角
-    double solar_azimuth;
-
-    // 短波辐射地形-太阳校正因子
-    double cos_theta;
-
-    s1 = second;
-    s2 = second + SEC_PER_HOUR * 3;
-    s3 = second + SEC_PER_HOUR * 6;
-
-    cz1 = compute_coszen(lat, lng, time_zone_lng, day_in_year, s1);
-    cz2 = compute_coszen(lat, lng, time_zone_lng, day_in_year, s2);
-    cz3 = compute_coszen(lat, lng, time_zone_lng, day_in_year, s3);
-
-    if ((cz1 <= 0.0) && (cz2 <= 0.0) && (cz3 <= 0.0)) {
-        // 太阳高度始终低于地平线
-        // 取时间步长中段
-        s0 = s2;
-    } else {
-        // 太阳高度至少有一个高于地平线
-        // 在时间步长的开始 中段 结尾之间选择太阳高度最高的时刻
-        if (cz1 >= cz2) {
-            cz0 = cz1;
-            s0 = s1;
+    for (int i=0; i<12; i++) {
+        s0 = second + (30*60)*i;
+        cz0 = compute_coszen(lat, lng, time_zone_lng, day_in_year, s0);
+        if (cz0 <= 0.0) {
+            sum_theta += 0.0;
         } else {
-            cz0 = cz2;
-            s0 = s2;
-        }
-        if (cz3 >= cz0) {
-            s0 = s3;
+            sum_theta += compute_cos_theta(lat, lng, time_zone_lng, day_in_year, s0, slope, aspect);
+            count++;
         }
     }
 
-    cos_theta = compute_cos_theta(lat, lng, time_zone_lng, day_in_year, s0, slope, aspect);
-    if (cos_theta <= 0.0) {
-        solar_azimuth = (compute_solar_azi(lat, lng, time_zone_lng, day_in_year, s0))/CONST_PI*180;
-        solar_elevation = 90.0-((compute_solar_zen(lat, lng, time_zone_lng, day_in_year, s0))/CONST_PI*180);
-        log_warn("Invalid Cos_Theta %f in %d, %fE %fN, with Aspect: %f, Slope: %f, Solar Elevation: %f and: Solar Azimuth %f", 
-        cos_theta, day_in_year, lng, lat, aspect, slope, solar_elevation, solar_azimuth);
-        cos_theta = 0.0;
+    if (count==0) {
+        mean_theta = 0.0;
+    } else {
+        mean_theta = (sum_theta/count);
     }
-    return cos_theta;
+
+    return mean_theta;
+}
+
+unsigned int compute_step_center(double         lat,
+                                 double         lng,
+                                 double         time_zone_lng,
+                                 unsigned short day_in_year,
+                                 unsigned       second) {
+    unsigned int s0 = 0;
+    double cz0 = 0;
+    unsigned int i_sum = 0;
+    unsigned int count = 0;
+
+    unsigned int s_out = 0;
+
+    for (int i=0; i<12; i++) {
+        s0 = second + (30*60)*i;
+        cz0 = compute_coszen(lat, lng, time_zone_lng, day_in_year, s0);
+        if (cz0 > 0.0) {
+            count += 1;
+        }
+    }
+
+    // if (count == 0) {
+    //     // Full Night
+    //     s_out = second + 9900;
+    // } else {
+    //     // At Least Once Daytime 
+    //     for (int i=0; i<12; i++) {
+    //         s0 = second + (30*60)*i;
+    //         cz0 = compute_coszen(lat, lng, time_zone_lng, day_in_year, s0);
+    //         if (cz0 > 0.0) {
+    //             s_out += (unsigned int) (s0 / count);
+    //         }
+    //     }
+    // }
+
+    // log_warn("Day %u, In is %u, Out is %u", day_in_year, second, s_out);
+
+    return count;
 }

@@ -146,6 +146,7 @@ vic_run(force_data_struct   *force,
 
             /** Define vegetation class number **/
             veg_class = veg_con[iveg].veg_class;
+            log_warn("Veg Class is %d", veg_class);
 
             /**************************************************
                Initialize Model Parameters
@@ -240,6 +241,7 @@ vic_run(force_data_struct   *force,
                      * Checked in 2022-03-07
                      */
                     glacier = &(all_vars->glacier[band]);
+                    log_warn("Band is %d", band);
 
                     // Convert LAI from global to local
                     if (veg_var->fcanopy > 0) {

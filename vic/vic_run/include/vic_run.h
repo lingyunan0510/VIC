@@ -318,7 +318,7 @@ void write_vegvar(veg_var_struct *, int);
 double calc_glacier_sensible_heat(double, double, double, double);
 double calc_glacier_latent_heat(double, double, double, double, double);
 double calc_glacier_outgoing_longwave_radiation(double, double);
-double calc_glacier_albedo(double, double, double);
+double calc_glacier_albedo(double, double, double, double);
 double calc_glacier_ground_heat(int);
 double calc_glacier_rain_heat(double, double, double, double);
 double solve_glacier(char, 
@@ -339,6 +339,8 @@ double glacier_energy_balance(double srf_tmp, va_list);
 double compute_solar_zen(double, double, double, unsigned short int, unsigned int);
 double compute_solar_azi(double, double, double, unsigned short int, unsigned int);
 double compute_cos_theta(double, double, double, unsigned short int, unsigned int, double, double);
-double compute_max_cos_theta(double, double, double, unsigned short int, unsigned int, double, double);
+double compute_mean_cos_theta(double, double, double, unsigned short int, unsigned int, double, double);
+
+unsigned int compute_step_center(double, double, double, unsigned short, unsigned);
 
 #endif

@@ -97,20 +97,15 @@ solve_snow(char               overstory,
     month = dmy->month;
     day_in_year = dmy->day_in_year;
 
+    // // 短波辐射校正因子赋值
+    cos_theta = force->cos_theta[band];
+
     density = force->density[hidx];
     longwave = force->longwave[hidx];
     pressure = force->pressure[hidx];
     shortwave = force->shortwave[hidx];
     vp = force->vp[hidx];
     vpd = force->vpd[hidx];
-    // 短波辐射校正因子赋值
-    // cos_theta = compute_max_cos_theta(soil_con->lat, 
-    //                               soil_con->lng,
-    //                               soil_con->time_zone_lng,
-    //                               day_in_year,
-    //                               dmy->dayseconds, 
-    //                               soil_con->BandSlope[band], 
-    //                               soil_con->BandAspect[band]);
 
     /* initialize moisture variables */
     melt = 0.;
@@ -154,6 +149,7 @@ solve_snow(char               overstory,
      * @brief 
      * 
      */
+    shortwave = (shortwave * cos_theta);
     (*ShortUnderIn) = shortwave;
     (*LongUnderIn) = longwave;
 

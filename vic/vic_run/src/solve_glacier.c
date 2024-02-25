@@ -86,6 +86,8 @@ double solve_glacier(char               overstory,
     double                   vp;
     double                   rain;
 
+    double                   cos_theta;
+
     /**
      * @brief Snow Related Parameters
      */
@@ -146,6 +148,9 @@ double solve_glacier(char               overstory,
         tsurf = glacier->surf_tmp;
         old_tsurf = glacier->surf_tmp;
 
+        // // 短波辐射校正因子赋值
+        cos_theta = force->cos_theta[band];
+
         // fprintf(LOG_DEST, "glacier_surf_temp = %f\n", tsurf);
 
         // Air Density (kg/m^3)
@@ -160,6 +165,10 @@ double solve_glacier(char               overstory,
          * 
          */
         shortwavein = force->shortwave[hidx];
+        shortwavein *= cos_theta;
+        if (shortwavein <= 0.0) {
+            shortwavein = 0.0;
+        }
         // Vapor Pressure (Pa)
         vp = force->vp[hidx];
         // 
@@ -171,11 +180,11 @@ double solve_glacier(char               overstory,
             ra = param.HUGE_RESIST;
         }
 
-        glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth);
+        glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, 24);
 
         Qm = calc_glacier_energy_balance(tsurf, tair, glacier_albedo, rain, 
-                                            shortwavein, longwavein, density, 
-                                            pressure, vp, dt, ra);
+                                         shortwavein, longwavein, density, 
+                                         pressure, vp, dt, ra);
 
         if ((tsurf >= 0.0) && (Qm > 0)) {
             /**
@@ -199,13 +208,14 @@ double solve_glacier(char               overstory,
                                 longwavein, density, pressure, vp, dt, ra);
             if (tbrent <= -998) { // 计算错误
                 glacier->surf_tmp = old_tsurf;
-            } else if (tbrent >= 0.0) { // 冰川表面温度非正值
+                glacier_melt = 0.0;
+            } else if (tbrent > 0.0) { // 冰川表面温度非正值
                 glacier->surf_tmp = 0.0;
+                glacier_melt = 0.00;
             } else {
                 glacier->surf_tmp = tbrent;
+                glacier_melt = 0.0;
             }
-            // fprintf(LOG_DEST, "tbrent = %f\n", tbrent);
-            glacier_melt = 0.0;
         }
         // if (band == 0) {
         //     fprintf(LOG_DEST, "after_gsf = %f\n", glacier->surf_tmp);
@@ -268,9 +278,12 @@ double solve_glacier(char               overstory,
         // band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, glacier_melt);
 
         /**
-         * @brief Modify Before Submit It 
+         * @brief 如果融水太少 就相当于没有融水
          * Marked By Yunan Ling In 2022-03-05
          */
+        if (glacier_melt < 1e-5) {
+            glacier_melt = 0.00;
+        }
         // glacier_melt = 0.00;
     }
     /**
