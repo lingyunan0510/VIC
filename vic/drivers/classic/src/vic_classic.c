@@ -233,7 +233,12 @@ main(int   argc,
             for (b = 0; b < options.SNOW_BAND; b++) {
                 all_vars.glacier[b].coverage = glacier_con.AreaFract[b];
                 all_vars.glacier[b].albedo = glacier_con.MinAlbedo[b];
-                all_vars.glacier[b].surf_tmp = -40.0;
+                /**
+                 * 为了节约编码成本
+                 * 在所有基于dd的冰川方案中
+                 * 重新定义surf_tmp为snow_band和glacier_band中的温度差
+                */
+                all_vars.glacier[b].surf_tmp = glacier_con.BandElev[b];
                 all_vars.glacier[b].melt = 0.0;
                 all_vars.glacier[b].qm = 0.0;
                 all_vars.glacier[b].METTING = false;

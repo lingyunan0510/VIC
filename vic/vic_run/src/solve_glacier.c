@@ -147,6 +147,8 @@ double solve_glacier(char               overstory,
         // TSurf
         tsurf = glacier->surf_tmp;
         old_tsurf = glacier->surf_tmp;
+        // 冰川上的校正温度
+        tair += tsurf;
 
         // // 短波辐射校正因子赋值
         cos_theta = force->cos_theta[band];
