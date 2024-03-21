@@ -182,7 +182,7 @@ double solve_glacier(char               overstory,
         glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, 24);
 
         if (tair > 0) {
-            glacier_melt = tair*options.DD;
+            glacier_melt = tair*options.DD + (1-glacier_albedo)*shortwavein*options.SRF;
         } else {
             glacier_melt = 0.0;
         }

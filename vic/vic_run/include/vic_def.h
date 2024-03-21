@@ -274,6 +274,8 @@ typedef struct {
 
     // Degree-Day Factor
     double DD;
+    // Shortwave Radiation Factor
+    double SRF;
 } option_struct;
 
 /******************************************************************************
