@@ -160,127 +160,31 @@ double solve_glacier(char               overstory,
         // Air Pressure (Pa)
         pressure = force->pressure[hidx];
         // Incoming Shortwave Radiation (W/m^2)
+        shortwavein = force->shortwave[hidx];
         /**
          * @brief 
-         * 
+         * 短波辐射地形-太阳校正
+         * 当入射太阳与坡面法线夹角超过90°即认为短波没有贡献
+         * 当夹角不超过90°时进行校正
          */
-        shortwavein = force->shortwave[hidx];
-        shortwavein *= cos_theta;
-        if (shortwavein <= 0.0) {
+        if (cos_theta <= 0.0) {
             shortwavein = 0.0;
+        } else {
+            shortwavein *= cos_theta;
         }
         // Vapor Pressure (Pa)
         vp = force->vp[hidx];
         // 
         rain = *rainfall;
 
-        if (wind[*UnderStory] > 0.0) {
-            ra = aero_resist[*UnderStory] / StabilityCorrection(ref_height[*UnderStory], 0.f, tsurf, Tcanopy, wind[*UnderStory], roughness[2]);
-        } else {
-            ra = param.HUGE_RESIST;
-        }
-
         glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, 24);
 
-        Qm = calc_glacier_energy_balance(tsurf, tair, glacier_albedo, rain, 
-                                         shortwavein, longwavein, density, 
-                                         pressure, vp, dt, ra);
-
-        if ((tsurf >= 0.0) && (Qm > 0)) {
-            /**
-             * 当表面温度为0 且 能量平衡余项为正时
-             * 发生融化
-             */
-            glacier->METTING = true;
-            glacier->surf_tmp = 0.0;
-            glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt; 
-            // fprintf(LOG_DEST, "glc_mlt = %f\n", glacier_melt);
+        if (tair > 0) {
+            glacier_melt = tair*options.DD + (1-glacier_melt)*shortwavein*options.SRF;
         } else {
-            /**
-             * 否则 仅涉及温度变化
-             * 采用Brent Root方法计算温度变化
-             */
-            glacier->METTING = false;
-            tbrent = root_brent((double) (tsurf - param.SNOW_DT), 
-                                (double) (tsurf + param.SNOW_DT), 
-                                glacier_energy_balance, 
-                                tair, glacier_albedo, rain, shortwavein, 
-                                longwavein, density, pressure, vp, dt, ra);
-            if (tbrent <= -998) { // 计算错误
-                glacier->surf_tmp = old_tsurf;
-                glacier_melt = 0.0;
-            } else if (tbrent > 0.0) { // 冰川表面温度非正值
-                glacier->surf_tmp = 0.0;
-                glacier_melt = 0.00;
-            } else {
-                glacier->surf_tmp = tbrent;
-                glacier_melt = 0.0;
-            }
+            glacier_melt = 0.0;
         }
-        // if (band == 0) {
-        //     fprintf(LOG_DEST, "after_gsf = %f\n", glacier->surf_tmp);
-        // }
 
-        // // /**
-        // //  * @brief May Be Modified Later
-        // //  * Marked By Yunan Ling in 2022-03-01
-        // //  */
-        // // if (snow->depth > 0.0) {
-        // //     tsurf = snow->surf_temp;
-        // // } else {
-        // //     if (Tgrnd <= 0.0) {
-        // //         tsurf = Tgrnd;
-        // //     } else {
-        // //         tsurf = 0.0;
-        // //     }
-        // // }
-        // // // tsurf = 0.0;
-
-
-
-        // // Calculate Glacier Albedo
-        // glacier_albedo = calc_glacier_albedo(tair, snow_albedo, snow_depth);
-        // // Calculate Glacier Outgoing Longwave
-        // longwaverout = calc_glacier_outgoing_longwave_radiation(tsurf, 1.0);
-        // // Calculate Glacier Net Shortwave
-        // NetRadiation = shortwavein * (1 - glacier_albedo) + longwavein - longwaverout;
-        // // Calculate Glacier Sensible Heat
-        // SensibleHeat = calc_glacier_sensible_heat(density, tair, tsurf, ra);
-        // // Calculate Glacier Latent Heat
-        // LatentHeat = calc_glacier_latent_heat(density, pressure, tsurf, vp, ra);
-        // // Calculate Glacier Ground Heat
-        // GroundHeat = 0.0;
-        // // Calculate Glacier Precipitation Heat 
-        // PcpHeat = calc_glacier_rain_heat(tsurf, tair, (*snowfall+*rainfall), dt);
-
-        // // Q net
-        // Qm = NetRadiation - SensibleHeat - LatentHeat + GroundHeat + PcpHeat;
-
-        // if ((Qm>0)&(tsurf==0.0)) {
-            
-        // } else {
-        //     // 
-        //     glacier_melt = 0.0;
-        // }
-
-        // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f", 
-        //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, dt,
-        //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
-        //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
-        
-        // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", 
-        //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, 
-        //     tair, density, pressure, vp, shortwavein, longwavein, longwaverout, 
-        //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
-        //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
-
-        // log_info("%d %d %d %d %d %f", 
-        // band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, glacier_melt);
-
-        /**
-         * @brief 如果融水太少 就相当于没有融水
-         * Marked By Yunan Ling In 2022-03-05
-         */
         if (glacier_melt < 1e-5) {
             glacier_melt = 0.00;
         }

@@ -133,12 +133,12 @@ vic_force(force_data_struct *force,
                                                   param.SNOW_MAX_SNOW_TEMP,
                                                   &(force[rec].prec[i]), 1);
             // 
-            unsigned int s = compute_step_center(soil_con->lat,
-                                                 soil_con->lng,
-                                                 soil_con->time_zone_lng,
-                                                 dmy[rec].day_in_year,
-                                                 dmy[rec].dayseconds);
-            force[rec].s0[i] = s;
+            // unsigned int s = compute_step_center(soil_con->lat,
+            //                                      soil_con->lng,
+            //                                      soil_con->time_zone_lng,
+            //                                      dmy[rec].day_in_year,
+            //                                      dmy[rec].dayseconds);
+            // force[rec].s0[i] = s;
             for (int band=0; band<options.SNOW_BAND; band++) {
                 if (soil_con->AreaFract[band] > 0) {
                     force[rec].cos_theta[band] = compute_mean_cos_theta(soil_con->lat,

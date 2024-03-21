@@ -271,6 +271,11 @@ typedef struct {
 
     // output options
     size_t Noutstreams;  /**< Number of output stream */
+
+    // Degree-Day Factor
+    double DD;
+    // Shortwave Radiation Factor
+    double SRF;
 } option_struct;
 
 /******************************************************************************

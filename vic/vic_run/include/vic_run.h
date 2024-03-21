@@ -341,6 +341,5 @@ double compute_solar_azi(double, double, double, unsigned short int, unsigned in
 double compute_cos_theta(double, double, double, unsigned short int, unsigned int, double, double);
 double compute_mean_cos_theta(double, double, double, unsigned short int, unsigned int, double, double);
 
-unsigned int compute_step_center(double, double, double, unsigned short, unsigned);
 
 #endif

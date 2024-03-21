@@ -200,12 +200,9 @@ double compute_cos_theta(double         lat,
     cos_theta = (cos_beta*cos_solar_zenith + sin_beta*sin_solar_zenith*cos(solar_azimuth-phi));
 
     if (cos_theta <= 0.0) {
-        // 坡面法线角和太阳光线的夹角大于90度
-        // 只有散射辐射
-        // Liu-Jordan模型
-        cos_theta = ((1+cos(slope))/2)*cos_solar_zenith;
-    } else {
-        cos_theta += ((1+cos(slope))/2)*cos_solar_zenith;
+        // 坡面法线角和太阳光线的夹角超过90°
+        // 无直射 因子为0
+        cos_theta = 0.0;
     }
 
     return cos_theta;
@@ -254,43 +251,4 @@ double compute_mean_cos_theta(double         lat,
     }
 
     return mean_theta;
-}
-
-unsigned int compute_step_center(double         lat,
-                                 double         lng,
-                                 double         time_zone_lng,
-                                 unsigned short day_in_year,
-                                 unsigned       second) {
-    unsigned int s0 = 0;
-    double cz0 = 0;
-    unsigned int i_sum = 0;
-    unsigned int count = 0;
-
-    unsigned int s_out = 0;
-
-    for (int i=0; i<12; i++) {
-        s0 = second + (30*60)*i;
-        cz0 = compute_coszen(lat, lng, time_zone_lng, day_in_year, s0);
-        if (cz0 > 0.0) {
-            count += 1;
-        }
-    }
-
-    // if (count == 0) {
-    //     // Full Night
-    //     s_out = second + 9900;
-    // } else {
-    //     // At Least Once Daytime 
-    //     for (int i=0; i<12; i++) {
-    //         s0 = second + (30*60)*i;
-    //         cz0 = compute_coszen(lat, lng, time_zone_lng, day_in_year, s0);
-    //         if (cz0 > 0.0) {
-    //             s_out += (unsigned int) (s0 / count);
-    //         }
-    //     }
-    // }
-
-    // log_warn("Day %u, In is %u, Out is %u", day_in_year, second, s_out);
-
-    return count;
 }
