@@ -640,6 +640,14 @@ collect_wb_terms(cell_data_struct cell,
     size_t                   frost_area;
 
     AreaFactor = Cv * AreaFract * TreeAdjustFactor * lakefactor;
+    /**
+     * @brief 当实际为冰川LUCC
+     * 采用冰川LUCC面积占总像元比*冰川分带面积比
+     * 此项改动对冰川LUCC对应的所有的水通量都成立
+    */
+    if (veg_class == 17) {
+        AreaFactor = Cv * glacier.coverage;
+    }
 
     /** record evaporation components **/
     tmp_evap = 0.0;
@@ -779,12 +787,19 @@ collect_wb_terms(cell_data_struct cell,
      * 
      * Modified Again in 2022-03-25
      * Checked Again in 2022-03-25
+     * 
+     * Modified in 2024-03-25
+     * 修改了输出时冰川LUCC所乘的面积比率
+     * 处于冰川LUCC下时冰川融水垂直水通量乘以冰川搞成分带所占比率
+     * 此项改动匹配将冰川融水垂直水通量添加到RUNOFF中
+     * 此项改动对冰川LUCC对应的所有的水通量都成立
      */
-    if (veg_class == 17) {
-        // log_info("Glacier Coverage %f, Cell Fraction %f", glacier.coverage, Cv);
-        out_data[OUT_GLACIER_MELT][0] += 1.0 * glacier.coverage * glacier.melt * Cv * MM_PER_M;
-        // log_info("%f", out_data[OUT_GLACIER_MELT][0]);
-    }
+    // if (veg_class == 17) {
+    //     // log_info("Glacier Coverage %f, Cell Fraction %f", glacier.coverage, Cv);
+    //     out_data[OUT_GLACIER_MELT][0] += 1.0 * glacier.coverage * glacier.melt * Cv * MM_PER_M;
+    //     // log_info("%f", out_data[OUT_GLACIER_MELT][0]);
+    // }
+    out_data[OUT_GLACIER_MELT][0] += glacier.melt * AreaFactor * MM_PER_M;
 
     /** record snow cover fraction **/
     out_data[OUT_SNOW_COVER][0] += snow.coverage * AreaFactor;
