@@ -76,14 +76,14 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
 
         // log_info("Total Area of Glacier is %f", total);
 
-        if (total != 1.) {
-            log_warn("Sum of the glacier band area fractions does not equal 1 (%f), dividing each fraction by the sum", total);
-            for (band = 0; band < options.SNOW_BAND; band++) {
-                glacier_con->AreaFract[band] /= total;
-            }
-        } else {
-            log_info("Glacier Band Area Correct");
-        }
+        // if (total != 1.) {
+        //     log_warn("Sum of the glacier band area fractions does not equal 1 (%f), dividing each fraction by the sum", total);
+        //     for (band = 0; band < options.SNOW_BAND; band++) {
+        //         glacier_con->AreaFract[band] /= total;
+        //     }
+        // } else {
+        //     log_info("Glacier Band Area Correct");
+        // }
         
         /**
          * @brief Read Minimum Albedo
