@@ -520,8 +520,8 @@ get_global_param(FILE *gp)
                  * Modified in 2022-02-01
                  * Checked in 2022-02-10
                  */
-                sscanf(cmdstr, "%*s %zu %s %s", &options.SNOW_BAND,
-                       filenames.snowband, filenames.glacierband);
+                sscanf(cmdstr, "%*s %zu %s %s %lf", &options.SNOW_BAND,
+                       filenames.snowband, filenames.glacierband, &options.d_star);
                 log_info("Function get_global_param Receive Glacier Filename %s", filenames.glacierband);
             }
             else if (strcasecmp("LAKES", optstr) == 0) {

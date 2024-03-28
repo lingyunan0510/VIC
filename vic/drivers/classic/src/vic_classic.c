@@ -233,7 +233,8 @@ main(int   argc,
             for (b = 0; b < options.SNOW_BAND; b++) {
                 all_vars.glacier[b].coverage = glacier_con.AreaFract[b];
                 all_vars.glacier[b].albedo = glacier_con.MinAlbedo[b];
-                all_vars.glacier[b].surf_tmp = -40.0;
+                all_vars.glacier[b].surf_tmp = 0.0;
+                all_vars.glacier[b].adjust_tmp = glacier_con.BandElev[b];
                 all_vars.glacier[b].melt = 0.0;
                 all_vars.glacier[b].qm = 0.0;
                 all_vars.glacier[b].METTING = false;

@@ -24,6 +24,7 @@ void initialize_glacier(glacier_data_struct *glacier) {
         glacier[i].coverage = 0.0;
         glacier[i].albedo = 0.0;
         glacier[i].surf_tmp = 0.0;
+        glacier[i].adjust_tmp  = 0.0;
         glacier[i].METTING = false;
         glacier[i].qm = 0.0;
         glacier[i].melt = 0.0;

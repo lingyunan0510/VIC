@@ -29,6 +29,7 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
     // double cell_aspect;
     double band_slope;
     double band_aspect;
+    double band_elev;
 
     // double area;
 
@@ -67,7 +68,7 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
             if (area_fract < 0) {
                 log_err("Negative glacier band area fraction (%f) read from file", area_fract);
             }
-            glacier_con->BandElev[band] = soil_con->BandElev[band];
+            // glacier_con->BandElev[band] = soil_con->BandElev[band];
             glacier_con->AreaFract[band] = area_fract;
             // log_info("%f", glacier_con->AreaFract[band]);
             total += area_fract;
@@ -75,14 +76,14 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
 
         // log_info("Total Area of Glacier is %f", total);
 
-        if (total != 1.) {
-            log_warn("Sum of the glacier band area fractions does not equal 1 (%f), dividing each fraction by the sum", total);
-            for (band = 0; band < options.SNOW_BAND; band++) {
-                glacier_con->AreaFract[band] /= total;
-            }
-        } else {
-            log_info("Glacier Band Area Correct");
-        }
+        // if (total != 1.) {
+        //     log_warn("Sum of the glacier band area fractions does not equal 1 (%f), dividing each fraction by the sum", total);
+        //     for (band = 0; band < options.SNOW_BAND; band++) {
+        //         glacier_con->AreaFract[band] /= total;
+        //     }
+        // } else {
+        //     log_info("Glacier Band Area Correct");
+        // }
         
         /**
          * @brief Read Minimum Albedo
@@ -104,6 +105,10 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
         for (band = 0; band < Nbands; band++) {
             fscanf(glacierband, "%lf", &band_aspect);
             soil_con->BandAspect[band] = band_aspect;
+        }
+        for (band = 0; band < Nbands; band++) {
+            fscanf(glacierband, "%lf", &band_elev);
+            glacier_con->BandElev[band] = (band_elev - soil_con->BandElev[band])*(-0.0065);
         }
         // for (band = 0; band < Nbands; band++) {
         //     fscanf(glacierband, "%lf", &area);

@@ -641,6 +641,10 @@ collect_wb_terms(cell_data_struct cell,
 
     AreaFactor = Cv * AreaFract * TreeAdjustFactor * lakefactor;
 
+    if (veg_class == 17) {
+        AreaFactor = Cv * glacier.coverage;
+    }
+
     /** record evaporation components **/
     tmp_evap = 0.0;
     for (index = 0; index < options.Nlayer; index++) {
@@ -780,11 +784,12 @@ collect_wb_terms(cell_data_struct cell,
      * Modified Again in 2022-03-25
      * Checked Again in 2022-03-25
      */
-    if (veg_class == 17) {
-        // log_info("Glacier Coverage %f, Cell Fraction %f", glacier.coverage, Cv);
-        out_data[OUT_GLACIER_MELT][0] += 1.0 * glacier.coverage * glacier.melt * Cv * MM_PER_M;
-        // log_info("%f", out_data[OUT_GLACIER_MELT][0]);
-    }
+    // if (veg_class == 17) {
+    //     // log_info("Glacier Coverage %f, Cell Fraction %f", glacier.coverage, Cv);
+    //     out_data[OUT_GLACIER_MELT][0] += 1.0 * glacier.coverage * glacier.melt * Cv * MM_PER_M;
+    //     // log_info("%f", out_data[OUT_GLACIER_MELT][0]);
+    // }
+    out_data[OUT_GLACIER_MELT][0] += glacier.melt * AreaFactor * MM_PER_M;
 
     /** record snow cover fraction **/
     out_data[OUT_SNOW_COVER][0] += snow.coverage * AreaFactor;

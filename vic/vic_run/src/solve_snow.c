@@ -147,9 +147,9 @@ solve_snow(char               overstory,
     /* initialize understory radiation inputs */
     /**
      * @brief 
-     * 
+     * 不再修正积雪短波入射
      */
-    shortwave = (shortwave * cos_theta);
+    // shortwave = (shortwave * cos_theta);
     (*ShortUnderIn) = shortwave;
     (*LongUnderIn) = longwave;
 

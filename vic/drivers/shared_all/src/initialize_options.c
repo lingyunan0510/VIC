@@ -80,4 +80,6 @@ initialize_options()
     options.SAVE_STATE = false;
     // output options
     options.Noutstreams = 2;
+    // 冰川能量平衡参数
+    options.d_star = 24.0;
 }

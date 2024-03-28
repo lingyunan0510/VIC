@@ -271,6 +271,9 @@ typedef struct {
 
     // output options
     size_t Noutstreams;  /**< Number of output stream */
+
+    // 冰川能量平衡方案
+    double d_star;   /* mm 冰川表面反照率参数化方案中的参考雪深 */
 } option_struct;
 
 /******************************************************************************
@@ -1011,13 +1014,14 @@ typedef struct {
  */
 typedef struct {
     // State
-    double coverage;/* Glacer Area Cover Fraction (%) */
-    double albedo;  /* Glacier Surface Albedo (no unit)*/
-    double surf_tmp;   /* Glacier Surface Temperature (C) */
-    bool METTING;   /* Flag Indicating Glacier Was Meltting Previously */
+    double coverage;    /* Glacer Area Cover Fraction (%) */
+    double albedo;      /* Glacier Surface Albedo (no unit)*/
+    double surf_tmp;    /* Glacier Surface Temperature (C) */
+    double adjust_tmp;  /* Glacier Surface Adjust Temperature (C) */
+    bool METTING;       /* Flag Indicating Glacier Was Meltting Previously */
     // Flux
-    double qm;      /* Energy Balance for Galcier Melting (W/m^2) */
-    double melt;    /* Glacier Melt (m) */
+    double qm;          /* Energy Balance for Galcier Melting (W/m^2) */
+    double melt;        /* Glacier Melt (m) */
 }  glacier_data_struct;
 
 

@@ -142,7 +142,7 @@ double solve_glacier(char               overstory,
         snow_tsurf = snow->surf_temp;
 
         // Tair
-        tair = air_temp;
+        tair = air_temp + glacier->adjust_tmp; // 校正冰川表面温度
         // fprintf(LOG_DEST, "air_temp = %f\n", air_temp);
         // TSurf
         tsurf = glacier->surf_tmp;
@@ -165,10 +165,10 @@ double solve_glacier(char               overstory,
          * 
          */
         shortwavein = force->shortwave[hidx];
-        shortwavein *= cos_theta;
-        if (shortwavein <= 0.0) {
-            shortwavein = 0.0;
-        }
+        // shortwavein *= cos_theta;
+        // if (shortwavein <= 0.0) {
+        //     shortwavein = 0.0;
+        // }
         // Vapor Pressure (Pa)
         vp = force->vp[hidx];
         // 
@@ -180,7 +180,7 @@ double solve_glacier(char               overstory,
             ra = param.HUGE_RESIST;
         }
 
-        glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, 24);
+        glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, options.d_star);
 
         Qm = calc_glacier_energy_balance(tsurf, tair, glacier_albedo, rain, 
                                          shortwavein, longwavein, density, 
