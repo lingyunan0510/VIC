@@ -1196,7 +1196,7 @@ surface_fluxes(bool                 overstory,
 
     ErrorFlag = runoff(cell, energy, soil_con, ppt, soil_con->frost_fract,
                        options.Nnode);
-    cell->runoff += store_glacier_melt*MM_PER_M;
+    cell->runoff += store_glacier_melt;
 
     return(ErrorFlag);
 }

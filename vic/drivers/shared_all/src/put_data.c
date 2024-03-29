@@ -788,7 +788,7 @@ collect_wb_terms(cell_data_struct cell,
     //     out_data[OUT_GLACIER_MELT][0] += 1.0 * glacier.coverage * glacier.melt * Cv * MM_PER_M;
     //     // log_info("%f", out_data[OUT_GLACIER_MELT][0]);
     // }
-    out_data[OUT_GLACIER_MELT][0] += glacier.melt * AreaFactor * MM_PER_M;
+    out_data[OUT_GLACIER_MELT][0] += glacier.melt * AreaFactor;
 
     /** record snow cover fraction **/
     out_data[OUT_SNOW_COVER][0] += snow.coverage * AreaFactor;
