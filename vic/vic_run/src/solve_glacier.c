@@ -169,11 +169,11 @@ double solve_glacier(char               overstory,
          * 当入射太阳与坡面法线夹角超过90°即认为短波没有贡献
          * 当夹角不超过90°时进行校正
          */
-        if (cos_theta <= 0.0) {
-            shortwavein = 0.0;
-        } else {
-            shortwavein *= cos_theta;
-        }
+        // if (cos_theta <= 0.0) {
+        //     shortwavein = 0.0;
+        // } else {
+        //     shortwavein *= cos_theta;
+        // }
         // Vapor Pressure (Pa)
         vp = force->vp[hidx];
         // 
