@@ -120,6 +120,7 @@ double solve_glacier(char               overstory,
     double                   GroundHeat;
     double                   PcpHeat;
     double                   Qm;
+    double                   new_Qm;
 
     // log_info("%d", veg_class);
     // fprintf(LOG_DEST, "veg_class = %d\n", veg_class);
@@ -186,14 +187,14 @@ double solve_glacier(char               overstory,
                                          shortwavein, longwavein, density, 
                                          pressure, vp, dt, ra);
 
-        if ((tsurf >= 0.0) && (Qm > 0)) {
+        if ((tsurf >= 0.0) && (Qm >= 0.0)) {
             /**
              * 当表面温度为0 且 能量平衡余项为正时
              * 发生融化
              */
             glacier->METTING = true;
             glacier->surf_tmp = 0.0;
-            glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt; 
+            glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt;
             // fprintf(LOG_DEST, "glc_mlt = %f\n", glacier_melt);
         } else {
             /**
@@ -211,7 +212,10 @@ double solve_glacier(char               overstory,
                 glacier_melt = 0.0;
             } else if (tbrent > 0.0) { // 冰川表面温度非正值
                 glacier->surf_tmp = 0.0;
-                glacier_melt = 0.00;
+                new_Qm = calc_glacier_energy_balance(0.0, tair, glacier_albedo, rain, shortwavein, longwavein, density, pressure, vp, dt, ra);
+                // glacier_melt = new_Qm / (CONST_LATICE * CONST_RHOFW) * dt * (abs(new_Qm)/abs(Qm));
+                glacier_melt = new_Qm / (CONST_LATICE * CONST_RHOFW) * dt;
+                // glacier_melt = 0.0;
             } else {
                 glacier->surf_tmp = tbrent;
                 glacier_melt = 0.0;
