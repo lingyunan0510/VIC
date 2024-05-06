@@ -144,7 +144,8 @@ double solve_glacier(char               overstory,
 
         // Tair
         tair = air_temp + glacier->adjust_tmp; // 校正冰川表面温度
-        // fprintf(LOG_DEST, "air_temp = %f\n", air_temp);
+        // fprintf(LOG_DEST, "air_temp = %f\n", tair);
+        // fprintf(LOG_DEST, "bnd_temp = %f\n", air_temp);
         // TSurf
         tsurf = glacier->surf_tmp;
         old_tsurf = glacier->surf_tmp;
@@ -209,15 +210,15 @@ double solve_glacier(char               overstory,
                                 longwavein, density, pressure, vp, dt, ra);
             if (tbrent <= -998) { // 计算错误
                 glacier->surf_tmp = old_tsurf;
+                glacier->METTING = false;
                 glacier_melt = 0.0;
             } else if (tbrent > 0.0) { // 冰川表面温度非正值
                 glacier->surf_tmp = 0.0;
-                new_Qm = calc_glacier_energy_balance(0.0, tair, glacier_albedo, rain, shortwavein, longwavein, density, pressure, vp, dt, ra);
-                // glacier_melt = new_Qm / (CONST_LATICE * CONST_RHOFW) * dt * (abs(new_Qm)/abs(Qm));
-                glacier_melt = new_Qm / (CONST_LATICE * CONST_RHOFW) * dt;
-                // glacier_melt = 0.0;
+                glacier->METTING = false;
+                glacier_melt = 0.0;
             } else {
                 glacier->surf_tmp = tbrent;
+                glacier->METTING = false;
                 glacier_melt = 0.0;
             }
         }
