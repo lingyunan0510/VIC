@@ -16,7 +16,7 @@ initialize_parameters()
     // Initialize temporary parameters
 
     // Lapse Rate
-    param.LAPSE_RATE = -0.0065;
+    param.LAPSE_RATE = -0.0060;
 
     // Precipitation Guage Height
     param.GAUGE_HEIGHT = 1.0;
