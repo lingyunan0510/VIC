@@ -1200,7 +1200,9 @@ surface_fluxes(bool                 overstory,
      * @brief 冰川水直接进入RUNOFF
      * 由于冰川最低点在河流的源头 冰川融水直接进入河道
     */
-    cell->runoff += store_glacier_melt;
+    if (veg_class == 17) {
+        cell->runoff += store_glacier_melt;
+    }
 
     return(ErrorFlag);
 }
