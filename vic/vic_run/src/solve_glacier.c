@@ -134,8 +134,8 @@ double solve_glacier(char               overstory,
 
         // Date Struct
         day_in_year = dmy->day_in_year;
-        // fprintf(LOG_DEST, "DOY = %d\n", day_in_year);
-        // fprintf(LOG_DEST, "Band = %d\n", band);
+        fprintf(LOG_DEST, "DOY = %d\n", day_in_year);
+        fprintf(LOG_DEST, "Band = %d\n", band);
 
         // Snow 
         snow_albedo = snow->albedo;
@@ -144,8 +144,8 @@ double solve_glacier(char               overstory,
 
         // Tair
         tair = air_temp + glacier->adjust_tmp; // 校正冰川表面温度
-        // fprintf(LOG_DEST, "air_temp = %f\n", tair);
-        // fprintf(LOG_DEST, "bnd_temp = %f\n", air_temp);
+        fprintf(LOG_DEST, "snw_bnd_temp = %f\n", air_temp);
+        fprintf(LOG_DEST, "glc_bnd_temp = %f\n", tair);
         // TSurf
         tsurf = glacier->surf_tmp;
         old_tsurf = glacier->surf_tmp;
