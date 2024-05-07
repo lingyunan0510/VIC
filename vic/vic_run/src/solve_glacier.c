@@ -196,7 +196,7 @@ double solve_glacier(char               overstory,
             glacier->METTING = true;
             glacier->surf_tmp = 0.0;
             glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt;
-            // fprintf(LOG_DEST, "glc_mlt = %f\n", glacier_melt);
+            fprintf(LOG_DEST, "Qm=%f glc_mlt=%f\n", Qm, glacier_melt);
         } else {
             /**
              * 否则 仅涉及温度变化
