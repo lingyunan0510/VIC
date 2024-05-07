@@ -203,18 +203,18 @@ double glacier_energy_balance(double srf_tmp, va_list ap) {
     // 辐射余项为以上变量之和
     netQ = shortwave_net + longwave_net + sensible_heat + latent_heat + rain_heat + ground_heat;
 
-    log_info("Srf_Tmp=%f Air_Tmp=%f abd=%f pcp=%f SR=%f LR=%f Air_Den=%f Air_Pre=%f Vap_Pre=%f dt=%f Ra=%f", 
-    srf_tmp, 
-    air_tmp, 
-    glc_abd,  
-    pcp_rat, 
-    shortwave_in, 
-    longwave_in,
-    air_den, 
-    air_pre, 
-    vap_pre, 
-    dt,
-    Ra);
+    // log_info("Srf_Tmp=%f Air_Tmp=%f abd=%f pcp=%f SR=%f LR=%f Air_Den=%f Air_Pre=%f Vap_Pre=%f dt=%f Ra=%f", 
+    // srf_tmp, 
+    // air_tmp, 
+    // glc_abd,  
+    // pcp_rat, 
+    // shortwave_in, 
+    // longwave_in,
+    // air_den, 
+    // air_pre, 
+    // vap_pre, 
+    // dt,
+    // Ra);
 
     return netQ;
 }

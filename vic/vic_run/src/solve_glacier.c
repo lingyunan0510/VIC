@@ -273,11 +273,11 @@ double solve_glacier(char               overstory,
         //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
         //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
         
-        // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", 
-        //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, 
-        //     tair, density, pressure, vp, shortwavein, longwavein, longwaverout, 
-        //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
-        //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
+        log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", 
+            band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, 
+            tair, density, pressure, vp, shortwavein, longwavein, longwaverout, 
+            snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
+            NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
 
         // log_info("%d %d %d %d %d %f", 
         // band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, glacier_melt);
