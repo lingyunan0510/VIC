@@ -196,9 +196,9 @@ double solve_glacier(char               overstory,
             glacier->METTING = true;
             glacier->surf_tmp = 0.0;
             glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt;
-            fprintf(LOG_DEST, "Qm=%f glc_mlt=%f\n", Qm, glacier_melt);
-            fprintf(LOG_DEST, "LatIce=%f DenFre=%f\n", CONST_LATICE, CONST_RHOFW);
-            fprintf(LOG_DEST, "dt=%f\n", dt);
+            // fprintf(LOG_DEST, "Qm=%f glc_mlt=%f\n", Qm, glacier_melt);
+            // fprintf(LOG_DEST, "LatIce=%f DenFre=%f\n", CONST_LATICE, CONST_RHOFW);
+            // fprintf(LOG_DEST, "dt=%f\n", dt);
         } else {
             /**
              * 否则 仅涉及温度变化
@@ -275,11 +275,11 @@ double solve_glacier(char               overstory,
         //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
         //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
         
-        log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", 
-            band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, 
-            tair, density, pressure, vp, shortwavein, longwavein, longwaverout, 
-            snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
-            NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
+        // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", 
+        //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, 
+        //     tair, density, pressure, vp, shortwavein, longwavein, longwaverout, 
+        //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
+        //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
 
         // log_info("%d %d %d %d %d %f", 
         // band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, glacier_melt);
@@ -288,7 +288,7 @@ double solve_glacier(char               overstory,
          * @brief 如果融水太少 就相当于没有融水
          * Marked By Yunan Ling In 2022-03-05
          */
-        if (glacier_melt < 1e-5) {
+        if (glacier_melt < 1e-6) {
             glacier_melt = 0.00;
         }
         // glacier_melt = 0.00;
