@@ -389,7 +389,8 @@ surface_fluxes(bool                 overstory,
 
         /* set air temperature and precipitation for this snow band */
         Tair = force->air_temp[hidx] + soil_con->Tfactor[band];
-        step_prec = force->prec[hidx] * soil_con->Pfactor[band];
+        // step_prec = force->prec[hidx] * soil_con->Pfactor[band];
+        step_prec = force->prec[hidx];
 
         // initialize ground surface temperaure
         Tgrnd = energy->T[0];
