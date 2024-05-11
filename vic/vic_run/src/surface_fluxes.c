@@ -1062,6 +1062,7 @@ surface_fluxes(bool                 overstory,
         (*glacier) = step_glacier;
         glacier->melt = store_glacier_melt;
         glacier->acc_melt += store_glacier_melt;
+        log_info("S %f %f", glacier->melt, glacier->acc_melt);
     }
 
     // ppt = store_ppt + store_glacier_melt*MM_PER_M;

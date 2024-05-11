@@ -216,7 +216,7 @@ double glacier_energy_balance(double srf_tmp, va_list ap) {
     // dt,
     // Ra);
 
-    log_info("netQ=%f SWnet=%f LWnet=%f SH=%f LH=%f LR=%f", netQ, shortwave_net, longwave_net, sensible_heat, latent_heat, rain_heat);
+    // log_info("netQ=%f SWnet=%f LWnet=%f SH=%f LH=%f LR=%f", netQ, shortwave_net, longwave_net, sensible_heat, latent_heat, rain_heat);
 
     return netQ;
 }
