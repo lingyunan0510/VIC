@@ -63,10 +63,10 @@ agg_stream_data(stream_struct *stream,
                      * @brief Marked by Yunan Ling
                      * 2022-02-13
                      */
-                    if (varid == 166) {
-                        log_info("Glacier Sum is %f", stream->aggdata[i][j][k][0]);
-                        log_info("Glacier input is %f", out_data[i][varid][k]);
-                    }
+                    // if (varid == 166) {
+                    //     log_info("Glacier Sum is %f", stream->aggdata[i][j][k][0]);
+                    //     log_info("Glacier input is %f", out_data[i][varid][k]);
+                    // }
                 }
             }
             // Maximum over the period

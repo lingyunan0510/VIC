@@ -303,6 +303,9 @@ get_default_outvar_aggtype(unsigned int varid)
     case OUT_GLACIER_MELT:
         agg_type = AGG_TYPE_SUM;
         break;
+    case OUT_ACC_GLACIER_MELT:
+        agg_type = AGG_TYPE_END;
+        break;
     default:
         agg_type = AGG_TYPE_AVG;
     }
