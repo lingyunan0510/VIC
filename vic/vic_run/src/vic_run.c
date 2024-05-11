@@ -247,7 +247,7 @@ vic_run(force_data_struct   *force,
                      * 清空冰川累积融化计数
                      * 是物质平衡的入口
                     */
-                    if ((dmy->month==10)&&(dmy->day==1)&&(dmy->dayseconds==6*3600)&&(veg_class == 17)) {
+                    if ((dmy->month==10)&&(dmy->day==1)&&(dmy->dayseconds==6*3600)) {
                         glacier->acc_melt = 0.0;
                     }
                     // Convert LAI from global to local
