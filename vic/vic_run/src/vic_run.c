@@ -241,7 +241,7 @@ vic_run(force_data_struct   *force,
                      * Checked in 2022-03-07
                      */
                     glacier = &(all_vars->glacier[band]);
-                    log_info("Veg %d Band %d acc %f", veg_class, band, glacier->acc_melt);
+                    // log_info("Veg %d Band %d acc %f", veg_class, band, glacier->acc_melt);
                     // log_warn("Band is %d", band);
 
                     // /**

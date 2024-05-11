@@ -348,6 +348,6 @@ unsigned int compute_step_center(double, double, double, unsigned short, unsigne
  * Added in 2024-05-11
  * Checked in 2024-05-11
 */
-void update_acc_glacier_melt(all_vars_struct *, dmy_struct *, size_t);
+void update_acc_glacier_melt(all_vars_struct *, dmy_struct *, veg_con_struct *, size_t);
 
 #endif
