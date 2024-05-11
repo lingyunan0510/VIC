@@ -264,6 +264,9 @@ main(int   argc,
                 **************************************************/
                 timer_start(&cell_timer);
                 // print_dmy(&(dmy[rec]));
+                if (&dmy[rec].month == 10) {
+                    log_info("HI");
+                }
                 ErrorFlag = vic_run(&force[rec], &all_vars,
                                     &(dmy[rec]), &global_param, &lake_con,
                                     &soil_con, veg_con, veg_lib);
