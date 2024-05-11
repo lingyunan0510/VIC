@@ -230,9 +230,9 @@ void update_acc_glacier_melt(all_vars_struct *all_vars, dmy_struct *dmy, size_t 
     if ((dmy->month==10)&&(dmy->day==1)&&(dmy->dayseconds==6*3600)) {
 
         // 冰川数据
-        glacier_data_struct glacier;
+        glacier_data_struct *glacier;
         // 积雪数据
-        snow_data_struct snow;
+        snow_data_struct *snow;
 
         for (band = 0; band < Nbands; band++) {
             glacier = &(all_vars->glacier[band]);
