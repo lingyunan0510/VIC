@@ -221,6 +221,27 @@ double glacier_energy_balance(double srf_tmp, va_list ap) {
     return netQ;
 }
 
+void update_acc_glacier_melt(all_vars_struct *all_vars, dmy_struct *dmy, size_t Nbands) {
+
+    // 计数变量
+    unsigned short band;
+
+    // 在每年的10月1日清空冰川累积融水
+    if ((dmy->month==10)&&(dmy->day==1)&&(dmy->dayseconds==6*3600)) {
+
+        // 冰川数据
+        glacier_data_struct glacier;
+        // 积雪数据
+        snow_data_struct snow;
+
+        for (band = 0; band < Nbands; band++) {
+            glacier = &(all_vars->glacier[band]);
+            // 清空冰川累积融水变量
+            glacier->acc_melt = 0.0;
+        }
+    }
+}
+
 
 // /**
 //  * @brief 

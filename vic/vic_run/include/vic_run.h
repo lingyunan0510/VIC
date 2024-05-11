@@ -343,4 +343,11 @@ double compute_mean_cos_theta(double, double, double, unsigned short int, unsign
 
 unsigned int compute_step_center(double, double, double, unsigned short, unsigned);
 
+/**
+ * @brief Update Accumulated Glacier Melt
+ * Added in 2024-05-11
+ * Checked in 2024-05-11
+*/
+void update_acc_glacier_melt(all_vars_struct *, dmy_struct *, size_t);
+
 #endif
