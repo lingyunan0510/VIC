@@ -272,6 +272,12 @@ enum
      * Checked in 2022-02-11
      */
     OUT_GLACIER_MELT,     /**< glacier melt [mm] */
+    /**
+     * @brief Enumerate Accumulated Glacier Output
+     * Added in 2024-05-11
+     * Checked in 2024-05-11
+     */
+    OUT_ACC_GLACIER_MELT,     /**< acculumated glacier melt [mm] */
     // Last value of enum - DO NOT ADD ANYTHING BELOW THIS LINE!!
     // used as a loop counter and must be >= the largest value in this enum
     N_OUTVAR_TYPES        /**< used as a loop counter*/

@@ -1061,6 +1061,7 @@ surface_fluxes(bool                 overstory,
     if (veg_class == 17) {
         (*glacier) = step_glacier;
         glacier->melt = store_glacier_melt;
+        glacier->acc_melt += store_glacier_melt;
     }
 
     // ppt = store_ppt + store_glacier_melt*MM_PER_M;

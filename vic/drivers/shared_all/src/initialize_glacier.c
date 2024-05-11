@@ -28,5 +28,6 @@ void initialize_glacier(glacier_data_struct *glacier) {
         glacier[i].METTING = false;
         glacier[i].qm = 0.0;
         glacier[i].melt = 0.0;
+        glacier[i].acc_melt = 0.0;
     }
 }

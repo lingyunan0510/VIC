@@ -611,6 +611,17 @@ set_output_met_data_info()
     strcpy(out_metadata[OUT_GLACIER_MELT].units, "mm");
     strcpy(out_metadata[OUT_GLACIER_MELT].description, "glacier melt");
 
+    /**
+     * @brief Make Output Accumulated Glacier Melt
+     * Added in 2024-05-11
+     * Checked in 2024-05-11
+    */
+    strcpy(out_metadata[OUT_ACC_GLACIER_MELT].varname, "OUT_ACC_GLACIER_MELT");
+    strcpy(out_metadata[OUT_ACC_GLACIER_MELT].long_name, "accumulated_glacier_melt");
+    strcpy(out_metadata[OUT_ACC_GLACIER_MELT].standard_name, "accumulated_glacier_melt_amount");
+    strcpy(out_metadata[OUT_ACC_GLACIER_MELT].units, "mm");
+    strcpy(out_metadata[OUT_ACC_GLACIER_MELT].description, "accumulated glacier melt");
+
     /* snowfall [mm] */
     strcpy(out_metadata[OUT_SNOWF].varname, "OUT_SNOWF");
     strcpy(out_metadata[OUT_SNOWF].long_name, "snowf");

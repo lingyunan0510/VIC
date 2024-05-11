@@ -243,6 +243,13 @@ vic_run(force_data_struct   *force,
                     glacier = &(all_vars->glacier[band]);
                     // log_warn("Band is %d", band);
 
+                    /**
+                     * 清空冰川累积融化计数
+                     * 是物质平衡的入口
+                    */
+                    if ((dmy->month==10)&&(dmy->day==1)&&(dmy->dayseconds==3600)&&(veg_class == 17)) {
+                        glacier->acc_melt = 0.0;
+                    }
                     // Convert LAI from global to local
                     if (veg_var->fcanopy > 0) {
                         veg_var->LAI /= veg_var->fcanopy;

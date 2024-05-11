@@ -1022,6 +1022,7 @@ typedef struct {
     // Flux
     double qm;          /* Energy Balance for Galcier Melting (W/m^2) */
     double melt;        /* Glacier Melt (m) */
+    double acc_melt;    /* Accumulated Glacier Melt (m)*/
 }  glacier_data_struct;
 
 

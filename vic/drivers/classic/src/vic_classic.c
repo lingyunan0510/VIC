@@ -236,6 +236,7 @@ main(int   argc,
                 all_vars.glacier[b].surf_tmp = 0.0;
                 all_vars.glacier[b].adjust_tmp = glacier_con.BandElev[b];
                 all_vars.glacier[b].melt = 0.0;
+                all_vars.glacier[b].acc_melt = 0.0;
                 all_vars.glacier[b].qm = 0.0;
                 all_vars.glacier[b].METTING = false;
                 // log_info("glacier_tsurf is %f", all_vars.glacier[b].surf_tmp);
