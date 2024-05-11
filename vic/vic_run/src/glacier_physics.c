@@ -221,24 +221,62 @@ double glacier_energy_balance(double srf_tmp, va_list ap) {
     return netQ;
 }
 
-void update_acc_glacier_melt(all_vars_struct *all_vars, dmy_struct *dmy, size_t Nbands) {
+void update_acc_glacier_melt(all_vars_struct *all_vars, dmy_struct *dmy, veg_con_struct *veg_con, size_t Nbands) {
 
-    // 计数变量
+    // 高程分带计数变量
     unsigned short band;
+    // 植被分带计数变量
+    unsigned short iveg;
+    // 植被分带总数变量
+    size_t Nveg;
+    // 植被分带赋值
+    Nveg = veg_con[0].vegetat_type_num;
 
     // 在每年的10月1日清空冰川累积融水
     if ((dmy->month==10)&&(dmy->day==1)&&(dmy->dayseconds==6*3600)) {
 
-        // 冰川数据
-        glacier_data_struct *glacier;
-        // 积雪数据
-        snow_data_struct *snow;
-
-        for (band = 0; band < Nbands; band++) {
-            glacier = &(all_vars->glacier[band]);
-            // 清空冰川累积融水变量
-            glacier->acc_melt = 0.0;
+        for (iveg = 0; iveg <= Nveg; iveg++) {
+            // 如果是冰川lucc 且 冰川还存在
+            if ((veg_con[iveg].Cv > 0.0)&&( veg_con[iveg].veg_class == 17)) {
+                // 遍历各分带
+                for (band = 0; band < Nbands; band++) {
+                    glacier_data_struct *glacier; // 冰川数据
+                    glacier = &(all_vars->glacier[band]);
+                    snow_data_struct *snow; // 积雪数据
+                    snow = &(all_vars->snow[iveg][band]);
+                    // 如果冰川在此分带上还有
+                    if (glacier->coverage > 0) {
+                        glacier->acc_melt = 0.0;
+                        // 如果积雪在此分带上还有
+                        if (snow->swq > 0) {
+                            log_info("Snow Remain %f", snow->swq);
+                            /**
+                             * 清除积雪 将其加入冰川物质平衡中
+                            */
+                        }
+                        /**
+                         * 冰川需要做一些操作 以免积雪没有了导致突然融雪
+                         * 降温 或者 保证反照率
+                        */
+                        /**
+                         * 累积融化量 + 积雪堆积量
+                         * 计算最终物质平衡
+                        */
+                    }
+                }
+            }
         }
+        // 在每个分带都计算完上年度的物质平衡通量之后
+        // 如果某分带冰川物质平衡为正 此分带前进/变厚 面积体积增加
+
+        // 如果某分带冰川物质平衡为负 且化完了 此分带消失 面积体积归零
+
+        // 如果某分带冰川物质平衡为负 且没有化完 此分带面积体积减少
+
+        // 计算冰川LUCC的新面积 补偿其他LUCC的新面积
+
+        // 计算各分带中新面积的百分比 并且保证新面积的百分比之和为1
+
     }
 }
 
