@@ -394,7 +394,7 @@ surface_fluxes(bool                 overstory,
         // initialize ground surface temperaure
         if (veg_class == 17) {
             // 如果使用
-            Tgrnd = step_glacier->surf_tmp;
+            Tgrnd = step_glacier.surf_tmp;
         } else {
             Tgrnd = energy->T[0];
         }
