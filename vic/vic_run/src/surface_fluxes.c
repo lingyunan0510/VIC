@@ -392,7 +392,12 @@ surface_fluxes(bool                 overstory,
         step_prec = force->prec[hidx] * soil_con->Pfactor[band];
 
         // initialize ground surface temperaure
-        Tgrnd = energy->T[0];
+        if (veg_class == 17) {
+            // 如果使用
+            Tgrnd = step_glacier->surf_tmp;
+        } else {
+            Tgrnd = energy->T[0];
+        }
 
         // initialize canopy terms
         Tcanopy = Tair;
