@@ -121,6 +121,13 @@ double solve_glacier(char               overstory,
     double                   PcpHeat;
     double                   Qm;
 
+    double bg;
+    double xa = 1.66707295e-03;
+    double xb = -4.35292948e-02;
+    double xc = 4.07314960e-01;
+    double xd = -1.59978653e+00;
+    double xe = 2.19952775e+00;
+
     // log_info("%d", veg_class);
     // fprintf(LOG_DEST, "veg_class = %d\n", veg_class);
 
@@ -181,13 +188,20 @@ double solve_glacier(char               overstory,
 
         glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, 24);
 
+        double x;
         if (tair > 0) {
-            glacier_melt = tair*options.DD;
+            if (dmy->month >= 8) {
+                x = dmy->month - 7;
+            } else {
+                x = dmy->month - 5;
+            }
+            bg = options.DD*((xa*x*x*x*x)+(xb*x*x*x)+(xc*x*x)+(xd*x)+xe);
+            glacier_melt = tair*bg;
         } else {
             glacier_melt = 0.0;
         }
 
-        if (glacier_melt < 1e-5) {
+        if (glacier_melt < 1e-3) {
             glacier_melt = 0.00;
         }
         // glacier_melt = 0.00;
