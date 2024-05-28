@@ -341,7 +341,6 @@ put_data(all_vars_struct   *all_vars,
                         collect_eb_terms(lake_var.energy,
                                          lake_var.snow,
                                          lake_var.soil,
-                                         Cv,
                                          /**
                                           * @brief Add Required Glacier Data
                                           * But Do Nothing Because The Lake Option
@@ -349,6 +348,7 @@ put_data(all_vars_struct   *all_vars,
                                           * Checked in 2022-02-13
                                           */
                                          glacier[0],
+                                         Cv,
                                          ThisAreaFract,
                                          ThisTreeAdjust,
                                          0,
