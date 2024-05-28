@@ -187,7 +187,8 @@ double solve_glacier(char               overstory,
         Qm = calc_glacier_energy_balance(tsurf, tair, glacier_albedo, rain, 
                                          shortwavein, longwavein, density, 
                                          pressure, vp, dt, ra);
-
+        // 更新冰川表面反照率
+        glacier->albedo = glacier_albedo;
         if ((tsurf >= 0.0) && (Qm >= 0.0)) {
             /**
              * 当表面温度为0 且 能量平衡余项为正时

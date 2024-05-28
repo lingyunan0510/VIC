@@ -248,6 +248,14 @@ put_data(all_vars_struct   *all_vars,
                     collect_eb_terms(energy[veg][band],
                                      snow[veg][band],
                                      cell[veg][band],
+                                    /**
+                                     * @brief Transter glacier to Energy Balance Calculation
+                                     * If veg Class is glacier, then do the math
+                                     * If not, do nothing
+                                     * Added in 2024-05-28
+                                     * Checked in 2024-05-28
+                                     */
+                                     glacier[band],
                                      Cv,
                                      ThisAreaFract,
                                      ThisTreeAdjust,
@@ -258,7 +266,15 @@ put_data(all_vars_struct   *all_vars,
                                      band,
                                      frost_fract,
                                      frost_slope,
-                                     out_data);
+                                     out_data,
+                                    /**
+                                     * @brief Transter Veg Classes to Energy Balance Calculation
+                                     * If veg Class is glacier, then do the math
+                                     * If not, do nothing
+                                     * Added in 2024-05-28
+                                     * Checked in 2024-05-28
+                                     */
+                                     veg_con[veg].veg_class);
 
                     // Store Wetland-Specific Variables
                     if (IsWet) {
@@ -326,6 +342,13 @@ put_data(all_vars_struct   *all_vars,
                                          lake_var.snow,
                                          lake_var.soil,
                                          Cv,
+                                         /**
+                                          * @brief Add Required Glacier Data
+                                          * But Do Nothing Because The Lake Option
+                                          * Modified in 2022-02-13
+                                          * Checked in 2022-02-13
+                                          */
+                                         glacier[0],
                                          ThisAreaFract,
                                          ThisTreeAdjust,
                                          0,
@@ -335,7 +358,14 @@ put_data(all_vars_struct   *all_vars,
                                          band,
                                          frost_fract,
                                          frost_slope,
-                                         out_data);
+                                         out_data, 
+                                         /**
+                                          * @brief Add Required Vegetation Class
+                                          * But Do Nothing Because The Lake Option
+                                          * Modified in 2022-02-13
+                                          * Checked in 2022-02-13
+                                          */
+                                         veg_con[veg].veg_class);
 
                         // Store Lake-Specific Variables
 
@@ -823,6 +853,12 @@ void
 collect_eb_terms(energy_bal_struct energy,
                  snow_data_struct  snow,
                  cell_data_struct  cell_wet,
+                 /**
+                  * @brief Put Glacier Melt Water Into Water Balance
+                  * Modified in 2024-05-28
+                  * Checked in 2024-05-28
+                  */
+                 glacier_data_struct glacier,
                  double            Cv,
                  double            AreaFract,
                  double            TreeAdjustFactor,
@@ -833,7 +869,15 @@ collect_eb_terms(energy_bal_struct energy,
                  int               band,
                  double           *frost_fract,
                  double            frost_slope,
-                 double          **out_data)
+                 double          **out_data, 
+                 /**
+                  * @brief Identification of Vegetation Class
+                  * If is glacier, do the math
+                  * Else do nothing
+                  * Modofied in 2022-02-13
+                  * Checked in 2022-12-13
+                  */
+                 int              veg_class)
 {
     extern option_struct options;
     double               AreaFactor;
@@ -844,6 +888,10 @@ collect_eb_terms(energy_bal_struct energy,
     size_t               frost_area;
 
     AreaFactor = Cv * AreaFract * TreeAdjustFactor * lakefactor;
+
+    if (veg_class == 17) {
+        AreaFactor = Cv * glacier.coverage;
+    }
 
     /**********************************
        Record Frozen Soil Variables
@@ -1021,6 +1069,11 @@ collect_eb_terms(energy_bal_struct energy,
     /** record band snowpack depth **/
     out_data[OUT_SNOW_DEPTH_BAND][band] += snow.depth * Cv * lakefactor *
                                            CM_PER_M;
+    
+    if (veg_class == 17) {
+        out_data[OUT_SNOW_ALBEDO_BAND][band] = snow.albedo;
+        out_data[OUT_GLACIER_ALBEDO_BAND][band] = glacier.albedo;
+    }
 
     /** record band canopy intercepted snow **/
     if (HasVeg) {

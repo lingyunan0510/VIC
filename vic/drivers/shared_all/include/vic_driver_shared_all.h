@@ -600,9 +600,14 @@ void calc_root_fractions(veg_con_struct *veg_con, soil_con_struct *soil_con);
 double calc_water_balance_error(double, double, double, double);
 bool cell_method_from_agg_type(unsigned short int aggtype, char cell_method[]);
 bool check_write_flag(int rec);
-void collect_eb_terms(energy_bal_struct, snow_data_struct, cell_data_struct,
+/**
+ * @brief Modifiy Water Balance Function 
+ * Modified in 2024-05-28
+ * Checked in 2024-05-28
+ */
+void collect_eb_terms(energy_bal_struct, snow_data_struct, cell_data_struct, glacier_data_struct, 
                       double, double, double, bool, bool, double, bool, int,
-                      double *, double, double **);
+                      double *, double, double **, int);
 /**
  * @brief Modifiy Water Balance Function 
  * Modified in 2022-02-13
