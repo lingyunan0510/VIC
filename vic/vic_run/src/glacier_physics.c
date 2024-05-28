@@ -232,8 +232,8 @@ void update_acc_glacier_melt(all_vars_struct *all_vars, dmy_struct *dmy, veg_con
     // 植被分带赋值
     Nveg = veg_con[0].vegetat_type_num;
 
-    // 在每年的10月1日清空冰川累积融水
-    if ((dmy->month==10)&&(dmy->day==1)&&(dmy->dayseconds==6*3600)) {
+    // 在每年的9月1日清空冰川累积融水
+    if ((dmy->month==9)&&(dmy->day==1)&&(dmy->dayseconds==6*3600)) {
 
         for (iveg = 0; iveg <= Nveg; iveg++) {
             // 如果是冰川lucc 且 冰川还存在
@@ -258,7 +258,7 @@ void update_acc_glacier_melt(all_vars_struct *all_vars, dmy_struct *dmy, veg_con
                          * 冰川需要做一些操作 以免积雪没有了导致突然融雪
                          * 降温 或者 保证反照率
                         */
-                       if (snow->coverage>0.5)  {
+                       if (snow->coverage>0.2)  {
                             // 
                             glacier->albedo_min = snow->albedo;
                         } else {
