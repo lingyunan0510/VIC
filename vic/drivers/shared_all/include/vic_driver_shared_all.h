@@ -278,6 +278,18 @@ enum
      * Checked in 2024-05-11
      */
     OUT_ACC_GLACIER_MELT,     /**< acculumated glacier melt [mm] */
+    /**
+     * @brief Enumerate Snow Surface Albedo For Each Band [fraction]
+     * Added in 2024-05-28
+     * Checked in 2024-05-28
+     */
+    OUT_SNOW_ALBEDO_BAND,
+    /**
+     * @brief Enumerate Glacier Surface Albedo For Each Band [fraction]
+     * Added in 2024-05-28
+     * Checked in 2024-05-28
+     */
+    OUT_GLACIER_ALBEDO_BAND,
     // Last value of enum - DO NOT ADD ANYTHING BELOW THIS LINE!!
     // used as a loop counter and must be >= the largest value in this enum
     N_OUTVAR_TYPES        /**< used as a loop counter*/

@@ -622,6 +622,28 @@ set_output_met_data_info()
     strcpy(out_metadata[OUT_ACC_GLACIER_MELT].units, "mm");
     strcpy(out_metadata[OUT_ACC_GLACIER_MELT].description, "accumulated glacier melt");
 
+    /**
+     * @brief Make Output Snow Surface Albedo In Each Band
+     * Added in 2024-05-28
+     * Checked in 2024-05-28
+    */
+    strcpy(out_metadata[OUT_SNOW_ALBEDO_BAND].varname, "OUT_SNOW_ALBEDO_BAND");
+    strcpy(out_metadata[OUT_SNOW_ALBEDO_BAND].long_name, "snow surface albedo in each band");
+    strcpy(out_metadata[OUT_SNOW_ALBEDO_BAND].standard_name, "snow_surface_albedo_band");
+    strcpy(out_metadata[OUT_SNOW_ALBEDO_BAND].units, "fraction");
+    strcpy(out_metadata[OUT_SNOW_ALBEDO_BAND].description, "snow surface albedo in each band");
+
+    /**
+     * @brief Make Output Glacier Surface Albedo In Each Band
+     * Added in 2024-05-28
+     * Checked in 2024-05-28
+    */
+    strcpy(out_metadata[OUT_GLACIER_ALBEDO_BAND].varname, "OUT_GLACIER_ALBEDO_BAND");
+    strcpy(out_metadata[OUT_GLACIER_ALBEDO_BAND].long_name, "glacier surface albedo in each band");
+    strcpy(out_metadata[OUT_GLACIER_ALBEDO_BAND].standard_name, "glacier_surface_albedo_band");
+    strcpy(out_metadata[OUT_GLACIER_ALBEDO_BAND].units, "fraction");
+    strcpy(out_metadata[OUT_GLACIER_ALBEDO_BAND].description, "glacier surface albedo in each band");
+
     /* snowfall [mm] */
     strcpy(out_metadata[OUT_SNOWF].varname, "OUT_SNOWF");
     strcpy(out_metadata[OUT_SNOWF].long_name, "snowf");
@@ -1525,4 +1547,10 @@ set_output_met_data_info()
     out_metadata[OUT_SNOW_PACKT_BAND].nelem = options.SNOW_BAND;
     out_metadata[OUT_SNOW_SURFT_BAND].nelem = options.SNOW_BAND;
     out_metadata[OUT_SWE_BAND].nelem = options.SNOW_BAND;
+    /**
+     * @brief 
+     * 
+    */
+    out_metadata[OUT_SNOW_ALBEDO_BAND].nelem = options.SNOW_BAND;
+    out_metadata[OUT_GLACIER_ALBEDO_BAND].nelem = options.SNOW_BAND;
 }

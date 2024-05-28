@@ -306,6 +306,17 @@ get_default_outvar_aggtype(unsigned int varid)
     case OUT_ACC_GLACIER_MELT:
         agg_type = AGG_TYPE_END;
         break;
+    /**
+     * @brief Aggregation Type Should be Last
+     * Added in 2024-05-28
+     * Checked in 2024-05-28
+     */
+    case OUT_SNOW_ALBEDO_BAND:
+        agg_type = AGG_TYPE_END;
+        break;
+    case OUT_GLACIER_ALBEDO_BAND:
+        agg_type = AGG_TYPE_END;
+        break;
     default:
         agg_type = AGG_TYPE_AVG;
     }
