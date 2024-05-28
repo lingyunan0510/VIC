@@ -258,6 +258,13 @@ void update_acc_glacier_melt(all_vars_struct *all_vars, dmy_struct *dmy, veg_con
                          * 冰川需要做一些操作 以免积雪没有了导致突然融雪
                          * 降温 或者 保证反照率
                         */
+                       if (snow->coverage>0.5)  {
+                            // 
+                            glacier->albedo_min = snow->albedo;
+                        } else {
+                            // 
+                            glacier->albedo_min = glacier->albedo_base;
+                        }
                         /**
                          * 累积融化量 + 积雪堆积量
                          * 计算最终物质平衡

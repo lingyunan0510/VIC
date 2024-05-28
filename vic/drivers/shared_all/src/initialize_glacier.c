@@ -23,6 +23,8 @@ void initialize_glacier(glacier_data_struct *glacier) {
     for (i = 0; i < options.SNOW_BAND; i++) {
         glacier[i].coverage = 0.0;
         glacier[i].albedo = 0.0;
+        glacier[i].albedo_min = 0.0;
+        glacier[i].albedo_base = 0.0;
         glacier[i].surf_tmp = 0.0;
         glacier[i].adjust_tmp  = 0.0;
         glacier[i].METTING = false;

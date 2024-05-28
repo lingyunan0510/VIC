@@ -1023,6 +1023,8 @@ typedef struct {
     double qm;          /* Energy Balance for Galcier Melting (W/m^2) */
     double melt;        /* Glacier Melt (m) */
     double acc_melt;    /* Accumulated Glacier Melt (m)*/
+    double albedo_min;  /* Glacier Surface Snow Albedo (no unit) */
+    double albedo_base; /* Glacier Surface Base Albedo (no unit) */
 }  glacier_data_struct;
 
 

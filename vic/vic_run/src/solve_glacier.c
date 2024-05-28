@@ -182,7 +182,7 @@ double solve_glacier(char               overstory,
             ra = param.HUGE_RESIST;
         }
 
-        glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, options.d_star);
+        glacier_albedo = calc_glacier_albedo(glacier->albedo_min, snow_albedo, snow_depth, options.d_star);
 
         Qm = calc_glacier_energy_balance(tsurf, tair, glacier_albedo, rain, 
                                          shortwavein, longwavein, density, 
