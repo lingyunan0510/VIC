@@ -105,7 +105,7 @@ double calc_saturated_vp_over_ice(temp) {
  * @brief 占位函数 计算冰川能量平衡
  * 
  * @param srf_tmp    Glacier Surface Temperature    C
- * @param ...        double air_tmp, double glc_abd, double pcp_rat, double shortwave_in, double longwave_in, double air_den, double air_pre, double vap_pre, double dt, double Ra,
+ * @param ...        
 
  * @return double 
  */
@@ -122,23 +122,6 @@ double calc_glacier_energy_balance(double srf_tmp, ...) {
     return netQ;
 }
 
-// /**
-//  * @brief 计算冰川能量平衡项
-//  * 
-//  * @param srf_tmp        Glacier Surface Temperature    C
-//  * @param air_tmp        Air Temperature                C
-//  * @param glc_abd        Glacier Minimum Albedo         No Scale
-//  * @param pcp_rat        Precipitation Rate             mm
-//  * @param shortwave_in   Income Shortwave               W/m^2
-//  * @param longwave_in    Income Longwave                W/m^2
-//  * @param air_den        Air Density                    kg/m^3
-//  * @param air_pre        Air Pressure                   Pa 
-//  * @param vap_pre        Vapor Pressure                 Pa 
-//  * @param dt 
-//  * @param Ra             Aerodynamics Resistance        No Scale
-//  * @return double 
-//  */
-
 /**
  * @brief 实际函数 计算冰川能量平衡
  * 
@@ -146,179 +129,201 @@ double calc_glacier_energy_balance(double srf_tmp, ...) {
  * @param ap 
  * @return double 
  */
-double glacier_energy_balance(double srf_tmp, va_list ap) {
-    
-    double air_tmp; 
-    double glc_abd; 
-    double pcp_rat; 
-    double shortwave_in; 
-    double longwave_in; 
-    double air_den; 
-    double air_pre; 
-    double vap_pre; 
-    double dt; 
-    double Ra; 
-    // bool is_snow;
+double glacier_energy_balance(double TSurf, va_list ap) {
 
-    air_tmp = (double) va_arg(ap, double);
-    glc_abd = (double) va_arg(ap, double);
-    pcp_rat = (double) va_arg(ap, double);
-    shortwave_in = (double) va_arg(ap, double);
-    longwave_in = (double) va_arg(ap, double);
-    air_den = (double) va_arg(ap, double);
-    air_pre = (double) va_arg(ap, double);
-    vap_pre = (double) va_arg(ap, double);
-    dt = (double) va_arg(ap, double);
+    extern option_struct     options;
+    extern parameters_struct param;
+
+    /* Define Variable Argument List */
+
+    /* General Model Parameters */
+    double  Dt;                     /* Model time step (sec) */
+    double  Ra;                     /* Aerodynamic resistance (s/m) */
+    double *Ra_used;                /* Aerodynamic resistance (s/m) after stability correction */
+
+    /* Vegetation Parameters */
+    double  Z;                      /* Reference height (m) */
+    double *Z0;                     /* surface roughness height (m) */
+
+    /* Atmospheric Forcing Variables */
+    double  AirDens;                /* Density of air (kg/m3) */
+    double  EactAir;                /* Actual vapor pressure of air (Pa) */
+    double  LongSnowIn;             /* Incoming longwave radiation (W/m2) */
+    double  Lv;                     /* Latent heat of vaporization (J/kg3) */
+    double  Press;                  /* Air pressure (Pa) */
+    double  Rain;                   /* Rain fall (m/timestep) */
+    double  NetShortUnder;          /* Net incident shortwave radiation (W/m2) */
+    double  Vpd;                    /* Vapor pressure deficit (Pa) */
+    double  Wind;                   /* Wind speed (m/s) */
+
+    /* Snowpack Variables */
+    double  OldTSurf;               /* Surface temperature during previous time step */
+    double  SnowCoverFract;         /* Fraction of area covered by snow */
+    double  SnowDepth;              /* Depth of snowpack (m) */
+    double  SnowDensity;            /* Density of snowpack (kg/m^3) */
+    double  SurfaceLiquidWater;     /* Liquid water in the surface layer (m) */
+    double  SweSurfaceLayer;        /* Snow water equivalent in surface layer (m) */
+
+    /* Energy Balance Components */
+    double  Tair;                   /* Canopy air / Air temperature (C) */
+    double  TGrnd;                  /* Ground surface temperature (C) */
+
+    double *AdvectedEnergy;         /* Energy advected by precipitation (W/m2) */
+    double *AdvectedSensibleHeat;   /* Sensible heat advected from snow-free area into snow covered area (W/m^2) */
+    double *DeltaColdContent;       /* Change in cold content of surface layer (W/m2) */
+    double *GroundFlux;             /* Ground Heat Flux (W/m2) */
+    double *LatentHeat;             /* Latent heat exchange at surface (W/m2) */
+    double *LatentHeatSub;          /* Latent heat of sublimation exchange at surface (W/m2) */
+    double *NetLongUnder;           /* Net longwave radiation at snowpack surface (W/m^2) */
+    double *RefreezeEnergy;         /* Refreeze energy (W/m2) */
+    double *SensibleHeat;           /* Sensible heat exchange at surface (W/m2) */
+    double *vapor_flux;             /* Mass flux of water vapor to or from the intercepted snow (m/timestep) */
+    double *blowing_flux;           /* Mass flux of water vapor from blowing snow. (m/timestep) */
+    double *surface_flux;           /* Mass flux of water vapor from pack snow. (m/timestep) */
+
+    /* Internal Routine Variables */
+
+    double Density;                 /* Density of water/ice at TMean (kg/m3) */
+    double NetRad;                  /* Net radiation exchange at surface (W/m2) */
+    double RestTerm;                /* Rest term in surface energy balance (W/m2) */
+    double TMean;                   /* Average temperature for time step (C) */
+    double Tmp;                     /* Average temperature for time step (K) */
+    double VaporMassFlux;           /* Mass flux of water vapor to or from the intercepted snow (kg/m2s) */
+    double BlowingMassFlux;         /* Mass flux of water vapor from blowing snow. (kg/m2s) */
+    double SurfaceMassFlux;         /* Mass flux of water vapor from pack snow. (kg/m2s) */
+
+    /* General Model Parameters */
+    Dt = (double) va_arg(ap, double);
     Ra = (double) va_arg(ap, double);
-    // is_snow = (bool) va_arg(ap, bool);
+    Ra_used = (double *) va_arg(ap, double *);
 
-    double netQ;
+    /* Vegetation Parameters */
+    Z = (double) va_arg(ap, double);
+    Z0 = (double *) va_arg(ap, double *);
 
-    double shortwave_net;
-    double longwave_net;
+    /* Atmospheric Forcing Variables */
+    AirDens = (double) va_arg(ap, double);
+    EactAir = (double) va_arg(ap, double);
+    LongSnowIn = (double) va_arg(ap, double);
+    Lv = (double) va_arg(ap, double);
+    Press = (double) va_arg(ap, double);
+    Rain = (double) va_arg(ap, double);
+    NetShortUnder = (double) va_arg(ap, double);
+    Vpd = (double) va_arg(ap, double);
+    Wind = (double) va_arg(ap, double);
 
-    double sensible_heat;
-    double latent_heat;
-    double rain_heat;
-    double ground_heat;
-    
-    // 净短波辐射
-    shortwave_net = (1 - glc_abd) * shortwave_in;
-    // 净长波辐射
-    longwave_net = longwave_in - calc_glacier_outgoing_longwave_radiation(srf_tmp, 1);
-    // 显热通量
-    sensible_heat = calc_glacier_sensible_heat(air_den, air_tmp, srf_tmp, Ra);
-    // 潜热通量
-    latent_heat = calc_glacier_latent_heat(air_den, air_pre, srf_tmp, vap_pre, Ra);
-    // 降水热通量
-    rain_heat = 0.0;
-    // if (is_snow) {
-    //     rain_heat = 0.0;
-    // } else {
-    //     rain_heat = calc_glacier_rain_heat(srf_tmp, air_tmp, pcp_rat, dt);
-    // }
-    // 地热通量
-    ground_heat = 0.0;
-    
-    // 辐射余项为以上变量之和
-    netQ = shortwave_net + longwave_net + sensible_heat + latent_heat + rain_heat + ground_heat;
+    /* Snowpack Variables */
+    OldTSurf = (double) va_arg(ap, double);
+    SnowCoverFract = (double) va_arg(ap, double);
+    SnowDepth = (double) va_arg(ap, double);
+    SnowDensity = (double) va_arg(ap, double);
+    SurfaceLiquidWater = (double) va_arg(ap, double);
+    SweSurfaceLayer = (double) va_arg(ap, double);
 
-    // log_info("%f %f %f %f %f %f %f %f %f %f", 
-    // srf_tmp, 
-    // air_tmp, 
-    // glc_abd,  
-    // pcp_rat, 
-    // shortwave_in, 
-    // longwave_in,
-    // air_den, 
-    // air_pre, 
-    // vap_pre, 
-    // dt,
-    // Ra);
+    /* Energy Balance Components */
+    Tair = (double) va_arg(ap, double);
+    TGrnd = (double) va_arg(ap, double);
 
-    return netQ;
+    AdvectedEnergy = (double *) va_arg(ap, double *);
+    AdvectedSensibleHeat = (double *)va_arg(ap, double *);
+    DeltaColdContent = (double *) va_arg(ap, double *);
+    GroundFlux = (double *) va_arg(ap, double *);
+    LatentHeat = (double *) va_arg(ap, double *);
+    LatentHeatSub = (double *) va_arg(ap, double *);
+    NetLongUnder = (double *) va_arg(ap, double *);
+    RefreezeEnergy = (double *) va_arg(ap, double *);
+    SensibleHeat = (double *) va_arg(ap, double *);
+    vapor_flux = (double *) va_arg(ap, double *);
+    blowing_flux = (double *) va_arg(ap, double *);
+    surface_flux = (double *) va_arg(ap, double *);
+
+    TMean = TSurf;
+    Density = CONST_RHOFW;
+
+    if (Wind > 0.0) {
+        Ra_used[0] = Ra / StabilityCorrection(Z, 0.f, TMean, Tair, Wind, Z0[2]);
+    } else {
+        Ra_used[0] = param.HUGE_RESIST;
+    }
+
+    /* Calculate longwave exchange and net radiation */
+
+    Tmp = TMean + CONST_TKFRZ;
+    (*NetLongUnder) = LongSnowIn - calc_outgoing_longwave(Tmp, param.EMISS_SNOW);
+    NetRad = NetShortUnder + (*NetLongUnder);
+
+    // 显热
+    *SensibleHeat = calc_sensible_heat(AirDens, Tair, TMean, Ra_used[0]);
+
+    // 无雪地区输入显热
+    (*AdvectedSensibleHeat) = 0.;
+
+    /* Convert sublimation terms from m/timestep to kg/m2s */
+    VaporMassFlux = *vapor_flux * Density / Dt;
+    BlowingMassFlux = *blowing_flux * Density / Dt;
+    SurfaceMassFlux = *surface_flux * Density / Dt;
+
+    // 潜热 可能需要一部分修改
+    latent_heat_from_snow(AirDens, EactAir, Lv, Press, Ra_used[0], TMean, Vpd, LatentHeat, LatentHeatSub, 
+                          &VaporMassFlux,
+                          &BlowingMassFlux,
+                          &SurfaceMassFlux);
+
+    /* Convert sublimation terms from kg/m2s to m/timestep */
+    *vapor_flux = VaporMassFlux * Dt / Density;
+    *blowing_flux = BlowingMassFlux * Dt / Density;
+    *surface_flux = SurfaceMassFlux * Dt / Density;
+
+    // 降水热
+    if (TMean == 0.) {
+        *AdvectedEnergy = (CONST_CPFW * CONST_RHOFW * (Tair) * Rain) / Dt;
+    } else {
+        *AdvectedEnergy = 0.;
+    }
+
+    // ColdContent的变化
+    /***
+     * @bug 在每一次调用本代码时都需要 须调用时妥善确定TSurf与OldTSurf
+     */
+    *DeltaColdContent = CONST_VCPICE_WQ * SweSurfaceLayer * (TSurf - OldTSurf) / Dt;
+
+    // 地热 假设不存在
+    *GroundFlux = 0;
+
+    // 计算冰雪一体表面的能量余项
+    // 能量余项 = 净辐射 + 显热 + 潜热 + 升华潜热 + 降水热 + 地热 - Content变化 + 无雪地区输入显热
+    // 其中 地热 无雪地区输入显热 被标记为0. 仅保留形式防止程序崩溃
+    RestTerm = NetRad + *SensibleHeat + *LatentHeat + *LatentHeatSub + *AdvectedEnergy + *GroundFlux - *DeltaColdContent + *AdvectedSensibleHeat;
+
+    // 基于冰雪一体的表面存在的液态水
+    // 计算如果要发生重冻结 需要消耗多少能量
+    // 此时重冻结能量为正
+    *RefreezeEnergy = (SurfaceLiquidWater * CONST_LATICE * Density) / Dt;
+
+    if (TSurf == 0.0 && RestTerm > -(*RefreezeEnergy)) {
+        /***
+         * @bug 
+         * 表面温度为0. 且 能量余项 + 重冻结能量 > 0.
+         * 存在两种情况
+         * 一种是发生重冻结 冻结释放融化潜热能量平衡 重冻结后可能仍存在部分液态水 冰雪表面温度保持0度
+         * 一种是不发生重冻结 能量余项为正 用于融化
+         */
+        // RefreezeEnergy可能为正也可能为负
+        // RestTerm为0.
+        *RefreezeEnergy = -RestTerm;
+        RestTerm = 0.0;
+    } else {
+        /***
+         * @bug 
+         * 表面温度不为0. 或 能量余项 + 重冻结能量 <= 0.
+         * 存在两种情况
+         * 一种是未达到阈值温度 无论能量余项如何为正/负 仅涉及到升温/降温
+         * 一种是即使表面液态水重冻结 总能量余项仍然为负 表面进一步降温 此时表面温度无法维持0度 且所有液态水冻结
+         */
+        // RefreezeEnergy为非负
+        // RestTerm可能为正也可能为负
+        RestTerm += *RefreezeEnergy;
+    }
+
+    return RestTerm;
 }
-
-
-// /**
-//  * @brief 
-//  * 
-//  * @param TSurf             冰川表面温度 CC
-//  * @param NetRad            净辐射通量 为净长波与净短波之和 W/m^2
-//  * @param SensibleHeat      显热通量 W/m^2
-//  * @param LatentHeat        潜热通量 W/m^2
-//  * @param GroundFlux        地热通量 W/m^2
-//  * @param AdvectedEnergy    降水热通量 W/m^2
-//  * @param RefreezeEnergy    在融化情景中 为融化所耗能量 W/m^2
-//  * @return double RestTerm  能量余项 仅在非融化情景中 作为温变所耗能量 W/m^2
-//  */
-// double calc_glacier_energy_balance(double TSurf, 
-//                                     double NetRad, 
-//                                     double SensibleHeat, 
-//                                     double LatentHeat, 
-//                                     double GroundFlux, 
-//                                     double AdvectedEnergy, 
-//                                     double *RefreezeEnergy) {
-//     double RestTerm = 0.0;
-    
-//     *RefreezeEnergy = 0.0;
-//     RestTerm = NetRad + *SensibleHeat + *LatentHeat + *GroundFlux + *AdvectedEnergy;
-//     /**
-//      * @brief 
-//      * 由于需要采用root brent法计算
-//      * 本代码基础结构参照snow/ice_energy_balance
-//      */
-//     // 仅在表面温度为0 且 能量平衡余项为正时 发生融化
-//     if (TSurf == 0.0 && RestTerm > (*RefreezeEnergy)) {
-//         *RefreezeEnergy = -RestTerm;
-//         RestTerm = 0.0;
-//     } else {
-//         // 有两种情况
-//         // 表面温度低于0 即冰川未达到熔化温度 即使有能量输入仅使冰川升温
-//         // 或能量平衡余项为负 即冰川变冷 冰川停止融化或降温
-//         RestTerm += *RefreezeEnergy;
-//     }
-
-//     /**
-//      * @brief 计算之后需要注意的点
-//      * 能量余项RestTerm在输出后作为指示变量
-//      * 取值为0时意为融化 但RefreezeEnergy才真正表示可用能量
-//      * 
-//      * 在非0值情况下 RestTerm可作为冰川升温/降温的可用能量
-//      * 但是与融化过程无关
-//      */
-
-//     return RestTerm;
-// }
-
-// void update_annual_glacier(all_vars_struct *all_vars, soil_con_struct soil_con) {
-
-//     extern option_struct options;
-
-//     // 计数变量
-//     int b;
-//     // 分带数
-//     size_t Nbands;
-//     // 格网面积
-//     double cell_area;
-//     // 冰川LUCC面积占比
-//     double cv;
-//     // 各分带面积
-//     double *band_area;
-//     // 各分带冰川面积
-//     double glacier_area;
-//     double *band_glacier_area;
-
-//     // 初始化变量
-//     Nbands = options.SNOW_BAND;
-//     band_area = calloc(Nbands, sizeof(*(band_area)));
-//     check_alloc_status(band_area, "Memory allocation error.");
-//     band_glacier_area = calloc(Nbands, sizeof(*(band_glacier_area)));
-//     check_alloc_status(band_glacier_area, "Memory allocation error.");
-
-//     // 分带面积
-//     for (b = 0; b < options.SNOW_BAND; b++) {
-//         band_area[b] = cell_area * soil_con.AreaFract[b];
-//     }
-
-//     // 冰川面积
-//     glacier_area = cv * cell_area;
-
-//     // 冰川分带面积
-//     for (b = 0; b < options.SNOW_BAND; b++) {
-//         glacier_data_struct glacier = all_vars->glacier[b];
-//         band_glacier_area[b] = glacier.coverage * cv * cell_area;
-//     }
-
-//     // 取得累计年融化垂直水通量 取得冰川表面积雪垂直水通量
-
-//     // 计算各分带累计融化体积
-
-//     // 计算分带各冰川新面积
-
-//     // 计算各分带冰川新面积占总冰川面积的百分比 更新glacier
-
-//     // 计算新的
-
-//     // 
-// }
