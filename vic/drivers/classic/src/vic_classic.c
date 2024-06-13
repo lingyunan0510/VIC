@@ -237,6 +237,7 @@ main(int   argc,
                  * 为了节约编码成本
                  * 在所有基于dd的冰川方案中
                  * 重新定义surf_tmp为snow_band和glacier_band中的温度差
+                 * 
                 */
                 all_vars.glacier[b].surf_tmp = glacier_con.BandElev[b];
                 all_vars.glacier[b].melt = 0.0;
