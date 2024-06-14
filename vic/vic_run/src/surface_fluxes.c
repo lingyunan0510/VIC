@@ -390,9 +390,9 @@ surface_fluxes(bool                 overstory,
         /* set air temperature and precipitation for this snow band */
         Tair = force->air_temp[hidx] + soil_con->Tfactor[band];
         step_prec = force->prec[hidx] * soil_con->Pfactor[band];
-        if ((veg_class == 17) && (glacier.coverage > 0.0)) {
+        if ((veg_class == 17) && (step_glacier.coverage > 0.0)) {
             // 更新
-            Tair += glacier.surf_tmp;
+            Tair += step_glacier.surf_tmp;
         }
 
         // initialize ground surface temperaure
@@ -934,7 +934,7 @@ surface_fluxes(bool                 overstory,
          * @brief When Vegatation Type Is Glacier
          *        Then Do the Math
          */
-        if ((veg_class == 17) && (glacier->coverage > 0.0)) {
+        if ((veg_class == 17) && (step_glacier.coverage > 0.0)) {
             step_glacier_melt = solve_glacier(overstory, 
                                       BareAlbedo, LongUnderOut,
                                       param.SNOW_MIN_RAIN_TEMP,
@@ -1064,7 +1064,7 @@ surface_fluxes(bool                 overstory,
      * @brief When Vegatation Type Is Glacier
      *        Do the Math and Record
      */
-    if ((veg_class == 17) && (glacier->coverage > 0.0)) {
+    if ((veg_class == 17) && (step_glacier->coverage > 0.0)) {
         (*glacier) = step_glacier;
         glacier->melt = store_glacier_melt;
     }
@@ -1206,7 +1206,7 @@ surface_fluxes(bool                 overstory,
      * @brief 冰川水直接进入RUNOFF
      * 由于冰川最低点在河流的源头 冰川融水直接进入河道
     */
-    if ((veg_class == 17) && (glacier->coverage > 0.0)) {
+    if ((veg_class == 17) && (step_glacier->coverage > 0.0)) {
         cell->runoff += store_glacier_melt;
     }
 
