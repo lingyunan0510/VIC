@@ -1064,7 +1064,7 @@ surface_fluxes(bool                 overstory,
      * @brief When Vegatation Type Is Glacier
      *        Do the Math and Record
      */
-    if ((veg_class == 17) && (step_glacier->coverage > 0.0)) {
+    if ((veg_class == 17) && (step_glacier.coverage > 0.0)) {
         (*glacier) = step_glacier;
         glacier->melt = store_glacier_melt;
     }
@@ -1206,7 +1206,7 @@ surface_fluxes(bool                 overstory,
      * @brief 冰川水直接进入RUNOFF
      * 由于冰川最低点在河流的源头 冰川融水直接进入河道
     */
-    if ((veg_class == 17) && (step_glacier->coverage > 0.0)) {
+    if ((veg_class == 17) && (step_glacier.coverage > 0.0)) {
         cell->runoff += store_glacier_melt;
     }
 
