@@ -70,149 +70,43 @@ double solve_glacier(char               overstory,
 
     // Error Flag
     int                      ErrorFlag;
-    // Day Of The Year
-    int                      day_in_year;
     // Melt Water
-    double                   melt;
-
-    /**
-     * @brief Metrological Forcing
-     */
-    double                   tair;
-    double                   density;
-    double                   longwavein;
-    double                   pressure;
-    double                   shortwavein;
-    double                   vp;
-    double                   rain;
-
-    double                   cos_theta;
-
-    /**
-     * @brief Snow Related Parameters
-     */
-    double                   snow_albedo;
-    double                   snow_depth;
-    double                   snow_tsurf;
-
-    /**
-     * @brief 
-     * 
-     */
-    double                   ra;
-
-    /**
-     * @brief Glacier Related Paramters
-     */
-    double                   tsurf;
-    double                   old_tsurf;
-    double                   tbrent;
     double                   glacier_melt;
-    double                   glacier_albedo;
-
-    /**
-     * @brief Energy Balance Items
-     */
-    double                   longwaverout;
-    double                   NetRadiation;
-    double                   SensibleHeat;
-    double                   LatentHeat;
-    double                   GroundHeat;
-    double                   PcpHeat;
-    double                   Qm;
 
     double bg;
-    double xa = 1.66707295e-03;
+    double xa =  1.66707295e-03;
     double xb = -4.35292948e-02;
-    double xc = 4.07314960e-01;
+    double xc =  4.07314960e-01;
     double xd = -1.59978653e+00;
-    double xe = 2.19952775e+00;
-
-    // log_info("%d", veg_class);
-    // fprintf(LOG_DEST, "veg_class = %d\n", veg_class);
+    double xe =  2.19952775e+00;
 
     if ((veg_class != 17) || (glacier->coverage <= 0.00)) {
         // No Glacier LUCC
         // No Glacier Melt
         glacier_melt = 0.0;
     } else {
-        // Glacier LUCC
-
-        // Date Struct
-        day_in_year = dmy->day_in_year;
-        // fprintf(LOG_DEST, "DOY = %d\n", day_in_year);
-        // fprintf(LOG_DEST, "Band = %d\n", band);
-
-        // Snow 
-        snow_albedo = snow->albedo;
-        snow_depth = snow->depth;
-        snow_tsurf = snow->surf_temp;
-
         // Tair
+        double tair;
         tair = air_temp;
-        // fprintf(LOG_DEST, "air_temp = %f\n", air_temp);
-        // TSurf
-        tsurf = glacier->surf_tmp;
-        old_tsurf = glacier->surf_tmp;
-        // 冰川上的校正温度
-        tair += tsurf;
-
-        // // 短波辐射校正因子赋值
-        cos_theta = force->cos_theta[band];
-
-        // fprintf(LOG_DEST, "glacier_surf_temp = %f\n", tsurf);
-
-        // Air Density (kg/m^3)
-        density = force->density[hidx];
-        // Incoming Longwave Radiation (W/m^2)
-        longwavein = force->longwave[hidx];
-        // Air Pressure (Pa)
-        pressure = force->pressure[hidx];
-        // Incoming Shortwave Radiation (W/m^2)
-        shortwavein = force->shortwave[hidx];
-        /**
-         * @brief 
-         * 短波辐射地形-太阳校正
-         * 当入射太阳与坡面法线夹角超过90°即认为短波没有贡献
-         * 当夹角不超过90°时进行校正
-         */
-        // if (cos_theta <= 0.0) {
-        //     shortwavein = 0.0;
-        // } else {
-        //     shortwavein *= cos_theta;
-        // }
-        // Vapor Pressure (Pa)
-        vp = force->vp[hidx];
-        // 
-        rain = *rainfall;
-
-        glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, 24);
-
         double x;
         if (tair > 0) {
             if (dmy->month >= 8) {
                 x = dmy->month - 7;
             } else {
-                x = dmy->month - 5;
+                x = dmy->month + 5;
             }
             bg = options.DD*((xa*x*x*x*x)+(xb*x*x*x)+(xc*x*x)+(xd*x)+xe);
             glacier_melt = tair*bg;
         } else {
             glacier_melt = 0.0;
         }
-
         if (glacier_melt < 1e-3) {
             glacier_melt = 0.00;
         }
-        // glacier_melt = 0.00;
     }
     /**
-     * @brief Modify Before Submit It
-     * Marked By Yunan Ling In 2022-03-05
+     * @brief Success Log
      */
     ErrorFlag = 0;
-    /**
-     * @brief Transfer Unit
-     */
     return glacier_melt;
 }
