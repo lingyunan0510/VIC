@@ -331,10 +331,17 @@ double solve_glacier(char,
                     double *, double *, double *, double *, double *, double *,
                     double *, int, size_t, unsigned short int, unsigned short int,
                     double, size_t, int, int *, double *, double *, dmy_struct *,
-                    force_data_struct *, snow_data_struct *, glacier_data_struct *);
+                  force_data_struct *, energy_bal_struct *, layer_data_struct *,
+                  snow_data_struct *, soil_con_struct *, veg_var_struct *, glacier_data_struct *);
 
 double calc_glacier_energy_balance(double srf_tmp, ...);
 double glacier_energy_balance(double srf_tmp, va_list);
+int glacier_melt(double, double, double, double, double *, double, double *,
+              double, double, double, double, double, double, double, double,
+              double, double, double, double, double, double *, double *,
+              double *, double *, double *, double *, double *, double *,
+              double *, double *, double *, double *, int, int, int,
+              snow_data_struct *, glacier_data_struct *);
 
 double compute_solar_zen(double, double, double, unsigned short int, unsigned int);
 double compute_solar_azi(double, double, double, unsigned short int, unsigned int);

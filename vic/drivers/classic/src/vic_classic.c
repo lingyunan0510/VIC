@@ -231,14 +231,44 @@ main(int   argc,
             
             int b;
             for (b = 0; b < options.SNOW_BAND; b++) {
-                all_vars.glacier[b].coverage = glacier_con.AreaFract[b];
-                all_vars.glacier[b].albedo = glacier_con.MinAlbedo[b];
-                all_vars.glacier[b].surf_tmp = 0.0;
+                // State variables
+                all_vars.glacier[b].albedo = 0.0;
+                all_vars.glacier[b].coldcontent = 0.0;
+                all_vars.glacier[b].band_coverage = glacier_con.AreaFract[b];
+                all_vars.glacier[b].last_snow = 0;
+                all_vars.glacier[b].MELTING = false;
+                all_vars.glacier[b].snow =  false;
+                // 表层
+                all_vars.glacier[b].surf_temp = 0.;
+                all_vars.glacier[b].surf_water = 0.;
+                all_vars.glacier[b].surf_temp_fbflag = false;
+                all_vars.glacier[b].surf_temp_fbcount = 0;
+                // 深层
+                all_vars.glacier[b].pack_temp = 0.;
+                all_vars.glacier[b].pack_water = 0.;
+                // 冰川
+                all_vars.glacier[b].albedo_min = glacier_con.MinAlbedo[b];
+                all_vars.glacier[b].gwe = 0.;
                 all_vars.glacier[b].adjust_tmp = glacier_con.BandElev[b];
-                all_vars.glacier[b].melt = 0.0;
-                all_vars.glacier[b].qm = 0.0;
-                all_vars.glacier[b].METTING = false;
-                // log_info("glacier_tsurf is %f", all_vars.glacier[b].surf_tmp);
+                // 输出 将被同步到snow中
+                all_vars.glacier[b].store_coverage = 1.0;
+                all_vars.glacier[b].store_swq = 0.;
+                all_vars.glacier[b].stroe_snow = false;
+                // 积雪物理特性
+                all_vars.glacier[b].swq = 0.;
+                all_vars.glacier[b].density = 0.;
+                all_vars.glacier[b].depth = 0.;
+                all_vars.glacier[b].max_snow_depth = 0.;
+                // Fluxes
+                all_vars.glacier[b].blowing_flux = 0.;
+                all_vars.glacier[b].mass_error = 0.;
+                all_vars.glacier[b].melt = 0.;
+                all_vars.glacier[b].snow_melt = 0.;
+                all_vars.glacier[b].glacier_melt = 0.;
+                all_vars.glacier[b].Qnet = 0.;
+                all_vars.glacier[b].surface_flux = 0.;
+                all_vars.glacier[b].transport = 0.;
+                all_vars.glacier[b].vapor_flux = 0.;
             }
 
             /******************************************

@@ -1010,18 +1010,48 @@ typedef struct {
 
 /**
  * @brief Glacier Data Struct
- * 
  */
 typedef struct {
-    // State
-    double coverage;    /* Glacer Area Cover Fraction (%) */
-    double albedo;      /* Glacier Surface Albedo (no unit)*/
-    double surf_tmp;    /* Glacier Surface Temperature (C) */
-    double adjust_tmp;  /* Glacier Surface Adjust Temperature (C) */
-    bool METTING;       /* Flag Indicating Glacier Was Meltting Previously */
-    // Flux
-    double qm;          /* Energy Balance for Galcier Melting (W/m^2) */
-    double melt;        /* Glacier Melt (m) */
+    // State variables
+    double albedo;                  // 表面反照率 %
+    double coldcontent;             // 冰川表雪ColdContent J
+    double coverage;                // 冰雪所占面积比 恒为1.
+    unsigned int last_snow;         // 距离上次降雪的Ts
+    bool MELTING;                   // 上个Ts是否融化
+    bool snow;                      // true=下雪/有积雪 false=无雪
+    // 表层
+    double surf_temp;               // 表层温度 C
+    double surf_water;              // 表层液态水量 m
+    bool surf_temp_fbflag;          // 标识 表面表层温度是否来源于以前的温度
+    unsigned int surf_temp_fbcount; // 标识 表面温度用以前的温度时 迭代求解的次数
+    // 深层
+    double pack_temp;               // 深层温度 C
+    double pack_water;              // 深层液态水量 m
+    // 冰川
+    double albedo_min;              // 冰川最低反照率 %
+    double gwe;                     // 冰川水当量 m
+    double adjust_tmp;              // 冰川表面校正温度 C
+    double band_coverage;           // 冰川分带所占面积百分比 %
+    // 输出 将被同步到snow中
+    double store_coverage;          // 积雪面积 %
+    double store_swq;               // 雪水当量 m
+    bool store_snow;                // 是否有雪出现
+    // 积雪物理特性
+    double albedo_snow;             // 雪反照率 %
+    double swq;                     // 雪水当量 m
+    double density;                 // 雪密度 kg/m^3
+    double depth;                   // 雪深 m
+    double max_snow_depth;          // 最大雪深 m
+    // Fluxes
+    double blowing_flux;            // 风吹雪升华量 m
+    double mass_error;              // 物质平衡误差 m
+    double melt;                    // 总融化量 m
+    double snow_melt;               // 融雪量 m
+    double glacier_melt;            // 融冰量 m
+    double Qnet;                    // 能量平衡余项 W/m^2
+    double surface_flux;            /**< depth of sublimation from blowing snow (m) */
+    double transport;               /**< flux of snow (potentially) transported from veg type */
+    double vapor_flux;              // 雪蒸发 升华 凝结量 m
 }  glacier_data_struct;
 
 
