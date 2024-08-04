@@ -162,7 +162,7 @@ surface_fluxes(bool                 overstory,
     double            store_blowing_flux;
     double            store_surface_flux;
     // Glacier Structure
-    double            store_glacier_melt;
+    double            store_glacier_runoff;
     // veg_var structure
     double            store_canopyevap;
     double            store_throughfall;
@@ -177,11 +177,10 @@ surface_fluxes(bool                 overstory,
     energy_bal_struct soil_energy;    // energy fluxes at soil surface
     veg_var_struct    snow_veg_var;    // veg fluxes/storages in presence of snow
     veg_var_struct    soil_veg_var;    // veg fluxes/storages in soil energy balance
-    snow_data_struct  step_snow;
     /**
-     * @brief 
-     * 
+     * @brief 冰雪
      */
+    snow_data_struct  step_snow;
     glacier_data_struct step_glacier;
     layer_data_struct step_layer[MAX_LAYERS];
 
@@ -190,7 +189,11 @@ surface_fluxes(bool                 overstory,
     energy_bal_struct iter_soil_energy;    // energy fluxes at soil surface
     veg_var_struct    iter_snow_veg_var;    // veg fluxes/storages in presence of snow
     veg_var_struct    iter_soil_veg_var;    // veg fluxes/storages in soil energy balance
+    /**
+     * @brief 冰雪
+     */
     snow_data_struct  iter_snow;
+    glacier_data_struct iter_glacier;
     layer_data_struct iter_layer[MAX_LAYERS];
     double            iter_aero_resist[3];
     double            iter_aero_resist_veg[3];
@@ -220,7 +223,7 @@ surface_fluxes(bool                 overstory,
     double            store_Raut;
     double            store_NPP;
 
-    if (options.CARBON) {
+    if (options.CARBON) { // 不计算碳循环和光合有效辐射
         store_gsLayer = calloc(options.Ncanopy, sizeof(*store_gsLayer));
         check_alloc_status(store_gsLayer, "Memory allocation error.");
     }
@@ -247,16 +250,15 @@ surface_fluxes(bool                 overstory,
     }
     energy->refreeze_energy = 0;
     coverage = snow->coverage;
-    snow_energy = (*energy);
-    soil_energy = (*energy);
+    snow_energy = (*energy);                        // 所有的能量平衡结构体本质都是积雪能量结构体
+    soil_energy = (*energy);                        // 包括了土壤能量 以及 积雪能量
     iter_soil_energy = (*energy);
     snow_veg_var = (*veg_var);
     soil_veg_var = (*veg_var);
-    step_snow = (*snow);
     /**
-     * @brief 
-     * 
+     * @brief 冰雪
      */
+    step_snow = (*snow);
     step_glacier = (*glacier);
     for (lidx = 0; lidx < Nlayers; lidx++) {
         step_layer[lidx] = layer[lidx];
@@ -342,7 +344,7 @@ surface_fluxes(bool                 overstory,
      * Added in 2022-02-22
      * Checked in 2022-02-22
      */
-    store_glacier_melt = 0.0;
+    store_glacier_runoff = 0.0;
     for (lidx = 0; lidx < options.Nlayer; lidx++) {
         store_layerevap[lidx] = 0.;
     }
@@ -389,6 +391,10 @@ surface_fluxes(bool                 overstory,
 
         /* set air temperature and precipitation for this snow band */
         Tair = force->air_temp[hidx] + soil_con->Tfactor[band];
+        // 在冰川LUCC 且此分带内面积大于0 校正冰川表面的气温
+        if ((veg_class == 17)&&(step_glacier.band_coverage > 0.)) {
+            Tair += step_glacier.adjust_tmp;
+        }
         // step_prec = force->prec[hidx] * soil_con->Pfactor[band];
         step_prec = force->prec[hidx];
 
@@ -407,7 +413,7 @@ surface_fluxes(bool                 overstory,
         last_snow_flux = 999;
 
         // compute LAI and absorbed PAR per canopy layer
-        if (options.CARBON && iveg < Nveg) {
+        if (options.CARBON && iveg < Nveg) { // 不计算碳循环和光合有效辐射
             LAIlayer = calloc(options.Ncanopy, sizeof(*LAIlayer));
             check_alloc_status(LAIlayer, "Memory allocation error.");
             faPAR = calloc(options.Ncanopy, sizeof(*faPAR));
@@ -446,7 +452,7 @@ surface_fluxes(bool                 overstory,
             free((char*) faPAR);
         }
 
-        // Compute mass flux of blowing snow
+        // Compute mass flux of blowing snow 不计算风吹雪
         if (!overstory && options.BLOWING && step_snow.swq > 0.) {
             Ls = calc_latent_heat_of_sublimation(step_snow.surf_temp);
             step_snow.blowing_flux = CalcBlowingSnow(step_dt, Tair,
@@ -547,7 +553,11 @@ surface_fluxes(bool                 overstory,
                 iter_soil_energy = soil_energy;
                 iter_snow_veg_var = snow_veg_var;
                 iter_soil_veg_var = soil_veg_var;
+                /**
+                 * @brief 冰雪赋值
+                 */
                 iter_snow = step_snow;
+                iter_glacier = step_glacier;
                 for (lidx = 0; lidx < Nlayers; lidx++) {
                     iter_layer[lidx] = step_layer[lidx];
                 }
@@ -588,33 +598,76 @@ surface_fluxes(bool                 overstory,
 
 
                 /** Solve snow accumulation, ablation and interception **/
-                step_melt = solve_snow(overstory, BareAlbedo, LongUnderOut,
-                                       param.SNOW_MIN_RAIN_TEMP,
-                                       param.SNOW_MAX_SNOW_TEMP,
-                                       new_snow_albedo,
-                                       Tcanopy, Tgrnd, Tair,
-                                       step_prec, snow_grnd_flux,
-                                       &energy->AlbedoUnder, Le,
-                                       &LongUnderIn, &NetLongSnow,
-                                       &NetShortGrnd,
-                                       &NetShortSnow, &ShortUnderIn, &OldTSurf,
-                                       iter_aero_resist, iter_aero_resist_used,
-                                       &coverage, &delta_coverage,
-                                       &delta_snow_heat, displacement,
-                                       gauge_correction, &step_melt_energy,
-                                       &step_out_prec, &step_out_rain,
-                                       &step_out_snow,
-                                       &step_ppt, &rainfall, ref_height,
-                                       roughness, snow_inflow, &snowfall,
-                                       &surf_atten,
-                                       wind, root, UNSTABLE_SNOW,
-                                       Nveg, iveg, band, step_dt, hidx,
-                                       veg_class,
-                                       &UnderStory, CanopLayerBnd, &dryFrac,
-                                       dmy, force, &(iter_snow_energy),
-                                       iter_layer, &(iter_snow),
-                                       soil_con,
-                                       &(iter_snow_veg_var));
+                /**
+                 * @brief 如果是非冰川LUCC 或冰川面积在此分带上不为0 正常计算积雪演进
+                 * 在输出时 由于冰川LUCC对应的是冰川自己的高程分带 
+                 * 在存在冰川且冰川面积为0时 对输出结果没有影响
+                 */
+                if ((veg_class != 17) || (step_glacier.band_coverage <= 0.0)) { 
+                    step_melt = solve_snow(overstory, BareAlbedo, LongUnderOut,
+                                        param.SNOW_MIN_RAIN_TEMP,
+                                        param.SNOW_MAX_SNOW_TEMP,
+                                        new_snow_albedo,
+                                        Tcanopy, Tgrnd, Tair,
+                                        step_prec, snow_grnd_flux,
+                                        &energy->AlbedoUnder, Le,
+                                        &LongUnderIn, &NetLongSnow,
+                                        &NetShortGrnd,
+                                        &NetShortSnow, &ShortUnderIn, &OldTSurf,
+                                        iter_aero_resist, iter_aero_resist_used,
+                                        &coverage, &delta_coverage,
+                                        &delta_snow_heat, displacement,
+                                        gauge_correction, &step_melt_energy,
+                                        &step_out_prec, &step_out_rain,
+                                        &step_out_snow,
+                                        &step_ppt, &rainfall, ref_height,
+                                        roughness, snow_inflow, &snowfall,
+                                        &surf_atten,
+                                        wind, root, UNSTABLE_SNOW,
+                                        Nveg, iveg, band, step_dt, hidx,
+                                        veg_class,
+                                        &UnderStory, CanopLayerBnd, &dryFrac,
+                                        dmy, force, &(iter_snow_energy),
+                                        iter_layer, &(iter_snow),
+                                        soil_con,
+                                        &(iter_snow_veg_var));
+                } else {
+                    /**
+                     * @brief 如果是冰川LUCC 且 冰川面积在此分带上为面积不为0 冰雪一体计算冰雪演进
+                     * 为了保证程序不崩溃 需要对slove_snow中涉及的所有指针变量\对象进行妥善赋值
+                     * 赋值原则如下 
+                     * 水输入通量和solve_snow相同
+                     * 能量通量参考积雪持续存在的情景
+                     * 水输出通量以solve_glacier为准
+                     */
+                    step_melt = solve_glacier(overstory, BareAlbedo, LongUnderOut,
+                                        param.SNOW_MIN_RAIN_TEMP,
+                                        param.SNOW_MAX_SNOW_TEMP,
+                                        new_snow_albedo,
+                                        Tcanopy, Tgrnd, Tair,
+                                        step_prec, snow_grnd_flux,
+                                        &energy->AlbedoUnder, Le,
+                                        &LongUnderIn, &NetLongSnow,
+                                        &NetShortGrnd,
+                                        &NetShortSnow, &ShortUnderIn, &OldTSurf,
+                                        iter_aero_resist, iter_aero_resist_used,
+                                        &coverage, &delta_coverage,
+                                        &delta_snow_heat, displacement,
+                                        gauge_correction, &step_melt_energy,
+                                        &step_out_prec, &step_out_rain,
+                                        &step_out_snow,
+                                        &step_ppt, &rainfall, ref_height,
+                                        roughness, snow_inflow, &snowfall,
+                                        &surf_atten,
+                                        wind, root, UNSTABLE_SNOW,
+                                        Nveg, iveg, band, step_dt, hidx,
+                                        veg_class,
+                                        &UnderStory, CanopLayerBnd, &dryFrac,
+                                        dmy, force, &(iter_snow_energy),
+                                        iter_layer, &(iter_snow),
+                                        soil_con,
+                                        &(iter_snow_veg_var), &(iter_glacier));
+                }
 
                 if (step_melt == ERROR) {
                     return (ERROR);
@@ -625,14 +678,21 @@ surface_fluxes(bool                 overstory,
                 /* Check that the snow surface temperature was estimated, if not
                    prepare to include thin snowpack in the estimation of the
                    snow-free surface energy balance */
-                if ((iter_snow.surf_temp == 999 || UNSTABLE_SNOW) &&
-                    iter_snow.swq > 0) {
+                if ((iter_snow.surf_temp == 999 || UNSTABLE_SNOW) && iter_snow.swq > 0) {
                     INCLUDE_SNOW = UnderStory + 1;
                     iter_soil_energy.advection = iter_snow_energy.advection;
                     iter_snow.surf_temp = step_snow.surf_temp;
                     step_melt_energy = 0;
+                } else {
+                    INCLUDE_SNOW = false;
                 }
-                else {
+
+                if ((veg_class == 17) && (step_glacier.band_coverage > 0.0)) {
+                    /**
+                     * @brief 在 存在积雪 且 积雪不稳定/求解失败 的情况下 将积雪能量平衡纳入地表能量平衡中
+                     * 其他情况中 如积雪正确求解之后 INCLUDE_SNOW标识为False
+                     * 在冰川LUCC中 积雪求解情况应该是正常求解 则INCLUDE_SNOW标识应该为False
+                     */
                     INCLUDE_SNOW = false;
                 }
 
@@ -644,7 +704,10 @@ surface_fluxes(bool                 overstory,
                 /**************************************************
                    Solve Energy Balance Components at Soil Surface
                 **************************************************/
-
+                /**
+                 * @brief 在
+                 * 
+                 */
                 Tsurf = calc_surf_energy_bal((*Le), LongUnderIn, NetLongSnow,
                                              NetShortGrnd, NetShortSnow,
                                              OldTSurf,
@@ -677,9 +740,13 @@ surface_fluxes(bool                 overstory,
                     return (ERROR);
                 }
 
-                if (INCLUDE_SNOW) {
-                    /* store melt from thin snowpack */
-                    step_ppt += step_melt;
+                if ((veg_class != 17) || (step_glacier.band_coverage <= 0.0)) { // 非冰川LUCC
+                    if (INCLUDE_SNOW) {                                         // 有雪的情况下
+                        /* store melt from thin snowpack */
+                        step_ppt += step_melt;                                  // 取出积雪计算的PPT赋值
+                    }
+                } else {                                                        // 冰川LUCC
+                    step_ppt += 0.0;                                            // 降雨 融雪和融冰都属于冰川径流 直接汇入河道而不考虑下渗
                 }
 
                 /*****************************************
@@ -787,7 +854,7 @@ surface_fluxes(bool                 overstory,
         /**************************************
            Compute GPP, Raut, and NPP
         **************************************/
-        if (options.CARBON) {
+        if (options.CARBON) { // 不计算碳循环和光合有效辐射
             if (iveg < Nveg && !step_snow.snow && dryFrac > 0) {
                 canopy_assimilation(vic_run_veg_lib[veg_class].Ctype,
                                     vic_run_veg_lib[veg_class].MaxCarboxRate,
@@ -852,7 +919,7 @@ surface_fluxes(bool                 overstory,
 
         compute_pot_evap(gp->model_steps_per_day,
                          vic_run_veg_lib[veg_class].rmin,
-                         iter_soil_veg_var.albedo, force->shortwave[hidx]*force->cos_theta[band],
+                         iter_soil_veg_var.albedo, force->shortwave[hidx], // 删除了忘记删除的短波辐射校正
                          iter_soil_energy.NetLongAtmos,
                          vic_run_veg_lib[veg_class].RGL, Tair, VPDcanopy,
                          iter_soil_veg_var.LAI, soil_con->elevation,
@@ -871,6 +938,7 @@ surface_fluxes(bool                 overstory,
         snow_veg_var = iter_snow_veg_var;
         soil_veg_var = iter_soil_veg_var;
         step_snow = iter_snow;
+        step_glacier = iter_glacier;
         for (lidx = 0; lidx < options.Nlayer; lidx++) {
             step_layer[lidx] = iter_layer[lidx];
         }
@@ -922,46 +990,42 @@ surface_fluxes(bool                 overstory,
         if (iveg != Nveg) {
             store_canopy_vapor_flux += step_snow.canopy_vapor_flux;
         }
-        /**
-         * @brief 
-         * 
-         */
-        store_melt += step_melt;
-        /**
-         * @brief When Vegatation Type Is Glacier
-         *        Then Do the Math
-         */
-        if (veg_class == 17) {
-            step_glacier_melt = solve_glacier(overstory, 
-                                      BareAlbedo, LongUnderOut,
-                                      param.SNOW_MIN_RAIN_TEMP,
-                                      param.SNOW_MAX_SNOW_TEMP,
-                                      new_snow_albedo,
-                                      Tcanopy, Tgrnd, Tair,
-                                      step_prec, snow_grnd_flux, 
-                                      &energy->AlbedoUnder, Le,
-                                      &LongUnderIn, &NetLongSnow,
-                                      &NetShortGrnd,
-                                      &NetShortSnow, &ShortUnderIn, &OldTSurf,
-                                      iter_aero_resist, iter_aero_resist_used,
-                                      &coverage, &delta_coverage,
-                                      &delta_snow_heat, displacement,
-                                      gauge_correction, &step_melt_energy,
-                                      &step_out_prec, &step_out_rain,
-                                      &step_out_snow,
-                                      &step_ppt, &rainfall, ref_height,
-                                      roughness, snow_inflow, &snowfall,
-                                      &surf_atten,
-                                      wind, root, UNSTABLE_SNOW,
-                                      Nveg, iveg, band, step_dt, 0,
-                                      veg_class,
-                                      &UnderStory, CanopLayerBnd, &dryFrac,
-                                      dmy, force, 
-                                      &(step_snow), &(step_glacier));
 
-            // Dummy Variable just Corresponding to Snow Melt
-            store_glacier_melt += step_glacier_melt;
-        }
+        store_melt += step_melt;
+        // /**
+        //  * @brief 由于冰雪一体演进 不再单独计算冰川融化 但是此处保留代码标识
+        //  */
+        // if (veg_class == 17) {
+        //     step_glacier_melt = solve_glacier(overstory, 
+        //                               BareAlbedo, LongUnderOut,
+        //                               param.SNOW_MIN_RAIN_TEMP,
+        //                               param.SNOW_MAX_SNOW_TEMP,
+        //                               new_snow_albedo,
+        //                               Tcanopy, Tgrnd, Tair,
+        //                               step_prec, snow_grnd_flux, 
+        //                               &energy->AlbedoUnder, Le,
+        //                               &LongUnderIn, &NetLongSnow,
+        //                               &NetShortGrnd,
+        //                               &NetShortSnow, &ShortUnderIn, &OldTSurf,
+        //                               iter_aero_resist, iter_aero_resist_used,
+        //                               &coverage, &delta_coverage,
+        //                               &delta_snow_heat, displacement,
+        //                               gauge_correction, &step_melt_energy,
+        //                               &step_out_prec, &step_out_rain,
+        //                               &step_out_snow,
+        //                               &step_ppt, &rainfall, ref_height,
+        //                               roughness, snow_inflow, &snowfall,
+        //                               &surf_atten,
+        //                               wind, root, UNSTABLE_SNOW,
+        //                               Nveg, iveg, band, step_dt, 0,
+        //                               veg_class,
+        //                               &UnderStory, CanopLayerBnd, &dryFrac,
+        //                               dmy, force, 
+        //                               &(step_snow), &(step_glacier));
+
+        //     // Dummy Variable just Corresponding to Snow Melt
+        //     store_glacier_melt += step_glacier_melt;
+        // }
 
         store_vapor_flux += step_snow.vapor_flux;
         store_surface_flux += step_snow.surface_flux;
@@ -1048,23 +1112,40 @@ surface_fluxes(bool                 overstory,
        Store snow variables for sub-model time steps
     ************************************************/
 
+    /**
+     * @brief 冰雪
+     */
     (*snow) = step_snow;
+    (*glacier) = step_glacier;
     snow->vapor_flux = store_vapor_flux;
     snow->blowing_flux = store_blowing_flux;
     snow->surface_flux = store_surface_flux;
     snow->canopy_vapor_flux = store_canopy_vapor_flux;
     (*Melt) = store_melt;
-    snow->melt = store_melt;
-    /**
-     * @brief When Vegatation Type Is Glacier
-     *        Do the Math and Record
-     */
-    if (veg_class == 17) {
-        (*glacier) = step_glacier;
-        glacier->melt = store_glacier_melt;
+    if ((veg_class != 17) || (step_glacier.band_coverage <= 0.0)) { 
+        /**
+         * @brief 如果不是冰川LUCC 或 冰川面积在此分带上为面积为0 
+         * 所有融化全部赋给积雪
+         */
+        snow->melt = store_melt;
+    } else {
+        /**
+         * @brief 如果是冰川LUCC 且 冰川面积在此分带上为面积不为0 
+         * 默认情况
+         */
+        snow->melt = step_glacier.snow_melt;
+        glacier->melt = store_melt;
+        glacier->snow_melt = step_glacier.snow_melt;
+        glacier->glacier_melt = step_glacier.glacier_melt;
     }
+    /**
+     * @brief 由于冰雪一体演进 暂时取消冰川对象的传递 此处保留代码标识
+     */
+    // if (veg_class == 17) {
+    //     (*glacier) = step_glacier;
+    //     glacier->melt = store_glacier_runoff;
+    // }
 
-    // ppt = store_ppt + store_glacier_melt*MM_PER_M;
     ppt = store_ppt;
 
     /******************************************************
@@ -1161,7 +1242,7 @@ surface_fluxes(bool                 overstory,
        Store carbon cycle variable sums for sub-model time steps
     **********************************************************/
 
-    if (options.CARBON && iveg != Nveg) {
+    if (options.CARBON && iveg != Nveg) { // 不计算碳循环和光合有效辐射
         veg_var->rc = 1 / store_gc / (double) N_steps;
         for (cidx = 0; cidx < options.Ncanopy; cidx++) {
             veg_var->rsLayer[cidx] = 1 / store_gsLayer[cidx] / (double) N_steps;
@@ -1197,8 +1278,10 @@ surface_fluxes(bool                 overstory,
 
     ErrorFlag = runoff(cell, energy, soil_con, ppt, soil_con->frost_fract,
                        options.Nnode);
-    if (veg_class == 17) {
-        cell->runoff += store_glacier_melt*MM_PER_M;
+
+    if ((veg_class == 17) && (step_glacier.band_coverage > 0.0)) { // 所有的冰川径流都计入模型格网的表面径流
+        cell->runoff += (*Melt)*MM_PER_M;
     }
+
     return(ErrorFlag);
 }

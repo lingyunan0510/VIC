@@ -61,243 +61,262 @@ double solve_glacier(char               overstory,
                      double            *dryFrac,
                      dmy_struct        *dmy,
                      force_data_struct *force,
+                     energy_bal_struct *energy,
+                     layer_data_struct *layer,
                      snow_data_struct  *snow,
+                     soil_con_struct   *soil_con,
+                     veg_var_struct    *veg_var,
                      glacier_data_struct *glacier) {
 
     // 
     extern option_struct options;
     extern parameters_struct param;
 
-    // Error Flag
-    int                      ErrorFlag;
-    // Day Of The Year
-    int                      day_in_year;
-    // Melt Water
-    double                   melt;
+    // 从Solve Snow中借用的代码块 定义中间变量
+    int                         ErrorFlag;
+    double                      ShortOverIn;
+    double                      melt;               // 输出的冰川径流 
+    double                      old_depth;
+    double                      old_swq;
+    double                      rainonly;
+    double                      tmp_grnd_flux;
+    double                      store_snowfall;
+    int                         month;
+    int                         day_in_year;
+    double                      density;
+    double                      longwave;
+    double                      pressure;
+    double                      shortwave;
+    double                      vp;
+    double                      vpd;
 
-    /**
-     * @brief Metrological Forcing
-     */
-    double                   tair;
-    double                   density;
-    double                   longwavein;
-    double                   pressure;
-    double                   shortwavein;
-    double                   vp;
-    double                   rain;
+    // 能量平衡本地变量 用于取值
+    double                      glacier_albedo;     // 冰川表面反照率
+    double                      glacier_snow_albedo;// 冰川表面的积雪反照率
 
-    double                   cos_theta;
+    double                      tsurf;              // 冰雪表面温度
+    double                      old_tsurf;          // 同上 
+    double                      tbrent;             // 同上
+    double                      ra;                 // 表面粗糙度
 
-    /**
-     * @brief Snow Related Parameters
-     */
-    double                   snow_albedo;
-    double                   snow_depth;
-    double                   snow_tsurf;
+    double                      ShortwaveIn;        // 入射短波
+    double                      ShortwaveNet;       // 净短波
+    double                      LongwaveIn;         // 入射长波
+    double                      LongwaveOut;        // 出射长波
+    double                      LongwaveNet;        // 净长波
+    double                      SensibleHeat;       // 显热
+    double                      LatentHeat;         // 潜热
+    double                      PcpHeat;            // 降水热
+    double                      GroundHeat;         // 地热
 
-    /**
-     * @brief 
-     * 
-     */
-    double                   ra;
+    // 冰雪一体演进冰川表面物质-能量平衡
+    // 在冰川LUCC中 solve_glacier取代了solve_snow
+    // 需要按照solve_snow的样式定义物质变量和能量变量
 
-    /**
-     * @brief Glacier Related Paramters
-     */
-    double                   tsurf;
-    double                   old_tsurf;
-    double                   tbrent;
-    double                   glacier_melt;
-    double                   glacier_albedo;
+    // 时间
+    month = dmy->month;
+    day_in_year = dmy->day_in_year;
+    // 驱动数据
+    density = force->density[hidx];
+    longwave = force->longwave[hidx];
+    pressure = force->pressure[hidx];
+    shortwave = force->shortwave[hidx];
+    vp = force->vp[hidx];
+    vpd = force->vpd[hidx];
 
-    /**
-     * @brief Energy Balance Items
-     */
-    double                   longwaverout;
-    double                   NetRadiation;
-    double                   SensibleHeat;
-    double                   LatentHeat;
-    double                   GroundHeat;
-    double                   PcpHeat;
-    double                   Qm;
-    double                   new_Qm;
+    melt = 0.; // 融化/出流量
+    *ppt = 0.; // 下渗量 恒为0.
 
-    // log_info("%d", veg_class);
-    // fprintf(LOG_DEST, "veg_class = %d\n", veg_class);
+    // 融化能量
+    (*melt_energy) = 0.;
 
-    if ((veg_class != 17) || (glacier->coverage <= 0.00)) {
-        // No Glacier LUCC
-        // No Glacier Melt
-        glacier_melt = 0.0;
-    } else {
-        // Glacier LUCC
+    // 积雪热能delta
+    (*delta_snow_heat) = 0.;
 
-        // Date Struct
-        day_in_year = dmy->day_in_year;
-        // fprintf(LOG_DEST, "DOY = %d\n", day_in_year);
-        // fprintf(LOG_DEST, "Band = %d\n", band);
-
-        // Snow 
-        snow_albedo = snow->albedo;
-        snow_depth = snow->depth;
-        snow_tsurf = snow->surf_temp;
-
-        // Tair
-        tair = air_temp + glacier->adjust_tmp; // 校正冰川表面温度
-        // fprintf(LOG_DEST, "air_temp = %f\n", tair);
-        // fprintf(LOG_DEST, "bnd_temp = %f\n", air_temp);
-        // TSurf
-        tsurf = glacier->surf_tmp;
-        old_tsurf = glacier->surf_tmp;
-
-        // // 短波辐射校正因子赋值
-        cos_theta = force->cos_theta[band];
-
-        // fprintf(LOG_DEST, "glacier_surf_temp = %f\n", tsurf);
-
-        // Air Density (kg/m^3)
-        density = force->density[hidx];
-        // Incoming Longwave Radiation (W/m^2)
-        longwavein = force->longwave[hidx];
-        // Air Pressure (Pa)
-        pressure = force->pressure[hidx];
-        // Incoming Shortwave Radiation (W/m^2)
-        /**
-         * @brief 
-         * 
-         */
-        shortwavein = force->shortwave[hidx];
-        // shortwavein *= cos_theta;
-        // if (shortwavein <= 0.0) {
-        //     shortwavein = 0.0;
-        // }
-        // Vapor Pressure (Pa)
-        vp = force->vp[hidx];
-        // 
-        rain = *rainfall;
-
-        if (wind[*UnderStory] > 0.0) {
-            ra = aero_resist[*UnderStory] / StabilityCorrection(ref_height[*UnderStory], 0.f, tsurf, Tcanopy, wind[*UnderStory], roughness[2]);
-        } else {
-            ra = param.HUGE_RESIST;
-        }
-
-        glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, options.d_star);
-
-        Qm = calc_glacier_energy_balance(tsurf, tair, glacier_albedo, rain, 
-                                         shortwavein, longwavein, density, 
-                                         pressure, vp, dt, ra);
-
-        if ((tsurf >= 0.0) && (Qm >= 0.0)) {
-            /**
-             * 当表面温度为0 且 能量平衡余项为正时
-             * 发生融化
-             */
-            glacier->METTING = true;
-            glacier->surf_tmp = 0.0;
-            glacier_melt = Qm / (CONST_LATICE * CONST_RHOFW) * dt;
-            // fprintf(LOG_DEST, "glc_mlt = %f\n", glacier_melt);
-        } else {
-            /**
-             * 否则 仅涉及温度变化
-             * 采用Brent Root方法计算温度变化
-             */
-            glacier->METTING = false;
-            tbrent = root_brent((double) (tsurf - param.SNOW_DT), 
-                                (double) (tsurf + param.SNOW_DT), 
-                                glacier_energy_balance, 
-                                tair, glacier_albedo, rain, shortwavein, 
-                                longwavein, density, pressure, vp, dt, ra);
-            if (tbrent <= -998) { // 计算错误
-                glacier->surf_tmp = old_tsurf;
-                glacier->METTING = false;
-                glacier_melt = 0.0;
-            } else if (tbrent > 0.0) { // 冰川表面温度非正值
-                glacier->surf_tmp = 0.0;
-                glacier->METTING = false;
-                glacier_melt = 0.0;
-            } else {
-                glacier->surf_tmp = tbrent;
-                glacier->METTING = false;
-                glacier_melt = 0.0;
-            }
-        }
-        // if (band == 0) {
-        //     fprintf(LOG_DEST, "after_gsf = %f\n", glacier->surf_tmp);
-        // }
-
-        // // /**
-        // //  * @brief May Be Modified Later
-        // //  * Marked By Yunan Ling in 2022-03-01
-        // //  */
-        // // if (snow->depth > 0.0) {
-        // //     tsurf = snow->surf_temp;
-        // // } else {
-        // //     if (Tgrnd <= 0.0) {
-        // //         tsurf = Tgrnd;
-        // //     } else {
-        // //         tsurf = 0.0;
-        // //     }
-        // // }
-        // // // tsurf = 0.0;
-
-
-
-        // // Calculate Glacier Albedo
-        // glacier_albedo = calc_glacier_albedo(tair, snow_albedo, snow_depth);
-        // // Calculate Glacier Outgoing Longwave
-        // longwaverout = calc_glacier_outgoing_longwave_radiation(tsurf, 1.0);
-        // // Calculate Glacier Net Shortwave
-        // NetRadiation = shortwavein * (1 - glacier_albedo) + longwavein - longwaverout;
-        // // Calculate Glacier Sensible Heat
-        // SensibleHeat = calc_glacier_sensible_heat(density, tair, tsurf, ra);
-        // // Calculate Glacier Latent Heat
-        // LatentHeat = calc_glacier_latent_heat(density, pressure, tsurf, vp, ra);
-        // // Calculate Glacier Ground Heat
-        // GroundHeat = 0.0;
-        // // Calculate Glacier Precipitation Heat 
-        // PcpHeat = calc_glacier_rain_heat(tsurf, tair, (*snowfall+*rainfall), dt);
-
-        // // Q net
-        // Qm = NetRadiation - SensibleHeat - LatentHeat + GroundHeat + PcpHeat;
-
-        // if ((Qm>0)&(tsurf==0.0)) {
-            
-        // } else {
-        //     // 
-        //     glacier_melt = 0.0;
-        // }
-
-        // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f", 
-        //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, dt,
-        //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
-        //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
-        
-        // log_info("%d %d %d %d %d %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", 
-        //     band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, 
-        //     tair, density, pressure, vp, shortwavein, longwavein, longwaverout, 
-        //     snow_depth, snow_albedo, glacier_albedo, ra, tsurf, 
-        //     NetRadiation, SensibleHeat, LatentHeat, Qm, glacier_melt*MM_PER_M);
-
-        // log_info("%d %d %d %d %d %f", 
-        // band, dmy->year, dmy->month, dmy->day, dmy->dayseconds, glacier_melt);
-
-        /**
-         * @brief 如果融水太少 就相当于没有融水
-         * Marked By Yunan Ling In 2022-03-05
-         */
-        if (glacier_melt < 1e-5) {
-            glacier_melt = 0.00;
-        }
-        // glacier_melt = 0.00;
+    // 雨雪分离
+    rainonly = calc_rainonly(air_temp, prec, MAX_SNOW_TEMP, MIN_RAIN_TEMP);
+    *snowfall = gauge_correction[SNOW] * (prec - rainonly);
+    *rainfall = gauge_correction[RAIN] * rainonly;
+    if (*snowfall < 1e-5) {
+        *snowfall = 0.;
     }
-    /**
-     * @brief Modify Before Submit It
-     * Marked By Yunan Ling In 2022-03-05
+    (*out_prec) = *snowfall + *rainfall;
+    (*out_rain) = *rainfall;
+    (*out_snow) = *snowfall;
+    store_snowfall = *snowfall;
+
+    // 潜热
+    (*Le) = calc_latent_heat_of_vaporization(air_temp);
+
+    // 垂直层标号
+    *UnderStory = 2;
+    // 表面覆盖率
+    (*surf_atten) = 1.;
+    // 输入短波 指针赋值
+    (*ShortUnderIn) = shortwave;
+    // 输入长波 指针赋值
+    (*LongUnderIn) = longwave;
+    // 积雪过程标识 
+    glacier->snow = true; // 恒为正 表明有雪/降雪 即涉及积雪过程
+    // 冰雪面积 恒为1.
+    *coverage = glacier->coverage;
+    // 冠层净长波
+    energy->NetLongOver = 0;
+    // 冠层入射长波
+    energy->LongOverIn = 0;
+    // 地表净短波 
+    (*NetShortGrnd) = 0.;
+    // 输入水通量 
+    (*snow_inflow) += *rainfall + *snowfall;
+    // 旧雪水当量
+    old_swq = glacier->swq;
+
+    if (glacier->swq > 0 && store_snowfall == 0) {
+        // 无降雪 但是有积雪
+        // VIC积雪反照率演算
+        glacier->last_snow++;
+        glacier_snow_albedo = snow_albedo(*snowfall, new_snow_albedo, glacier->swq, glacier->albedo_snow, glacier->coldcontent, dt, glacier->last_snow, glacier->MELTING);
+    } else {
+        // 新雪
+        glacier->last_snow = 0;
+        glacier_snow_albedo = new_snow_albedo;
+    }
+    /***
+     * @attention 冰川表面反照率演算
      */
-    ErrorFlag = 0;
-    /**
-     * @brief Transfer Unit
+    glacier_albedo = calc_glacier_albedo(glacier->albedo_min, glacier_snow_albedo, glacier->swq, options.d_star);
+    (*AlbedoUnder) = glacier_albedo
+    // 表面净短波
+    (*NetShortSnow) = (1.0 - *AlbedoUnder) * (*ShortUnderIn);
+    // 计算
+    ErrorFlag = glacier_melt((*Le), (*NetShortSnow), Tcanopy, Tgrnd, roughness, aero_resist[*UnderStory], 
+                            aero_resist_used, air_temp, *coverage, dt, density, snow_grnd_flux, *LongUnderIn, 
+                            pressure, *rainfall, *snowfall, vp, vpd, wind[*UnderStory], ref_height[*UnderStory], 
+                            NetLongSnow, Torg_snow, &melt, &energy->error, &energy->advected_sensible, 
+                            &energy->advection, &energy->deltaCC, &tmp_grnd_flux, &energy->latent, &energy->latent_sub, 
+                            &energy->refreeze_energy, &energy->sensible, INCLUDE_SNOW, iveg, band, snow, glacier);
+    // 演算失败 仅出现在积雪过程中 表明薄雪无法被单独作为一层进行能量平衡演算
+    // 冰川过程中大概不会出现 大概不会 嗯
+    if (ErrorFlag == ERROR) {
+        return (ERROR);
+    }
+
+    // 表面反照率
+    energy->AlbedoUnder = *AlbedoUnder;
+
+    /***
+     * @attention 
+     * 在有雪的情况下 更新积雪属性
+     * 在无雪的情况下 积雪属性初始化
+     * MELTING仅标识积雪是否融化 当不存在积雪的情况下 此标识失效
+     * coverage恒为1.0 以屏蔽地表能量平衡
      */
-    return glacier_melt;
+    if (glacier->swq > 0.) {
+        // 雪密度
+        if (glacier->surf_temp <= 0) {// 演进积雪密度
+            glacier->density = snow_density(snow, *snowfall, old_swq, air_temp, dt);
+        } else if (glacier->last_snow == 0) { // 新雪密度
+            glacier->density = new_snow_density(air_temp);
+        }
+        // 更新雪深
+        old_depth = glacier->depth;
+        glacier->depth = CONST_RHOFW * glacier->swq / glacier->density;
+        // 融化标识
+        if (glacier->coldcontent >= 0 && ((soil_con->lat >= 0 && (day_in_year > 60 && day_in_year < 273)) || (soil_con->lat < 0 && (day_in_year < 60 || day_in_year > 273)))) {
+            glacier->MELTING = true;
+        } else if (glacier->MELTING && *snowfall > param.SNOW_TRACESNOW) {
+            glacier->MELTING = false;
+        }
+    } else {
+        // 重置反照率 雪深 雪密度
+        glacier->albedo_snow = new_snow_albedo;
+        glacier->density = 0.;
+        glacier->depth = 0.;
+        glacier->swq = 0.;
+        // 清空表层/底层状态
+        glacier->surf_water = 0;
+        glacier->pack_water = 0;
+        glacier->surf_temp = 0;
+        glacier->pack_temp = 0;
+        // 
+        glacier->store_coverage = 1.0;
+        glacier->store_swq = 0.0;
+        glacier->store_snow = true;
+        glacier->MELTING = false;
+    }
+
+    /***
+     * @attention 无论积雪是否存在
+     * 冰川都会阻隔向下的能量余项
+     * 能量总是用于融雪/融冰 不考虑能量的向下/向外传递
+     * 不用进行delta_coverage能量平衡校正
+     */
+    (*delta_coverage) = 0.;
+
+    /***
+     * @brief 当无雪的时候 重置积雪参数
+     */
+    if (glacier->swq == 0) {
+
+
+        glacier->density = 0.;
+        glacier->depth = 0.;
+        // 
+        glacier->surf_water = 0;
+        glacier->pack_water = 0;
+        glacier->surf_temp = 0;
+        glacier->pack_temp = 0;
+        // 
+        snow->snow_distrib_slope = 0;
+        snow->store_snow = true;
+        snow->MELTING = false;
+    }
+
+    // 为了防止程序不正常输出 将glacier对象的属性拷贝至snow对象中
+    // State
+    snow->albedo = glacier->albedo;
+    snow->coldcontent = glacier->coldcontent;
+    snow->coverage = glacier->coverage;
+    snow->density = glacier->density;
+    snow->last_snow = glacier->last_snow;
+    snow->MELTING = glacier->METING;
+    snow->snow = glacier->snow;
+    snow->depth = glacier->depth;
+    // 表层
+    snow->surf_temp = glacier->surf_temp;
+    snow->surf_water = glacier->surf_water;
+    snow->surf_temp_fbcount = glacier->surf_temp_fbcount;
+    snow->surf_temp_fbflag = glacier->surf_temp_fbflag;
+    // 深层
+    snow->pack_temp = glacier->pack_temp;
+    snow->pack_water = glacier->pack_water;
+    // 输出 将被同步到snow中
+    snow->store_coverage = glacier->store_coverage;
+    snow->store_swq = glacier->store_swq;
+    snow->store_snow = glacier->stroe_snow;
+    // 积雪物理特性
+    snow->swq = glacier->swq;
+    snow->density = glacier->density;
+    snow->depth = glacier->depth;
+    snow->max_snow_depth = glacier->max_snow_depth;
+    // 通量
+    snow->blowing_flux = glacier->blowing_flux;
+    snow->mass_error = glacier->mass_error;
+    snow->Qnet = glacier->Qnet;
+    snow->surface_flux = glacier->surface_flux;
+    snow->transport = glacier->transport;
+    snow->vapor_flux = glacier->vapor_flux;
+    /***
+     * @attention 融雪和融冰分开
+     */
+    snow->melt = glacier->snow_melt;
+
+    // 降雨和降雪都被冰川/积雪消耗了
+    // 通量不再向下传递
+    (*rainfall) = 0.;
+    (*snowfall) = 0.;
+
+    energy->melt_energy *= -1.;
+
+    return (melt);
 }
