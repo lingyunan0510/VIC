@@ -1280,7 +1280,7 @@ surface_fluxes(bool                 overstory,
                        options.Nnode);
 
     if ((veg_class == 17) && (step_glacier.band_coverage > 0.0)) { // 所有的冰川径流都计入模型格网的表面径流
-        // cell->runoff += (*Melt)*MM_PER_M;
+        cell->runoff += (*Melt);
     }
 
     return(ErrorFlag);

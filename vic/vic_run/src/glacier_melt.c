@@ -357,9 +357,9 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
         glacier->pack_temp = 0.0;
     }
 
-    glacier->melt = AllMelt;
-    glacier->snow_melt = SnowMelt;
-    glacier->glacier_melt = GlacierMelt;
+    glacier->melt = AllMelt*MM_PER_M;
+    glacier->snow_melt = SnowMelt*MM_PER_M;
+    glacier->glacier_melt = GlacierMelt*MM_PER_M;
 
     // 物质平衡残差
     /***

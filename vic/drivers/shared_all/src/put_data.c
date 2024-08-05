@@ -785,7 +785,7 @@ collect_wb_terms(cell_data_struct cell,
      * Checked Again in 2022-03-25
      */
     if (veg_class == 17) {
-        out_data[OUT_GLACIER_MELT][0] += glacier.glacier_melt * AreaFactor * MM_PER_M;
+        out_data[OUT_GLACIER_MELT][0] += glacier.glacier_melt * AreaFactor;
     }
 
     /** record snow cover fraction **/

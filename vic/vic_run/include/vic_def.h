@@ -1045,9 +1045,9 @@ typedef struct {
     // Fluxes
     double blowing_flux;            // 风吹雪升华量 m
     double mass_error;              // 物质平衡误差 m
-    double melt;                    // 总融化量 m
-    double snow_melt;               // 融雪量 m
-    double glacier_melt;            // 融冰量 m
+    double melt;                    // 总融化量 mm
+    double snow_melt;               // 融雪量 mm
+    double glacier_melt;            // 融冰量 mm
     double Qnet;                    // 能量平衡余项 W/m^2
     double surface_flux;            /**< depth of sublimation from blowing snow (m) */
     double transport;               /**< flux of snow (potentially) transported from veg type */
