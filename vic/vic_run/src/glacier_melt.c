@@ -48,6 +48,9 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
                     int               band,                     // 高程分带编号
                     snow_data_struct *snow,                     // 积雪 只用于存储与输出 保证程序不崩溃 不作实际演算
                     glacier_data_struct *glacier) {             // 冰川 冰雪一体实际变量存储位置
+    
+    extern option_struct     options;
+    extern parameters_struct param;
 
     double                   error;                             // 
     double                   DeltaPackCC;                       /* Change in cold content of the pack                           */
