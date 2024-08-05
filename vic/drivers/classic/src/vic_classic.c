@@ -253,7 +253,7 @@ main(int   argc,
                 // 输出 将被同步到snow中
                 all_vars.glacier[b].store_coverage = 1.0;
                 all_vars.glacier[b].store_swq = 0.;
-                all_vars.glacier[b].stroe_snow = false;
+                all_vars.glacier[b].store_snow = false;
                 // 积雪物理特性
                 all_vars.glacier[b].swq = 0.;
                 all_vars.glacier[b].density = 0.;
