@@ -28,7 +28,7 @@ void initialize_glacier(glacier_data_struct *glacier) {
         glacier[i].coverage = 1.0;
         glacier[i].band_coverage = 0.0;
         glacier[i].last_snow = 0;
-        glacier[i].METING = false;
+        glacier[i].MELTING = false;
         glacier[i].snow = false;
         // 表层
         glacier[i].surf_temp = 0.;
@@ -45,7 +45,7 @@ void initialize_glacier(glacier_data_struct *glacier) {
         // 输出 将被同步到snow中
         glacier[i].store_coverage = 1.0;
         glacier[i].store_swq = 0.;
-        glacier[i].stroe_snow = true;
+        glacier[i].store_snow = true;
         // 积雪物理特性
         glacier[i].albedo_snow = 0.85;
         glacier[i].density = 0.;
