@@ -109,7 +109,7 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
         }
         for (band = 0; band < Nbands; band++) {
             fscanf(glacierband, "%lf", &band_elev);
-            glacier_con->BandElev[band] = (band_elev - soil_con->BandElev[band])*(-0.0060);
+            glacier_con->BandElev[band] = (band_elev - soil_con->BandElev[band])*(-0.0050);
             if (band_elev == 0.) {
                 glacier_con->BandElev[band] = 0.;
             }
