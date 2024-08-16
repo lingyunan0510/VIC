@@ -96,7 +96,7 @@ double solve_glacier(char               overstory,
                 x = dmy->month + 5;
             }
             bg = options.DD*((xa*x*x*x*x)+(xb*x*x*x)+(xc*x*x)+(xd*x)+xe);
-            glacier_melt = tair * bg * ( 1.0 - (snow->coverage));
+            glacier_melt = tair * bg;
         } else {
             glacier_melt = 0.0;
         }
