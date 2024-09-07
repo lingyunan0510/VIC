@@ -188,6 +188,16 @@ double solve_glacier(char               overstory,
     (*AlbedoUnder) = glacier_albedo;
     // 表面净短波
     (*NetShortSnow) = (1.0 - *AlbedoUnder) * (*ShortUnderIn);
+
+    if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
+        // log_info("\n----Band %d\nTime %d\nSnw_Mlt1 %f\nSnw_Mlt2 %f", band, dmy->dayseconds, glacier->snow_melt, snow->melt);
+        // log_info("\n----Band %d\nTime %d\nNetSW %f\nInSW %f\nAlbedo %f", band, dmy->dayseconds, (*NetShortSnow), (*ShortUnderIn), (*AlbedoUnder));
+        log_info("\n----Before\nBand %d\nTime %d\nSWE1 %f\n SWE2 %f", band, dmy->dayseconds, glacier->swq, snow->swq);
+        // log_info("\nSnowFall %f\nRainFall %f\nTemp %f", *snowfall, *rainfall, air_temp);
+        // log_info("\nNetSW %f\nNetLW %f", *NetShortSnow, *NetLongSnow);
+        // log_info("\nMelt %f\nSnowMelt %f\nGlacierMelt %f", melt, glacier->snow_melt, glacier->glacier_melt);
+    }
+
     // 计算
     ErrorFlag = glacier_melt((*Le), (*NetShortSnow), Tcanopy, Tgrnd, roughness, aero_resist[*UnderStory], 
                             aero_resist_used, air_temp, *coverage, dt, density, snow_grnd_flux, *LongUnderIn, 
@@ -203,7 +213,8 @@ double solve_glacier(char               overstory,
 
     if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
         // log_info("\n----Band %d\nTime %d\nSnw_Mlt1 %f\nSnw_Mlt2 %f", band, dmy->dayseconds, glacier->snow_melt, snow->melt);
-        log_info("\n----Band %d\nTime %d\nNetSW %f\nInSW %f\nAlbedo %f", band, dmy->dayseconds, (*NetShortSnow), (*ShortUnderIn), (*AlbedoUnder));
+        // log_info("\n----Band %d\nTime %d\nNetSW %f\nInSW %f\nAlbedo %f", band, dmy->dayseconds, (*NetShortSnow), (*ShortUnderIn), (*AlbedoUnder));
+        log_info("\n----After\nBand %d\nTime %d\nSWE1 %f\n SWE2 %f", band, dmy->dayseconds, glacier->swq, snow->swq);
         // log_info("\nSnowFall %f\nRainFall %f\nTemp %f", *snowfall, *rainfall, air_temp);
         // log_info("\nNetSW %f\nNetLW %f", *NetShortSnow, *NetLongSnow);
         // log_info("\nMelt %f\nSnowMelt %f\nGlacierMelt %f", melt, glacier->snow_melt, glacier->glacier_melt);
