@@ -190,6 +190,7 @@ double solve_glacier(char               overstory,
     (*NetShortSnow) = (1.0 - *AlbedoUnder) * (*ShortUnderIn);
 
     if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
+        log_info("\n-------Before\nSWE %f", glacier->swq*1000);
         // log_info("\n----Band %d\nTime %d\nSnw_Mlt1 %f\nSnw_Mlt2 %f", band, dmy->dayseconds, glacier->snow_melt, snow->melt);
         // log_info("\n----Band %d\nTime %d\nNetSW %f\nInSW %f\nAlbedo %f", band, dmy->dayseconds, (*NetShortSnow), (*ShortUnderIn), (*AlbedoUnder));
         // log_info("\n----Before\nBand %d\nTime %d\nSWE1 %f\nSWE2 %f", band, dmy->dayseconds, glacier->swq, snow->swq);
@@ -215,9 +216,9 @@ double solve_glacier(char               overstory,
         // log_info("\n----Band %d\nTime %d\nSnw_Mlt1 %f\nSnw_Mlt2 %f", band, dmy->dayseconds, glacier->snow_melt, snow->melt);
         // log_info("\n----Band %d\nTime %d\nNetSW %f\nInSW %f\nAlbedo %f", band, dmy->dayseconds, (*NetShortSnow), (*ShortUnderIn), (*AlbedoUnder));
         // log_info("\n----After\nBand %d\nTime %d\nSWE1 %f\nSWE2 %f", band, dmy->dayseconds, glacier->swq, snow->swq);
-        log_info("\n----After\nBand %d\nTime %d\nSensiH %f\nLatenH %f\nLatenHS %f\nNetSw %f\nNetLw %f\nNetQ %f\nTsurf %f\nTair %f\nMlt %f", 
+        log_info("\nBand %d\nTime %d\nSensiH %f\nLatenH %f\nLatenHS %f\nNetSw %f\nNetLw %f\nNetQ %f\nTsurf %f\nTair %f\nMlt %f\nSnw_Mlt %f\nGlc_Mlt %f\nSWE %f", 
                 band, dmy->dayseconds, energy->sensible, energy->latent, energy->latent_sub, (*NetShortSnow), (*NetLongSnow), energy->refreeze_energy, 
-                glacier->surf_temp, air_temp, melt);
+                glacier->surf_temp, air_temp, melt, glacier->snow_melt, glacier->glacier_melt, glacier->swq*1000);
         // log_info("\nSnowFall %f\nRainFall %f\nTemp %f", *snowfall, *rainfall, air_temp);
         // log_info("\nNetSW %f\nNetLW %f", *NetShortSnow, *NetLongSnow);
         // log_info("\nMelt %f\nSnowMelt %f\nGlacierMelt %f", melt, glacier->snow_melt, glacier->glacier_melt);
