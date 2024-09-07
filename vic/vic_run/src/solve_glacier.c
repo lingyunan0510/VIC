@@ -201,12 +201,12 @@ double solve_glacier(char               overstory,
         return (ERROR);
     }
 
-    // if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
-    //     log_info("VegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
-    //     log_info("\nSnowFall %f\nRainFall %f\nTemp %f", *snowfall, *rainfall, air_temp);
-    //     log_info("\nNetSW %f\nNetLW %f", *NetShortSnow, *NetLongSnow);
-    //     log_info("\nMelt %f\nSnowMelt %f\nGlacierMelt %f", melt, glacier->snow_melt, glacier->glacier_melt);
-    // }
+    if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
+        log_info("\nBand %d Time %d", band, dmy->dayseconds);
+        log_info("\nSnowFall %f\nRainFall %f\nTemp %f", *snowfall, *rainfall, air_temp);
+        log_info("\nNetSW %f\nNetLW %f", *NetShortSnow, *NetLongSnow);
+        log_info("\nMelt %f\nSnowMelt %f\nGlacierMelt %f", melt, glacier->snow_melt, glacier->glacier_melt);
+    }
 
     // 表面反照率
     energy->AlbedoUnder = *AlbedoUnder;
