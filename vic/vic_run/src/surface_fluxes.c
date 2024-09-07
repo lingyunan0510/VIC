@@ -930,13 +930,13 @@ surface_fluxes(bool                 overstory,
                 }
                 if (veg_class == 17) {
                     if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                        log_info("Tol_Under %d Last_Tol_Under %d", tol_under, last_tol_under);
+                        log_info("Tol_Under %d Last_Tol_Under %d Tol_Grd %d", tol_under, last_tol_under, param.TOL_GRND);
                     }
                     if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                        log_info("Tol_Under %d Last_Tol_Under %d", tol_under, last_tol_under);
+                        log_info("Tol_Under %d Last_Tol_Under %d Tol_Grd %d", tol_under, last_tol_under, param.TOL_GRND);
                     }
                     if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                        log_info("Tol_Under %d Last_Tol_Under %d", tol_under, last_tol_under);
+                        log_info("Tol_Under %d Last_Tol_Under %d Tol_Grd %d", tol_under, last_tol_under, param.TOL_GRND);
                     }
                 }
             }
