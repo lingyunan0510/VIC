@@ -203,7 +203,9 @@ double solve_glacier(char               overstory,
 
     if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
         log_info("Band %d", band);
-        log_info("SnowFall %f\nRainFall %f\nMelt %f", *snowfall, *rainfall, melt);
+        log_info("\nSnowFall %f\nRainFall %f\nTemp %f\n", *snowfall, *rainfall, air_temp);
+        log_info("\nNetSW %f\nNetLW %f", NetShortSnow, NetLongSnow);
+        log_info("\nMelt %f\nSnowMelt %f\nGlacierMelt %f", melt, glacier->snow_melt, glacier->glacier_melt);
     }
 
     // 表面反照率
