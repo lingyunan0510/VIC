@@ -605,18 +605,14 @@ surface_fluxes(bool                 overstory,
 
                 // update understory energy balance terms for iteration
                 if (last_snow_flux != 999) {
-                    if ((fabs(store_tol_under) > fabs(A_tol_under) &&
-                         A_tol_under != 999 &&
-                         fabs(store_tol_under - A_tol_under) > 1.) ||
-                        tol_under < 0) { // stepped the correct way
+                    if ((fabs(store_tol_under) > fabs(A_tol_under) && A_tol_under != 999 && fabs(store_tol_under - A_tol_under) > 1.) || tol_under < 0) { // stepped the correct way
                         UNSTABLE_CNT++;
                         if (UNSTABLE_CNT > 3 || tol_under < 0) {
                             UNSTABLE_SNOW = true;
                         }
                     }
                     else if (!INCLUDE_SNOW) { // stepped the wrong way
-                        snow_flux =
-                            (last_snow_flux + iter_soil_energy.snow_flux) / 2.;
+                        snow_flux = (last_snow_flux + iter_soil_energy.snow_flux) / 2.;
                     }
                 }
                 last_snow_flux = snow_flux;
@@ -900,18 +896,14 @@ surface_fluxes(bool                 overstory,
                 *****************************************/
 
                 // compute understory tolerance
-                if (INCLUDE_SNOW ||
-                    (iter_snow.swq == 0 && delta_coverage == 0)) {
+                if (INCLUDE_SNOW || (iter_snow.swq == 0 && delta_coverage == 0)) {
                     store_tol_under = 0;
                     tol_under = 0;
-                }
-                else {
+                } else {
                     store_tol_under = snow_flux - iter_soil_energy.snow_flux;
                     tol_under = fabs(store_tol_under);
                 }
-                if (fabs(tol_under - last_tol_under) < param.TOL_GRND &&
-                    tol_under >
-                    1.) {
+                if (fabs(tol_under - last_tol_under) < param.TOL_GRND && tol_under > 1.) {
                     tol_under = -999;
                 }
 
