@@ -783,7 +783,7 @@ surface_fluxes(bool                 overstory,
                      * 其他情况中 如积雪正确求解之后 INCLUDE_SNOW标识为False
                      * 在冰川LUCC中 积雪求解情况应该是正常求解 则INCLUDE_SNOW标识应该为False
                      * 
-                     * @bug 此标识会影响地表能量平衡的
+                     * @bug 此标识会影响地表能量平衡的understory tolerance标识
                      * 
                      */
                     INCLUDE_SNOW = false;
@@ -923,8 +923,15 @@ surface_fluxes(bool                 overstory,
                     store_tol_under = snow_flux - iter_soil_energy.snow_flux;
                     tol_under = fabs(store_tol_under);
                 }
+                /**
+                 * @bug 我们认为在冰川表面不存在不稳定积雪 
+                 *      为了防止understory tolerance过度迭代
+                 *      特在此将store_tol_under和tol_under复制为0
+                 * @date 2024-09-07
+                 */
                 if ((veg_class == 17) && (step_glacier.band_coverage > 0.0)) {
-
+                    store_tol_under = 0;
+                    tol_under = 0;
                 }
                 if (fabs(tol_under - last_tol_under) < param.TOL_GRND && tol_under > 1.) {
                     tol_under = -999;
