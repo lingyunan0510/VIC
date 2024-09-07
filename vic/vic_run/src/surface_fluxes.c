@@ -782,6 +782,9 @@ surface_fluxes(bool                 overstory,
                      * @brief 在 存在积雪 且 积雪不稳定/求解失败 的情况下 将积雪能量平衡纳入地表能量平衡中
                      * 其他情况中 如积雪正确求解之后 INCLUDE_SNOW标识为False
                      * 在冰川LUCC中 积雪求解情况应该是正常求解 则INCLUDE_SNOW标识应该为False
+                     * 
+                     * @bug 此标识会影响地表能量平衡的
+                     * 
                      */
                     INCLUDE_SNOW = false;
                 }
@@ -896,12 +899,32 @@ surface_fluxes(bool                 overstory,
                 *****************************************/
 
                 // compute understory tolerance
+                if (veg_class == 17) {
+                    if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                        log_warn("Before");
+                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                    }
+                    if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                        log_warn("Before");
+                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                    }
+                    if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                        log_warn("Before");
+                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                    }
+                }
                 if (INCLUDE_SNOW || (iter_snow.swq == 0 && delta_coverage == 0)) {
                     store_tol_under = 0;
                     tol_under = 0;
                 } else {
                     store_tol_under = snow_flux - iter_soil_energy.snow_flux;
                     tol_under = fabs(store_tol_under);
+                }
+                if ((veg_class == 17) && (step_glacier.band_coverage > 0.0)) {
+
                 }
                 if (fabs(tol_under - last_tol_under) < param.TOL_GRND && tol_under > 1.) {
                     tol_under = -999;
@@ -930,14 +953,17 @@ surface_fluxes(bool                 overstory,
                 }
                 if (veg_class == 17) {
                     if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                        log_warn("After");
                         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
                         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
                     }
                     if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                        log_warn("After");
                         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
                         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
                     }
                     if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                        log_warn("After");
                         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
                         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
                     }
