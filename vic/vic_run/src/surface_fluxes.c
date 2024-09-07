@@ -938,13 +938,13 @@ surface_fluxes(bool                 overstory,
                 }
                 if (veg_class == 17) {
                     if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                        log_info("Tol_Under %d Mx_Canopy %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                        log_info("Tol_Under %d Last_Tol_Under %d", tol_under, last_tol_under);
                     }
                     if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                        log_info("Tol_Under %d Mx_Canopy %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                        log_info("Tol_Under %d Last_Tol_Under %d", tol_under, last_tol_under);
                     }
                     if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                        log_info("Tol_Under %d Mx_Canopy %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                        log_info("Tol_Under %d Last_Tol_Under %d", tol_under, last_tol_under);
                     }
                 }
             }
