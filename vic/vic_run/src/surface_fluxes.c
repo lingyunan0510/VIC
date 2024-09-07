@@ -646,6 +646,7 @@ surface_fluxes(bool                 overstory,
                  * 在存在冰川且冰川面积为0时 对输出结果没有影响
                  */
                 if ((veg_class != 17) || (step_glacier.band_coverage <= 0.0)) { 
+                    log_info("THis is Snow\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
                     step_melt = solve_snow(overstory, BareAlbedo, LongUnderOut,
                                         param.SNOW_MIN_RAIN_TEMP,
                                         param.SNOW_MAX_SNOW_TEMP,
@@ -682,6 +683,7 @@ surface_fluxes(bool                 overstory,
                      * 能量通量参考积雪持续存在的情景
                      * 水输出通量以solve_glacier为准
                      */
+                    log_info("THis is Glacier\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
                     step_melt = solve_glacier(overstory, BareAlbedo, LongUnderOut,
                                         param.SNOW_MIN_RAIN_TEMP,
                                         param.SNOW_MAX_SNOW_TEMP,
