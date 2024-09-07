@@ -389,13 +389,13 @@ surface_fluxes(bool                 overstory,
         //     log_info("--First Interation");
         // }
         if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-            log_info("--First Interation");
+            log_info("2000-01-01--First Interation");
         }
         if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-            log_info("--First Interation");
+            log_info("2003-07-15--First Interation");
         }
         if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-            log_info("--First Interation");
+            log_info("2003-12-31--First Interation");
         }
 
 
@@ -543,6 +543,15 @@ surface_fluxes(bool                 overstory,
             //      */
             //     log_info("----Second Interation");
             // }
+            if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                log_info("2000-01-01--Second Interation");
+            }
+            if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                log_info("2003-07-15--Second Interation");
+            }
+            if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                log_info("2003-12-31--Second Interation");
+            }
 
             over_iter++;
             last_tol_over = tol_over;
@@ -570,6 +579,15 @@ surface_fluxes(bool                 overstory,
                 //     log_info("------Thrid Interation");
                 // }
                 /** Iterate for understory solution - itererates to find snow flux **/
+                if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                    log_info("2000-01-01--Thrid Interation");
+                }
+                if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                    log_info("2003-07-15--Third Interation");
+                }
+                if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                    log_info("2003-12-31--Third Interation");
+                }
 
                 under_iter++;
                 last_tol_under = tol_under;
