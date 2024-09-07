@@ -202,7 +202,7 @@ double solve_glacier(char               overstory,
     }
 
     if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
-        log_info("\nBand %d\nTime %d\nGlc_Mlt %f", band, dmy->dayseconds, glacier->glacier_melt);
+        log_info("\n----Band %d\nTime %d\nSnw_Mlt1 %f\nSnw_Mlt1 %f", band, dmy->dayseconds, glacier->snow_melt, snow->melt);
         // log_info("\nSnowFall %f\nRainFall %f\nTemp %f", *snowfall, *rainfall, air_temp);
         // log_info("\nNetSW %f\nNetLW %f", *NetShortSnow, *NetLongSnow);
         // log_info("\nMelt %f\nSnowMelt %f\nGlacierMelt %f", melt, glacier->snow_melt, glacier->glacier_melt);
