@@ -388,14 +388,16 @@ surface_fluxes(bool                 overstory,
         //      */
         //     log_info("--First Interation");
         // }
-        if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-            log_info("2000-01-01--First Interation");
-        }
-        if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-            log_info("2003-07-15--First Interation");
-        }
-        if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-            log_info("2003-12-31--First Interation");
+        if (veg_class == 17) {
+            if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                log_info("2000-01-01--First Interation");
+            }
+            if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                log_info("2003-07-15--First Interation");
+            }
+            if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                log_info("2003-12-31--First Interation");
+            }
         }
 
 
@@ -543,14 +545,16 @@ surface_fluxes(bool                 overstory,
             //      */
             //     log_info("----Second Interation");
             // }
-            if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                log_info("2000-01-01--Second Interation");
-            }
-            if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                log_info("2003-07-15--Second Interation");
-            }
-            if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                log_info("2003-12-31--Second Interation");
+            if (veg_class == 17) {
+                if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                    log_info("2000-01-01--Second Interation");
+                }
+                if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                    log_info("2003-07-15--Second Interation");
+                }
+                if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                    log_info("2003-12-31--Second Interation");
+                }
             }
 
             over_iter++;
@@ -579,14 +583,16 @@ surface_fluxes(bool                 overstory,
                 //     log_info("------Thrid Interation");
                 // }
                 /** Iterate for understory solution - itererates to find snow flux **/
-                if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                    log_info("2000-01-01--Thrid Interation");
-                }
-                if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                    log_info("2003-07-15--Third Interation");
-                }
-                if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                    log_info("2003-12-31--Third Interation");
+                if (veg_class == 17) {
+                    if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                        log_info("2000-01-01--Thrid Interation");
+                    }
+                    if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                        log_info("2003-07-15--Third Interation");
+                    }
+                    if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                        log_info("2003-12-31--Third Interation");
+                    }
                 }
 
                 under_iter++;
@@ -929,6 +935,17 @@ surface_fluxes(bool                 overstory,
                     // } else if (under_iter >= param.MAX_ITER_GRND_CANOPY) {
                     //     log_info("------Third One");
                     // }
+                }
+                if (veg_class == 17) {
+                    if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                        log_info("Tol_Under %d Mx_Canopy %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                    }
+                    if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                        log_info("Tol_Under %d Mx_Canopy %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                    }
+                    if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                        log_info("Tol_Under %d Mx_Canopy %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                    }
                 }
             }
             while ((fabs(tol_under - last_tol_under) > param.TOL_GRND) &&
