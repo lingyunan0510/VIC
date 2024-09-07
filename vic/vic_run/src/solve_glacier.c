@@ -201,7 +201,7 @@ double solve_glacier(char               overstory,
         return (ERROR);
     }
 
-    if (dmy->year==2003)&(dmy->month==7)&(dmy->day==15) {
+    if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
         log_info("Band %d", band);
         log_info("SnowFall %f\nRainFall %f\nMelt %f", *snowfall, *rainfall, melt);
     }
