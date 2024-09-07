@@ -388,17 +388,17 @@ surface_fluxes(bool                 overstory,
         //      */
         //     log_info("--First Interation");
         // }
-        if (veg_class == 17) {
-            if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                log_info("2000-01-01--First Interation");
-            }
-            if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                log_info("2003-07-15--First Interation");
-            }
-            if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                log_info("2003-12-31--First Interation");
-            }
-        }
+        // if (veg_class == 17) {
+        //     if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+        //         log_info("2000-01-01--First Interation");
+        //     }
+        //     if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+        //         log_info("2003-07-15--First Interation");
+        //     }
+        //     if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+        //         log_info("2003-12-31--First Interation");
+        //     }
+        // }
 
 
         /* set air temperature and precipitation for this snow band */
@@ -545,17 +545,17 @@ surface_fluxes(bool                 overstory,
             //      */
             //     log_info("----Second Interation");
             // }
-            if (veg_class == 17) {
-                if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                    log_info("2000-01-01--Second Interation");
-                }
-                if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                    log_info("2003-07-15--Second Interation");
-                }
-                if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                    log_info("2003-12-31--Second Interation");
-                }
-            }
+            // if (veg_class == 17) {
+            //     if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+            //         log_info("2000-01-01--Second Interation");
+            //     }
+            //     if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+            //         log_info("2003-07-15--Second Interation");
+            //     }
+            //     if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+            //         log_info("2003-12-31--Second Interation");
+            //     }
+            // }
 
             over_iter++;
             last_tol_over = tol_over;
@@ -583,17 +583,17 @@ surface_fluxes(bool                 overstory,
                 //     log_info("------Thrid Interation");
                 // }
                 /** Iterate for understory solution - itererates to find snow flux **/
-                if (veg_class == 17) {
-                    if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                        log_info("2000-01-01--Thrid Interation");
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                        log_info("2003-07-15--Third Interation");
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                        log_info("2003-12-31--Third Interation");
-                    }
-                }
+                // if (veg_class == 17) {
+                //     if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                //         log_info("2000-01-01--Thrid Interation");
+                //     }
+                //     if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                //         log_info("2003-07-15--Third Interation");
+                //     }
+                //     if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                //         log_info("2003-12-31--Third Interation");
+                //     }
+                // }
 
                 under_iter++;
                 last_tol_under = tol_under;
@@ -676,15 +676,15 @@ surface_fluxes(bool                 overstory,
                  * 在存在冰川且冰川面积为0时 对输出结果没有影响
                  */
                 if ((veg_class != 17) || (step_glacier.band_coverage <= 0.0)) { 
-                    if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                        log_info("THis is Snow\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                        log_info("THis is Snow\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                        log_info("THis is Snow\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
-                    }
+                    // if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                    //     log_info("THis is Snow\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
+                    // }
+                    // if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                    //     log_info("THis is Snow\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
+                    // }
+                    // if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                    //     log_info("THis is Snow\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
+                    // }
                     step_melt = solve_snow(overstory, BareAlbedo, LongUnderOut,
                                         param.SNOW_MIN_RAIN_TEMP,
                                         param.SNOW_MAX_SNOW_TEMP,
@@ -721,15 +721,15 @@ surface_fluxes(bool                 overstory,
                      * 能量通量参考积雪持续存在的情景
                      * 水输出通量以solve_glacier为准
                      */
-                    if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                        log_info("THis is Glacier\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                        log_info("THis is Glacier\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                        log_info("THis is Glacier\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
-                    }
+                    // if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                    //     log_info("THis is Glacier\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
+                    // }
+                    // if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                    //     log_info("THis is Glacier\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
+                    // }
+                    // if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                    //     log_info("THis is Glacier\nVegClass %d Band %d Time %d", veg_class, band, dmy->dayseconds);
+                    // }
                     step_melt = solve_glacier(overstory, BareAlbedo, LongUnderOut,
                                         param.SNOW_MIN_RAIN_TEMP,
                                         param.SNOW_MAX_SNOW_TEMP,
@@ -899,23 +899,23 @@ surface_fluxes(bool                 overstory,
                 *****************************************/
 
                 // compute understory tolerance
-                if (veg_class == 17) {
-                    if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                        log_warn("Before");
-                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
-                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                        log_warn("Before");
-                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
-                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                        log_warn("Before");
-                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
-                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
-                    }
-                }
+                // if (veg_class == 17) {
+                //     if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                //         log_warn("Before");
+                //         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                //         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                //     }
+                //     if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                //         log_warn("Before");
+                //         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                //         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                //     }
+                //     if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                //         log_warn("Before");
+                //         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                //         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                //     }
+                // }
                 if (INCLUDE_SNOW || (iter_snow.swq == 0 && delta_coverage == 0)) {
                     store_tol_under = 0;
                     tol_under = 0;
@@ -958,23 +958,23 @@ surface_fluxes(bool                 overstory,
                     //     log_info("------Third One");
                     // }
                 }
-                if (veg_class == 17) {
-                    if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
-                        log_warn("After");
-                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
-                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
-                        log_warn("After");
-                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
-                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
-                    }
-                    if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
-                        log_warn("After");
-                        log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
-                        log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
-                    }
-                }
+                // if (veg_class == 17) {
+                //     if (((dmy->year==2000)&&(dmy->month==1)&&(dmy->day==1))) {
+                //         log_warn("After");
+                //         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                //         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                //     }
+                //     if (((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15))) {
+                //         log_warn("After");
+                //         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                //         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                //     }
+                //     if (((dmy->year==2003)&&(dmy->month==12)&&(dmy->day==31))) {
+                //         log_warn("After");
+                //         log_info("Tol_Under %f Last_Tol_Under %f Tol_Grd %f", tol_under, last_tol_under, param.TOL_GRND);
+                //         log_info("Under_iter %d MX_GD_CANOPY %d", under_iter, param.MAX_ITER_GRND_CANOPY);
+                //     }
+                // }
             }
             while ((fabs(tol_under - last_tol_under) > param.TOL_GRND) &&
                    (tol_under != 0) &&
