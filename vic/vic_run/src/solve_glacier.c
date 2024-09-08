@@ -193,7 +193,7 @@ double solve_glacier(char               overstory,
     //     log_warn("Band%d %d-%d-%d %d", band, dmy->year, dmy->month, dmy->day, dmy->dayseconds);
     // }
 
-    if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==15)) {
+    if ((dmy->year==2003)&&(dmy->month==7)&&(dmy->day==14)) {
         log_info("\n-------Before\nSWE %f\nSurfW %f\nPackW %f\nSurfT %f\nPackT %f\nRainF %f\nSnowF %f", glacier->swq*1000, glacier->surf_water, glacier->pack_water, glacier->surf_temp, glacier->pack_temp, (*rainfall), (*snowfall));
         // log_info("\n----Band %d\nTime %d\nSnw_Mlt1 %f\nSnw_Mlt2 %f", band, dmy->dayseconds, glacier->snow_melt, snow->melt);
         // log_info("\n----Band %d\nTime %d\nNetSW %f\nInSW %f\nAlbedo %f", band, dmy->dayseconds, (*NetShortSnow), (*ShortUnderIn), (*AlbedoUnder));
