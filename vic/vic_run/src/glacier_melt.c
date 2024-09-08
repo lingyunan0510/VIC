@@ -201,9 +201,10 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
                     SurfaceSwq = Ice;
                 }
             } else {
-                // 融化量大于积雪量 所有积雪都融化
+                // 融化量大于积雪量 
+                // 所有积雪都融化
                 // 剩余的为冰川融化
-                SnowMelt = AllMelt - Ice;
+                SnowMelt = Ice;
                 GlacierMelt = AllMelt - SnowMelt;
                 // 所有积雪固液水当量都转移到积雪表面 并清空存储
                 glacier->surf_water += AllMelt + glacier->pack_water;
@@ -277,7 +278,7 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
         melt[0] = 0.0;
     }
     /***
-     * @bug 更新底层积雪含水量
+     * @bug 顶层出流 全部汇入底层
      */
     glacier->pack_water += melt[0]; 
     // 出流液态水进入 底层积雪所有液态水凝结 可以放出的最大热量
