@@ -406,48 +406,49 @@ surface_fluxes(bool                 overstory,
         // 在冰川LUCC 且此分带内面积大于0 校正冰川表面的气温
         if ((veg_class == 17)&&(step_glacier.band_coverage > 0.)) {
             // Tair += (step_glacier.adjust_tmp);
-            double tplas;
-            switch (dmy->month) {
-                case 1:
-                    tplas = (4.26705293);
-                    break;
-                case 2:
-                    tplas = (4.68735408);
-                    break;
-                case 3:
-                    tplas = (5.17911222);
-                    break;
-                case 4:
-                    tplas = (5.91676130);
-                    break;
-                case 5:
-                    tplas = (6.09051728);
-                    break;
-                case 6:
-                    tplas = (6.07825521);
-                    break;
-                case 7:
-                    tplas = (5.14313228);
-                    break;
-                case 8:
-                    tplas = (4.89289345);
-                    break;
-                case 9:
-                    tplas = (4.65611915);
-                    break;
-                case 10:
-                    tplas = (4.59476437);
-                    break;
-                case 11:
-                    tplas = (4.06843937);
-                    break;
-                case 12:
-                    tplas = (4.17310629);
-                    break;
-                default:
-                    break;
-            }
-            Tair += (step_glacier.adjust_tmp * tplas / (-1000));
+            // double tplas;
+            // switch (dmy->month) {
+            //     case 1:
+            //         tplas = (4.26705293);
+            //         break;
+            //     case 2:
+            //         tplas = (4.68735408);
+            //         break;
+            //     case 3:
+            //         tplas = (5.17911222);
+            //         break;
+            //     case 4:
+            //         tplas = (5.91676130);
+            //         break;
+            //     case 5:
+            //         tplas = (6.09051728);
+            //         break;
+            //     case 6:
+            //         tplas = (6.07825521);
+            //         break;
+            //     case 7:
+            //         tplas = (5.14313228);
+            //         break;
+            //     case 8:
+            //         tplas = (4.89289345);
+            //         break;
+            //     case 9:
+            //         tplas = (4.65611915);
+            //         break;
+            //     case 10:
+            //         tplas = (4.59476437);
+            //         break;
+            //     case 11:
+            //         tplas = (4.06843937);
+            //         break;
+            //     case 12:
+            //         tplas = (4.17310629);
+            //         break;
+            //     default:
+            //         break;
+            // }
+            // Tair += (step_glacier.adjust_tmp * tplas / (-1000));
+            Tair += step_glacier.adjust_tmp;
         }
         // step_prec = force->prec[hidx] * soil_con->Pfactor[band];
         step_prec = force->prec[hidx];
