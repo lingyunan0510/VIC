@@ -948,9 +948,6 @@ surface_fluxes(bool                 overstory,
                     tol_over = 0;
                 }
                 if (veg_class == 17) {
-                    if ((dmy->year==2003)&&(dmy->month==7)&(dmy->day==15)) {
-                        log_info("\nBand %d Sec %d\nRain %f PPT %f", band, dmy->dayseconds, (rainfall), (ppt));
-                    }
                     // log_info("------T_Surf is %f", snow->surf_temp);
                     // log_info("------Melt is %f", snow->melt);
                     // log_info("UnderStory is %d", UnderStory);
@@ -1418,6 +1415,9 @@ surface_fluxes(bool                 overstory,
 
     if ((veg_class == 17) && (step_glacier.band_coverage > 0.0)) { // 所有的冰川径流都计入模型格网的表面径流
         cell->runoff += (*Melt);
+        if ((dmy->year==2003)&&(dmy->month==7)&(dmy->day==15)) {
+            log_info("\nBand %d Sec %d\nRain %f PPT %f", band, dmy->dayseconds, (rainfall), (ppt));
+        }
     }
 
     return(ErrorFlag);
