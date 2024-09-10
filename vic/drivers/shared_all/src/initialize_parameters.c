@@ -17,7 +17,8 @@ initialize_parameters()
 
     // Lapse Rate
     // param.LAPSE_RATE = -0.0060;
-    param.LAPSE_RATE = -0.00498;
+    // param.LAPSE_RATE = -0.00498; // 玉龙喀什河
+    param.LAPSE_RATE = -0.00454; // 布尔津河
 
     // Precipitation Guage Height
     param.GAUGE_HEIGHT = 1.0;
