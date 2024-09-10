@@ -16,6 +16,7 @@
 void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_struct *glacier_con) {
     
     extern option_struct     options;
+    extern parameters_struct param;
     
     char ErrStr[MAXSTRING];
     size_t band;
@@ -109,7 +110,7 @@ void read_glacierband(FILE *glacierband, soil_con_struct *soil_con, glacier_con_
         for (band = 0; band < Nbands; band++) {
             fscanf(glacierband, "%lf", &band_elev);
             // glacier_con->BandElev[band] = (band_elev - soil_con->BandElev[band])*(-0.0050);
-            glacier_con->BandElev[band] = (band_elev - soil_con->BandElev[band])*(-0.00498);
+            glacier_con->BandElev[band] = (band_elev - soil_con->BandElev[band])*param.LAPSE_RATE;
         }
         // for (band = 0; band < Nbands; band++) {
         //     fscanf(glacierband, "%lf", &area);
