@@ -398,8 +398,8 @@ surface_fluxes(bool                 overstory,
         /**
          * @bug 分带降水校正还没有做
          */
-        // step_prec = force->prec[hidx] * soil_con->Pfactor[band];
-        step_prec = force->prec[hidx];
+        step_prec = force->prec[hidx] * soil_con->Pfactor[band];
+        // step_prec = force->prec[hidx];
 
         // initialize ground surface temperaure
         Tgrnd = energy->T[0];
