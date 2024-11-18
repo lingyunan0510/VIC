@@ -636,6 +636,48 @@ surface_fluxes(bool                 overstory,
                                         &(iter_snow_veg_var));
                 } else {
                     /**
+                     * @brief 在9月初的时候
+                     * 将积雪移除
+                     */
+                    if ((dmy->month==9) && (dmy->day==1) && (dmy->dayseconds==0)) {
+                        // 有雪
+                        if (glacier->swq > 0.) {
+                            if ((glacier->depth)*MM_PER_M > options.d_star) {
+                                // 雪够深
+                                double SurfaceSwq;
+                                double PackSwq;
+                                double old_swq;
+                                double new_swq;
+                                double old_ice;
+                                double new_ice;
+                                old_swq = glacier->swq;
+                                old_ice = glacier->swq - glacier->pack_water - glacier->surf_water;
+                                // 雪只留雪深为 d_star mm
+                                glacier->depth = options.d_star/MM_PER_M;
+                                // 总雪水当量为 swq    mm
+                                new_ice = (glacier->depth)*(glacier->density);
+                                // 
+                                if (new_ice > param.SNOW_MAX_SURFACE_SWE) {
+                                    SurfaceSwq = param.SNOW_MAX_SURFACE_SWE;
+                                    PackSwq = new_ice - SurfaceSwq;
+                                } else {
+                                    SurfaceSwq = new_ice;
+                                    PackSwq = 0.;
+                                }
+                                // 底部存水记为 0.
+                                glacier->pack_water = 0.;
+                                // 表层存水不变
+                                // glacier->surf_water = 0.;
+                                // 更新SWE
+                                glacier->swq = glacier->pack_water + glacier->surf_water + new_ice;
+                            } else {
+                                // 雪不够深 啥也不做
+                            }
+                        } else {
+                            // 无雪 啥也不做
+                        }
+                    }
+                    /**
                      * @brief 如果是冰川LUCC 且 冰川面积在此分带上为面积不为0 冰雪一体计算冰雪演进
                      * 为了保证程序不崩溃 需要对slove_snow中涉及的所有指针变量\对象进行妥善赋值
                      * 赋值原则如下 

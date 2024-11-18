@@ -1052,6 +1052,8 @@ typedef struct {
     double surface_flux;            /**< depth of sublimation from blowing snow (m) */
     double transport;               /**< flux of snow (potentially) transported from veg type */
     double vapor_flux;              // 雪蒸发 升华 凝结量 m
+    // 
+    // double acc_glacier_melt;        // 累积冰川融化量 mm
 }  glacier_data_struct;
 
 

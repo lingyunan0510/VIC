@@ -184,7 +184,7 @@ double solve_glacier(char               overstory,
     /***
      * @attention 冰川表面反照率演算
      */
-    glacier_albedo = calc_glacier_albedo(glacier->albedo_min, glacier_snow_albedo, glacier->swq, options.d_star);
+    glacier_albedo = calc_glacier_albedo(glacier->albedo_min, glacier_snow_albedo, glacier->depth, options.d_star);
     (*AlbedoUnder) = glacier_albedo;
     // 表面净短波
     (*NetShortSnow) = (1.0 - *AlbedoUnder) * (*ShortUnderIn);
@@ -257,8 +257,7 @@ double solve_glacier(char               overstory,
      * @brief 当无雪的时候 重置积雪参数
      */
     if (glacier->swq == 0) {
-
-
+        // 
         glacier->density = 0.;
         glacier->depth = 0.;
         // 
