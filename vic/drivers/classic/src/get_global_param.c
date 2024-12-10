@@ -520,8 +520,8 @@ get_global_param(FILE *gp)
                  * Modified in 2022-02-01
                  * Checked in 2022-02-10
                  */
-                sscanf(cmdstr, "%*s %zu %s %s %lf %lf", &options.SNOW_BAND,
-                       filenames.snowband, filenames.glacierband, &options.DD, &options.SRF);
+                sscanf(cmdstr, "%*s %zu %s %s %lf %lf %lf", &options.SNOW_BAND,
+                       filenames.snowband, filenames.glacierband, &options.DD, &options.SRF, &options.d_star);
             }
             else if (strcasecmp("LAKES", optstr) == 0) {
                 sscanf(cmdstr, "%*s %s", flgstr);

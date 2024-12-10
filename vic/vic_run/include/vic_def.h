@@ -276,6 +276,8 @@ typedef struct {
     double DD;
     // Shortwave Radiation Factor
     double SRF;
+    // Parameter Controlling Albedo Decrease
+    double d_star;
 } option_struct;
 
 /******************************************************************************

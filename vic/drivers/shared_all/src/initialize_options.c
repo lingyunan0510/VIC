@@ -80,4 +80,6 @@ initialize_options()
     options.SAVE_STATE = false;
     // output options
     options.Noutstreams = 2;
+    // glacier options
+    options.d_star = 24;
 }
