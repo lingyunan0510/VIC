@@ -163,6 +163,17 @@ double solve_glacier(char               overstory,
         pressure = force->pressure[hidx];
         // Incoming Shortwave Radiation (W/m^2)
         shortwavein = force->shortwave[hidx];
+        /**
+         * @brief 
+         * 短波辐射地形-太阳校正
+         * 当入射太阳与坡面法线夹角超过90°即认为短波没有贡献
+         * 当夹角不超过90°时进行校正
+         */
+        // if (cos_theta <= 0.0) {
+        //     shortwavein = 0.0;
+        // } else {
+        //     shortwavein *= cos_theta;
+        // }
         // Vapor Pressure (Pa)
         vp = force->vp[hidx];
         // 
@@ -170,8 +181,8 @@ double solve_glacier(char               overstory,
 
         glacier_albedo = calc_glacier_albedo(glacier->albedo, snow_albedo, snow_depth, options.d_star);
 
-        if (tair > 0) {
-            glacier_melt = (tair)*options.DD + (1-glacier_albedo)*shortwavein*options.SRF;
+        if (tair > 0.5) {
+            glacier_melt = (tair-0.5)*options.DD + (1-glacier_albedo)*shortwavein*options.SRF;
             // glacier_melt = (tair + shortwavein*options.SRF)*options.DD;
         } else {
             glacier_melt = 0.0;
