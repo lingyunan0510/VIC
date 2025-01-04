@@ -85,7 +85,7 @@ double calc_glacier_rain_heat(double srf_tmp, double air_tmp, double pcp_rat, do
  */
 double calc_glacier_albedo(double min_abd, double snw_abd, double snw_dph, double d) {
     double glc_abd;
-    glc_abd = snw_abd*(1-exp(-snw_dph*MM_PER_M/d))+min_abd*exp(-snw_dph*MM_PER_M/d);
+    glc_abd = snw_abd*(1-exp(-(snw_dph*MM_PER_M)/d))+min_abd*exp(-(snw_dph*MM_PER_M)/d);
     // fprintf(LOG_DEST, "min_abd = %f\n", min_abd);
     // fprintf(LOG_DEST, "glc_abd = %f\n", glc_abd);
     return glc_abd;

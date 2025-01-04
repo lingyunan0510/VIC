@@ -286,9 +286,9 @@ double solve_glacier(char               overstory,
          * @brief 如果融水太少 就相当于没有融水
          * Marked By Yunan Ling In 2022-03-05
          */
-        if (glacier_melt < 1e-5) {
-            glacier_melt = 0.00;
-        }
+        // if (glacier_melt < 1e-5) {
+        //     glacier_melt = 0.00;
+        // }
         // glacier_melt = 0.00;
     }
     /**

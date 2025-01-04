@@ -389,7 +389,7 @@ surface_fluxes(bool                 overstory,
 
         /* set air temperature and precipitation for this snow band */
         Tair = force->air_temp[hidx] + soil_con->Tfactor[band];
-        // step_prec = force->prec[hidx] * soil_con->Pfactor[band];
+        step_prec = force->prec[hidx] * soil_con->Pfactor[band];
         step_prec = force->prec[hidx];
 
         // initialize ground surface temperaure
@@ -931,7 +931,7 @@ surface_fluxes(bool                 overstory,
          * @brief When Vegatation Type Is Glacier
          *        Then Do the Math
          */
-        if (veg_class == 17) {
+        if ((veg_class == 17)&&(step_glacier.coverage>0.)) {
             step_glacier_melt = solve_glacier(overstory, 
                                       BareAlbedo, LongUnderOut,
                                       param.SNOW_MIN_RAIN_TEMP,
@@ -1059,7 +1059,7 @@ surface_fluxes(bool                 overstory,
      * @brief When Vegatation Type Is Glacier
      *        Do the Math and Record
      */
-    if (veg_class == 17) {
+    if ((veg_class == 17)&&(step_glacier.coverage>0.)) {
         (*glacier) = step_glacier;
         glacier->melt = store_glacier_melt;
     }
@@ -1197,7 +1197,7 @@ surface_fluxes(bool                 overstory,
 
     ErrorFlag = runoff(cell, energy, soil_con, ppt, soil_con->frost_fract,
                        options.Nnode);
-    if (veg_class == 17) {
+    if ((veg_class == 17)&&(step_glacier.coverage>0.)) {
         cell->runoff += store_glacier_melt*MM_PER_M;
     }
     return(ErrorFlag);
