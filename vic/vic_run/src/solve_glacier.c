@@ -139,7 +139,7 @@ double solve_glacier(char               overstory,
 
         // Snow 
         snow_albedo = snow->albedo;
-        snow_depth = snow->depth;
+        snow_depth = snow->swq;
         snow_tsurf = snow->surf_temp;
 
         // Tair
