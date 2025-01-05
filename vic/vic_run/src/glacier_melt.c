@@ -266,7 +266,8 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
     /***
      * @bug 更新表层积雪含水量
      */
-    MaxLiquidWater = param.SNOW_LIQUID_WATER_CAPACITY * SurfaceSwq;
+    // MaxLiquidWater = param.SNOW_LIQUID_WATER_CAPACITY * SurfaceSwq;
+    MaxLiquidWater = 0.;
     if (glacier->surf_water > MaxLiquidWater) {
         // 此时所有的融水都在表层
         melt[0] = glacier->surf_water - MaxLiquidWater;
@@ -309,7 +310,8 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
         Ice += DeltaPackSwq;
     }
     // 底层液态水出流
-    MaxLiquidWater = param.SNOW_LIQUID_WATER_CAPACITY * PackSwq;
+    // MaxLiquidWater = param.SNOW_LIQUID_WATER_CAPACITY * PackSwq;
+    MaxLiquidWater = 0.;
     if (glacier->pack_water > MaxLiquidWater) {
         melt[0] = glacier->pack_water - MaxLiquidWater;
         glacier->pack_water = MaxLiquidWater;
