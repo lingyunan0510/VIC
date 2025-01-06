@@ -166,22 +166,26 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
             // 冰雪表面温度非负
             // 预期在升温过程中 才会进入此分支
             glacier->surf_temp = 0.;
-            Qnet = calc_glacier_energy_balance((double) 0.0, delta_t, aero_resist, aero_resist_used, z2, Z0,
-                                           density, vp, LongSnowIn, Le, pressure, RainFall, NetShortSnow, vpd,
-                                           wind, (*OldTSurf), coverage, glacier->depth, glacier->density,
-                                           glacier->surf_water, SurfaceSwq, Tcanopy, Tgrnd,
-                                          &advection, &advected_sensible_heat, &deltaCC, &grnd_flux, &latent_heat,
-                                          &latent_heat_sub, NetLongSnow, &RefreezeEnergy, &sensible_heat,
-                                          &glacier->vapor_flux, &glacier->blowing_flux, &glacier->surface_flux);
-            AllMelt = fabs(Qnet) / (CONST_LATICE * CONST_RHOFW) * delta_t;
-            // 升温融化
-            if (AllMelt <= Ice) { // 只融雪
-                SnowMelt = AllMelt;
-                GlacierMelt = 0.;
-            } else {             // 雪融完
-                SnowMelt = Ice;
-                GlacierMelt = AllMelt - Ice;
-            }
+            // Qnet = calc_glacier_energy_balance((double) 0.0, delta_t, aero_resist, aero_resist_used, z2, Z0,
+            //                                density, vp, LongSnowIn, Le, pressure, RainFall, NetShortSnow, vpd,
+            //                                wind, (*OldTSurf), coverage, glacier->depth, glacier->density,
+            //                                glacier->surf_water, SurfaceSwq, Tcanopy, Tgrnd,
+            //                               &advection, &advected_sensible_heat, &deltaCC, &grnd_flux, &latent_heat,
+            //                               &latent_heat_sub, NetLongSnow, &RefreezeEnergy, &sensible_heat,
+            //                               &glacier->vapor_flux, &glacier->blowing_flux, &glacier->surface_flux);
+            // AllMelt = fabs(Qnet) / (CONST_LATICE * CONST_RHOFW) * delta_t;
+            // // 升温融化
+            // if (AllMelt <= Ice) { // 只融雪
+            //     SnowMelt = AllMelt;
+            //     GlacierMelt = 0.;
+            // } else {             // 雪融完
+            //     SnowMelt = Ice;
+            //     GlacierMelt = AllMelt - Ice;
+            // }
+            // 不发生融化
+            AllMelt = 0.;
+            SnowMelt = 0.;
+            GlacierMelt = 0.;
         }
     }
 
