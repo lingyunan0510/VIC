@@ -275,19 +275,18 @@ double glacier_energy_balance(double TSurf, va_list ap) {
     *surface_flux = SurfaceMassFlux * Dt / Density;
 
     // 降水热
-    if (TMean == 0.) {
-        *AdvectedEnergy = (CONST_CPFW * CONST_RHOFW * (Tair) * Rain) / Dt;
-    } else {
-        *AdvectedEnergy = 0.;
-    }
+    // 降水的温度即为气温
+    *AdvectedEnergy = (CONST_CPFW * CONST_RHOFW * (Tair) * Rain) / Dt;
 
     // ColdContent的变化
-    /***
-     * @bug 在每一次调用本代码时都需要 须调用时妥善确定TSurf与OldTSurf
-     */
-    *DeltaColdContent = CONST_VCPICE_WQ * SweSurfaceLayer * (TSurf - OldTSurf) / Dt;
+    // 保留格式 但是冰川不需要
+    *DeltaColdContent = 0.;
 
     // 地热 假设不存在
+    /**
+     * @todo
+     * 赵求东方案
+     */
     *GroundFlux = 0;
 
     // 计算冰雪一体表面的能量余项
@@ -296,34 +295,14 @@ double glacier_energy_balance(double TSurf, va_list ap) {
     RestTerm = NetRad + *SensibleHeat + *LatentHeat + *LatentHeatSub + *AdvectedEnergy + *GroundFlux - *DeltaColdContent + *AdvectedSensibleHeat;
 
     // 基于冰雪一体的表面存在的液态水
-    // 计算如果要发生重冻结 需要消耗多少能量
-    // 此时重冻结能量为正
-    *RefreezeEnergy = (SurfaceLiquidWater * CONST_LATICE * Density) / Dt;
+    // 但是冰川不考虑
+    *RefreezeEnergy = 0.;
 
-    if (TSurf == 0.0 && RestTerm > -(*RefreezeEnergy)) {
-        /***
-         * @bug 
-         * 表面温度为0. 且 能量余项 + 重冻结能量 > 0.
-         * 存在两种情况
-         * 一种是发生重冻结 冻结释放融化潜热能量平衡 重冻结后可能仍存在部分液态水 冰雪表面温度保持0度
-         * 一种是不发生重冻结 能量余项为正 用于融化
-         */
-        // RefreezeEnergy可能为正也可能为负
-        // RestTerm为0.
-        *RefreezeEnergy = -RestTerm;
-        RestTerm = 0.0;
-    } else {
-        /***
-         * @bug 
-         * 表面温度不为0. 或 能量余项 + 重冻结能量 <= 0.
-         * 存在两种情况
-         * 一种是未达到阈值温度 无论能量余项如何为正/负 仅涉及到升温/降温
-         * 一种是即使表面液态水重冻结 总能量余项仍然为负 表面进一步降温 此时表面温度无法维持0度 且所有液态水冻结
-         */
-        // RefreezeEnergy为非负
-        // RestTerm可能为正也可能为负
-        RestTerm += *RefreezeEnergy;
-    }
-
+    /**
+     * @attention
+     * 直接返回余项
+     * 余项为正值 说明冰川表面获得能量
+     * 余项为负值 说明冰川表面失去能量
+     */
     return RestTerm;
 }
