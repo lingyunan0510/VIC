@@ -159,7 +159,7 @@ initialize_parameters()
     param.SNOW_L1 = 6.0;
     param.SNOW_L2 = 20.0;
     // param.SNOW_NEW_SNOW_ALB = 0.85;
-    param.SNOW_NEW_SNOW_ALB = 0.75;
+    param.SNOW_NEW_SNOW_ALB = 0.725;
     param.SNOW_ALB_ACCUM_A = 0.94;
     param.SNOW_ALB_ACCUM_B = 0.58;
     param.SNOW_ALB_THAW_A = 0.82;
