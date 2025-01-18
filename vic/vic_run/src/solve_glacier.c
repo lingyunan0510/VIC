@@ -184,6 +184,14 @@ double solve_glacier(char               overstory,
     /***
      * @attention 冰川表面反照率演算
      */
+    double abd_min;
+    abd_min = 0.324-0.018*air_temp;
+    if (abd_min < 0.2) {
+        abd_min = 0.2;
+    } else if (abd_min > 0.8) {
+        abd_min = 0.8
+    }
+    glacier->albedo_min = abd_min;
     glacier_albedo = calc_glacier_albedo(glacier->albedo_min, glacier_snow_albedo, glacier->depth, options.d_star);
     (*AlbedoUnder) = glacier_albedo;
     // 表面净短波
