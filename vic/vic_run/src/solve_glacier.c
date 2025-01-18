@@ -185,7 +185,13 @@ double solve_glacier(char               overstory,
      * @attention 冰川表面反照率演算
      */
     double abd_min;
-    abd_min = 0.324-0.018*air_temp;
+    double dew;
+    double rh;
+    double logex;
+    rh = vp/(vp+vpd)*100.0;                                         // 相对湿度
+    logex = 0.66077+7.5*air_temp/(237.3+air_temp)+ (log10(rh)-2);   // Log
+    dew = (logex-0.66077)*237.3/(0.66077+7.5-logex);
+    abd_min = -0.031*dew+0.2577;
     if (abd_min < 0.2) {
         abd_min = 0.2;
     } else if (abd_min > 0.8) {
