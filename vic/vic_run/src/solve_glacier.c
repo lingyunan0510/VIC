@@ -195,7 +195,7 @@ double solve_glacier(char               overstory,
     if (abd_min < 0.2) {
         abd_min = 0.2;
     } else if (abd_min > 0.8) {
-        abd_min = 0.8
+        abd_min = 0.8;
     }
     glacier->albedo_min = abd_min;
     glacier_albedo = calc_glacier_albedo(glacier->albedo_min, glacier_snow_albedo, glacier->depth, options.d_star);
