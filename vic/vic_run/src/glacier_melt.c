@@ -213,16 +213,13 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
     glacier->glacier_melt = GlacierMelt*MM_PER_M;
 
     // 物质平衡残差
-    /***
-     * @bug 没有冰川项
-     */
-    MassBalanceError = (InitialSwq - glacier->swq) + (RainFall + SnowFall) - melt[0] + glacier->vapor_flux;
+    MassBalanceError = SnowFall - AllMelt + glacier->vapor_flux;
 
     // 将流出量转化为mm
     melt[0] *= MM_PER_M;
     // 物质平衡残差
     glacier->mass_error = MassBalanceError;
-    snow->mass_error = MassBalanceError;
+    snow->mass_error = 0.0;
     // CC
     glacier->coldcontent = 0.0;
     snow->coldcontent = 0.0;
