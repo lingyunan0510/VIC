@@ -299,8 +299,11 @@ get_default_outvar_aggtype(unsigned int varid)
      * @brief Aggregation Type Should be Sum
      * Added in 2022-02-11
      * Checked in 2022-02-11
+     * Added in 2025-02-06
+     * Checked in 2025-02-06
      */
     case OUT_GLACIER_MELT:
+    case OUT_GLACIER_MB:
         agg_type = AGG_TYPE_SUM;
         break;
     default:

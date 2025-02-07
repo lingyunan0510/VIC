@@ -314,7 +314,7 @@ double solve_glacier(char               overstory,
     snow->max_snow_depth = glacier->max_snow_depth;
     // 通量
     snow->blowing_flux = glacier->blowing_flux;
-    snow->mass_error = glacier->mass_error;
+    // snow->mass_error = glacier->mass_error;
     snow->Qnet = glacier->Qnet;
     snow->surface_flux = glacier->surface_flux;
     snow->transport = glacier->transport;
