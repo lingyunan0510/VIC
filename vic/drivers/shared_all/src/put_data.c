@@ -786,6 +786,7 @@ collect_wb_terms(cell_data_struct cell,
      */
     if (veg_class == 17) {
         out_data[OUT_GLACIER_MELT][0] += glacier.glacier_melt * AreaFactor;
+        out_data[OUT_GLACIER_MB][0] += glacier.mass_error * glacier.band_coverage;
     }
 
     /** record snow cover fraction **/

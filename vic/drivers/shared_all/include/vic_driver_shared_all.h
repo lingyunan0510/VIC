@@ -272,6 +272,7 @@ enum
      * Checked in 2022-02-11
      */
     OUT_GLACIER_MELT,     /**< glacier melt [mm] */
+    OUT_GLACIER_MB,       /**< glacier mass balance [m] */
     // Last value of enum - DO NOT ADD ANYTHING BELOW THIS LINE!!
     // used as a loop counter and must be >= the largest value in this enum
     N_OUTVAR_TYPES        /**< used as a loop counter*/

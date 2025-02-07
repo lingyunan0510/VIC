@@ -611,6 +611,17 @@ set_output_met_data_info()
     strcpy(out_metadata[OUT_GLACIER_MELT].units, "mm");
     strcpy(out_metadata[OUT_GLACIER_MELT].description, "glacier melt");
 
+    /**
+     * @brief Make Output Glacier MB
+     * Added in 2025-02-07
+     * Checked in 2025-02-07
+     */
+    strcpy(out_metadata[OUT_GLACIER_MB].varname, "OUT_GLACIER_MB");
+    strcpy(out_metadata[OUT_GLACIER_MB].long_name, "glacier_mass_balance");
+    strcpy(out_metadata[OUT_GLACIER_MB].standard_name, "glacier_mass_balance");
+    strcpy(out_metadata[OUT_GLACIER_MB].units, "m");
+    strcpy(out_metadata[OUT_GLACIER_MB].description, "glacier mass balance");
+
     /* snowfall [mm] */
     strcpy(out_metadata[OUT_SNOWF].varname, "OUT_SNOWF");
     strcpy(out_metadata[OUT_SNOWF].long_name, "snowf");
