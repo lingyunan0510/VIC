@@ -17,8 +17,8 @@ initialize_parameters()
 
     // Lapse Rate
     // param.LAPSE_RATE = -0.0060;
-    param.LAPSE_RATE = -0.00498; // 玉龙喀什河
-    // param.LAPSE_RATE = -0.00454; // 布尔津河
+    // param.LAPSE_RATE = -0.00498; // 玉龙喀什河
+    param.LAPSE_RATE = -0.00454; // 布尔津河
 
     // Precipitation Guage Height
     param.GAUGE_HEIGHT = 1.0;
@@ -159,7 +159,7 @@ initialize_parameters()
     param.SNOW_L1 = 6.0;
     param.SNOW_L2 = 20.0;
     // param.SNOW_NEW_SNOW_ALB = 0.85;
-    param.SNOW_NEW_SNOW_ALB = 0.765;
+    param.SNOW_NEW_SNOW_ALB = 0.775;
     param.SNOW_ALB_ACCUM_A = 0.94;
     param.SNOW_ALB_ACCUM_B = 0.58;
     param.SNOW_ALB_THAW_A = 0.82;
