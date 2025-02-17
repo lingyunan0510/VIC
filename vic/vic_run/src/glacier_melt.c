@@ -213,7 +213,7 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
     glacier->glacier_melt = GlacierMelt*MM_PER_M;
 
     // 物质平衡残差
-    MassBalanceError = SnowFall - AllMelt + (glacier->vapor_flux*(-1));
+    MassBalanceError = SnowFall - AllMelt;
 
     // 将流出量转化为mm
     melt[0] *= MM_PER_M;
