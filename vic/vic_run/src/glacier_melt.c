@@ -221,8 +221,8 @@ int glacier_melt(   double            Le,                       // 蒸发潜热 
     glacier->mass_error = MassBalanceError;
     snow->mass_error = 0.0;
     // CC
-    glacier->coldcontent = 0.0;
-    snow->coldcontent = 0.0;
+    glacier->coldcontent = CONST_VCPICE_WQ * glacier->swq * glacier->surf_temp;
+    snow->coldcontent = CONST_VCPICE_WQ * glacier->swq * glacier->surf_temp;
     // 水汽通量 换向
     glacier->vapor_flux *= -1;
     snow->vapor_flux *= -1.;
