@@ -166,8 +166,8 @@ initialize_parameters()
     // param.SNOW_ALB_THAW_B = 0.46;
     param.SNOW_ALB_ACCUM_A = 0.82;
     param.SNOW_ALB_ACCUM_B = 0.46;
-    param.SNOW_ALB_THAW_A = 0.70;
-    param.SNOW_ALB_THAW_B = 0.34;
+    param.SNOW_ALB_THAW_A = 0.1;
+    param.SNOW_ALB_THAW_B = 0.1;
     param.SNOW_TRACESNOW = 0.03;
     param.SNOW_CONDUCT = 2.9302e-6;
     param.SNOW_MAX_SNOW_TEMP = 0.5;
